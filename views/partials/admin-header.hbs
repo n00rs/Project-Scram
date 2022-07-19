@@ -1,0 +1,28 @@
+<div class="main-banner inner" id="home">
+    <!-- admin header -->
+    <header class="header">
+        <div class="container-fluid px-lg-5">
+            <!-- nav -->
+            {{#if admin}}
+            <nav class="py-4 col-12">
+                <div id="logo">
+                    <h1> <a href="/">ADMIN</a></h1>
+                </div>
+                <label for="drop" class="toggle">Menu</label>
+                <input type="checkbox" id="drop" />
+                <ul class="menu mt-2">
+                    <li class="active"><a href="/admin">ADMIN</a></li>
+                    <li><a href="/admin/view-products">VIEW PRODUCTS</a></li>
+                    <li><a href="/admin/add-products">ADD PRODUCTS</a></li>
+                    <li><a href="/admin/view-users">VIEW USERS</a></li>
+                    <li><a href="/admin/logout">LOG OUT</a></li>
+                </ul>
+                {{/if}}
+            </nav>
+            <!-- //nav -->
+        </div>
+    </header>
+</div>
+
+<!-- //header -->
+<!--/banner-->

@@ -1,0 +1,5 @@
+module.exports = {
+    ADMINCOLLECTION: "ADMIN",
+    USERCOLLECTION: "USER",
+    PRODUCTCOLLECTION:"PRODUCT"
+}

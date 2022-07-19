@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scram</title>
+
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" media="all" />
+    <!-- Style-CSS -->
+
+    <link href="/stylesheets/home.css" rel="stylesheet" type="text/css" media="all" />
+    <!-- /Fonts -->
+
+    <link href="//fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900"
+        rel="stylesheet">
+
+    {{!-- bootstrap-css --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    {{#if admin}}
+    {{>admin-header}}
+    {{else}}
+    {{>user-header}}
+    {{/if}}
+
+    {{{body}}}
+
+    {{#if admin}}
+    {{>admin-footer}}
+    {{else}}
+    {{>user-footer}}
+    {{/if}}
+
+
+    {{!-- fonawesome-js --}}
+
+    <script src="https://kit.fontawesome.com/81d2539132.js" crossorigin="anonymous"></script>
+
+    {{!-- bootstrap-js --}}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

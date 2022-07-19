@@ -1,0 +1,34 @@
+<section>
+    <div class="container p-5">
+        <div class="row p-5">
+            <div class="col-md-8">
+                <div>
+                    <p class="fs-3 ms-5">ADD NEW ADMIN</p>
+                </div>
+                <form action="/admin/add-admin" method="post">
+                    <div class="col-md-8">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="name" id="" placeholder="">
+                            <label for="">NAME*</label>
+                        </div>
+                        {{#if idError}}
+                        <h6 class="fw-bold text-danger">"{{idError}}"</h6>
+                        {{/if}}
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" name="userName" id="" placeholder="">
+                            <label for="">USERNAME*</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" name="password" id="" placeholder="">
+                            <label for="">PASSWORD*</label>
+                        </div>
+                        <button class="btn active mb-3" type="submit">
+                            ADD-ADMIN
+                            <span style="margin-left: 1em;"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

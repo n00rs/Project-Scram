@@ -1,0 +1,163 @@
+ <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+<script>
+    $(document).ready(function(){jQuery.validator.addMethod("alphanumeric", function(value, element) {
+    return this.optional(element) || /^[\w.]+$/i.test(value);
+}), 
+    $("#userSignup").validate({
+    errorClass: 'signupError',
+        
+        rules:{
+            firstName:{ 
+                lettersonly:true,
+                required:true,
+                minlength:3,
+                maxlength:8
+            },
+            lastName:{
+                required:true,
+                minlength:3,
+                maxlength:8
+            },
+            email:{
+                required:true,
+                email:true
+                
+            },
+            password:{
+                required:true,
+                alphanumeric:true,
+                rangelength:[7, 14]
+                
+            },
+        },
+        messages:{
+            firstName:{
+                required:"enter first name",
+                minlength:"enter atleast 3 characters",
+                maxlength:"not more than 8 characters"
+            },
+            lastName:{
+                required:"enter second name",
+                minlength:"enter atleast 3 characters",
+                maxlenth:"not more than 8 characters"
+            },
+            email:{
+                required:"Enter your emailaddress",
+                email:"enter a valid email adress"
+            },
+            password:{
+                required:"enter a password",
+                rangelength:"enter characters between 7 to 14 ",
+                alphanumeric:"enter mix of numbers and alphabets"
+            },
+        }
+    })
+})
+$.validator.addMethod( "alphanumeric", function( value, element ) {
+	return this.optional( element ) || /^\w+$/i.test( value );
+}, "Letters, numbers, and underscores only please." );
+</script>
+
+<section class="">
+    <div class="row" style="margin-right: 0em;">
+
+        <div class="container bg-black ">
+            <div class="col-md-8 col-12 p-5   login-box">
+
+                <form action="/signup" method="post" id="userSignup">
+                    <div class="row mb-3 ">
+                        {{#if idError}}
+                        <p class="text-warning">"{{idError}}""</p>
+                        {{/if}}
+                        <div class="col  ">
+                            <p>EMAIL*</p>
+                            <input type="email" name="email" class="form-control" placeholder="">
+                        </div>
+                        <div class="col">
+                            <p>MOBILE*</p>
+                            <input type="tel" name="phone" class="form-control" placeholder="MOBILE NUMBER*"
+                                value="+91">
+                        </div>
+                    </div>
+                    <div class="row mb-3 ">
+                        <div class="col ">
+                            <p>PASSWORD*</p>
+                            <input type="password" name="password" class="form-control" placeholder="PASSWORD*"
+                                id="password">
+                        </div>
+                        <div class="col">
+                            <p>CONFIRM PASSWORD*</p>
+                            <input type="password" class="form-control" placeholder="CONFIRM PASSWORD*"
+                                id="confirm-password" onkeyup="confirmPassword()">
+                                <span id="message"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3 ">
+                        <div class="col ">
+                            <p>FIRST NAME*</p>
+                            <input type="text" name="firstName" class="form-control" placeholder="FIRST NAME*">
+                        </div>
+                        <div class="col">
+                            <p>LAST NAME*</p>
+                            <input type="text" name="lastName" class="form-control" placeholder="LAST NAME*">
+                        </div>
+                    </div>
+                    <div class="row mb-3 ">
+                        <div class="col ">  
+                            <p>COUNTRY*</p>
+                            <input type="text" class="form-control" name="country" placeholder="COUNTRY*">
+                        </div>
+                        <div class="col">
+                            <p>GENDER*</p>
+                            <select class="form-select" name="gender" aria-label="Default select example">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3 ">
+                        <div class="form-check">
+                            <p class="mt-5">By submitting this form, you confirm to have read and understood the
+                                Dainese S.p.A. Privacy Policy. To allow us to stay in touch with you, tick the
+                                following boxes:</p>
+                            <input class="form-check-input text-white bg-warning" type="checkbox" value=""
+                                id="flexCheckDefault">
+                            <label class="form-check-label text-white">I AGREE</p>
+                        </div>
+                        <div class="col-3 ms-5">
+                            <button type="submit" id="signup">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                SIGN UP
+                            </button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{!-- checking same password --}}
+
+<script>
+    function confirmPassword(){
+        let password = document.getElementById('password').value ;
+        let confirmPassword = document.getElementById('confirm-password').value;
+
+        if(password != confirmPassword){
+            document.getElementById('message').style.color = 'red';
+            document.getElementById('message').innerHTML = 'Use same password'
+            document.getElementById('signup').disabled = true;
+        } else {
+            document.getElementById('message').style.color = 'green';
+            document.getElementById('message').innerHTML = 'Password Confirmed'
+            document.getElementById('signup').disabled = false ;
+        }
+    }
+
+</script>
+
