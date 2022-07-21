@@ -1,0 +1,150 @@
+{{!-- to choos category --}}
+<script type="text/javascript">
+    function makeDisable() {
+        var x = document.getElementById("sub-category2")
+        var y = document.getElementById("sub-category1")
+        x.disabled = true
+        y.disabled = false
+
+    }
+    function makeEnable() {
+        var x = document.getElementById("sub-category2")
+        var y = document.getElementById("sub-category1")
+        y.disabled = true
+        x.disabled = false
+    }
+</script>
+<section>
+    <div class="container p-5">
+        <div class="row  bg-light ">
+            <div class="col-md-3">
+
+            </div>
+            <div class="col-md-8">
+                <div>
+                    <p class="display-6 p-5">ADD-PRODUCTS</p>
+                </div>
+                <form action="/admin/add-products" method="post" enctype="multipart/form-data">
+
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <input type="radio" name="category" id="helmet" class="form-check-input" value="helmet"
+                                onclick="makeDisable()" notchecked>
+
+                            <label class="form-check-label">HELMET</label>
+                            <label for="">CATEGORY</label>
+
+                            <select id="sub-category1" name="subcategory" class="form-select"
+                                placeholder="for-helmets">
+                                <label for="">choose</label>
+                                <option value="none"> Choose...</option>
+                                <option value="racing">RACING</option>
+                                <option value="sport">SPORT</option>
+                                <option value="sport">TOURING</option>
+                                <option value="off-road">OFF-ROAD</option>
+                            </select>
+                        </div>
+
+                        <div class=" mb-3">
+                            <input type="radio" name="category" id="accessories" class="form-check-input"
+                                value="accessories" onclick= "makeEnable()" notchecked>
+                            <label class="form-check-label">ACCESSORIES</label>
+                            <label for="">CATEGORY</label>
+                            <select id="sub-category2" name="subcategory" class="form-select"
+                                placeholder="for-helmets">
+                                <option value="none"> Choose...</option>
+                                <option value="visors">VISORS</option>
+                                <option value="communications">COMMUNICATION</option>
+                                <option value="pads">PADS</option>
+                                <option value="others">OTHERS</option>
+                            </select>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="model" id="model" placeholder="">
+                            <label for="">MODEL*</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="modelname" id="" placeholder="">
+                            <label for="">NAME*</label>
+                        </div>
+
+                            <div class="form-check col-md-6">
+                                <input class="form-check-input" type="checkbox" name="small" value="S"
+                                    id="" >
+                                <label class="form-check-label" for="">
+                                    SMALL
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="medium" value="M"
+                                    id="" >
+                                <label class="form-check-label" for="">
+                                    MEDIUM
+                                </label>
+                            </div>
+                            <div class="form-check col-md-6">
+                                <input class="form-check-input" type="checkbox" name="large" value="L"
+                                    id="" >
+                                <label class="form-check-label" for="">
+                                    LARGE
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="extra_extra_large" value="XXL"
+                                    id="flexcheckboxDefault2" >
+                                <label class="form-check-label" for="flexcheckboxDefault2">
+                                    EXTRA EXTRA LARGE
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="extra_large" value="XL"
+                                    id="flexcheckboxDefault2" >
+                                <label class="form-check-label" for="flexcheckboxDefault2">
+                                    EXTRA LARGE
+                                </label>
+                            </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="price" name="price">
+                            <label for="">PRICE*</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="stock" name="stock">
+                            <label for="">STOCK*</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" name="description"></textarea>
+                            <label for="">DESCRIPTION*</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" name="features"></textarea>
+                            <label for="">FEATURES*</label>
+                        </div>
+
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="image1" name="image1" required>
+                            <label class="custom-file-label" for="customFile" >Choose file</label>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="image2" name="image2" required>
+                            <label class="custom-file-label" for="customFile" >Choose file</label>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="image3" name="image3" required>
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="image4" name="image4" required>
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                        <button class="btn active mb-3" type="submit">
+                            ADD-PRODUCT
+                            <span style="margin-left: 1em;"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

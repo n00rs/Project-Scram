@@ -1,0 +1,53 @@
+<section class="">
+   
+
+        <div class="container  justify-content-center align-items-center">
+            <div class="col-md-8 col-12 p-5">
+                
+                <form action="/admin/updateUserData" method="post" id="">
+                
+                    <div class="row mb-3 ">
+                        <div class="col  ">
+                            <p>EMAIL*</p>
+                            <input type="email" name="email" class="form-control" value="{{user.email}}" readonly >
+                        </div>
+                        <div class="col">
+                            <p>MOBILE*</p>
+                            <input type="tel" name="phone" value="{{user.phone}}" class="form-control" placeholder="MOBILE NUMBER*"
+                                value="+91">
+                        </div>
+                    </div>
+                    <div class="row mb-3 ">
+                        <div class="col ">
+                            <p>FIRST NAME*</p>
+                            <input type="text" name="firstName" value="{{user.firstName}}" class="form-control" placeholder="FIRST NAME*">
+                        </div>
+                        <div class="col">
+                            <p>LAST NAME*</p>
+                            <input type="text" name="lastName" value="{{user.lastName}}" class="form-control" placeholder="LAST NAME*">
+                        </div>
+                    </div>
+                    <div class="row mb-3 ">
+                        <div class="col ">  
+                            <p>COUNTRY*</p>
+                            <input type="text" class="form-control" value="{{user.country}}" name="country" placeholder="COUNTRY*">
+                        </div>
+                        <div class="col">
+                            <p>GENDER*</p>
+                            <select class="form-select" name="gender" value="{{user.gender}}" aria-label="Default select example">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="hidden" value="{{user._id}}" name="id">
+                    
+                        <div class="col-3 ms-5">
+                            <button class="btn active" type="submit" id="signup"> UPDATE
+                            </button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
