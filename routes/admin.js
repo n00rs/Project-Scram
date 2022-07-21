@@ -1,4 +1,3 @@
-const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
 const adminHelpers = require('../helpers/adminHelpers')
@@ -32,9 +31,7 @@ router.get('/add-admin', (req, res) => {
 router.post('/add-admin', (req,res)=>{
 
 adminHelpers.add_admin(req.body).then(()=>{
-
 res.redirect('/admin');
-
 })
 .catch((err)=>{
    req.session.idError = err ;
@@ -61,6 +58,10 @@ if(data.status){
     })
 })
 
+router.get('/logout',(req,res)=>{
+    req.session.destroy()
+    res.redirect('/')
+})
 //   USER MANAGEMENT FROM ADMIN SIDE
 
 router.get('/view-users',verifyAdmin,async (req,res)=>{
@@ -117,22 +118,64 @@ router.post('/add-products',(req,res)=>{
     console.log(req.body);
     adminHelpers.addProduct(req.body).then((result)=>{
 
-        img1.mv('./public/images/product_images/'+result+'_1.jpg') ;
-        img2.mv('./public/images/product_images/'+result+'_2.jpg') ;
-        img3.mv('./public/images/product_images/'+result+'_3.jpg') ;
-        img4.mv('./public/images/product_images/'+result+'_4.jpg') ;
+        if (img1)   img1.mv('./public/images/product_images/'+result+'_1.jpg') ;
+        if (img2)   img2.mv('./public/images/product_images/'+result+'_2.jpg') ;
+        if (img3)   img3.mv('./public/images/product_images/'+result+'_3.jpg') ;
+        if (img4)   img4.mv('./public/images/product_images/'+result+'_4.jpg') ;
 
         res.redirect('/admin/view-products')
     })
 })
 
-router.get('/view-products',(req,res)=>{
-    res.render('admin/view-products')
+router.get('/view-products', async (req,res)=>{
+
+    let products = await adminHelpers.fetchAllProducts();
+
+    res.render('admin/view-products',{admin:true,products})
 })
 
+router.get('/edit-product/:id',async (req,res)=>{
+    console.log(req.params.id);
 
+  let product = await adminHelpers.fetchProduct(req.params.id)
+  res.render('admin/edit-product',{admin:true,product})
+})
 
+router.post('/edit-product',(req,res)=>{
+    console.log(req.files);
+    
+    
+    adminHelpers.editProduct(req.body).then((result)=>{
+    try {
+        if(req.files){
 
+            let id = req.body.productId ;
+            let img1 = req.files.image1 ;
+            let img2 = req.files.image2 ; 
+            let img3 = req.files.image4 ;
+            let img4 = req.files.image4 ;
+             
+             if (img1)  img1.mv('./public/images/product_images/'+ id +'_1.jpg') ;
+             if (img2)  img2.mv('./public/images/product_images/'+ id +'_2.jpg') ;
+             if (img3)  img3.mv('./public/images/product_images/'+ id +'_3.jpg') ;
+             if (img4)  img4.mv('./public/images/product_images/'+ id +'_4.jpg') ;  
+        }
+        
+    } catch (error) {
+
+       console.log(error);
+
+    }
+    res.redirect('/admin/view-products')
+    })
+})
+
+router.get('/deleteProduct',(req,res)=>{
+    console.log(req.query.id);
+    adminHelpers.deleteProduct(req.query.id).then((result)=>{
+        res.json(result);
+    })
+})
 
 
 module.exports = router;

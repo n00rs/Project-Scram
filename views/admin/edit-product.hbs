@@ -1,21 +1,4 @@
-{{!-- to choos category --}}
-<script type="text/javascript">
-    function makeDisable() {
-        var x = document.getElementById("sub-category2")
-        var y = document.getElementById("sub-category1")
-        x.hidden = true 
-        x.value = null
-        y.hidden = false
 
-    }
-    function makeEnable() {
-        var x = document.getElementById("sub-category2")
-        var y = document.getElementById("sub-category1")
-        y.hidden = true 
-        y.value = null
-        x.hidden = false
-    }
-</script>
 <section>
     <div class="container p-5">
         <div class="row  bg-light ">
@@ -24,50 +7,33 @@
             </div>
             <div class="col-md-8">
                 <div>
-                    <p class="display-6 p-5">ADD-PRODUCTS</p>
+                    <p class="display-6 p-5">EDIT-PRODUCTS</p>
                 </div>
-                <form action="/admin/add-products" method="post" enctype="multipart/form-data">
+                <form action="/admin/edit-product" method="post" enctype="multipart/form-data">
 
                     <div class="col-md-8">
                         <div class="mb-3">
-                            <input type="radio" name="category" id="helmet" class="form-check-input" value="helmet"
-                                onclick="makeDisable()" checked>
+                            <input type="radio" name="category" id="helmet" class="form-check-input" value="{{product.category}}"
+                                 readonly checked>
 
-                            <label class="form-check-label">HELMET</label>
+                            <label class="form-check-label">{{product.category}}</label><br><br>
                             <label for="">CATEGORY</label>
 
-                            <select id="sub-category1" name="subcategory" class="form-select"
+                            <select id="sub-category1" name="subcategory" class="form-select mb-3" readonly
                                 placeholder="for-helmets">
                                 <label for="">choose</label>
-                                <option value="none"> Choose...</option>
-                                <option value="racing">RACING</option>
-                                <option value="sport">SPORT</option>
-                                <option value="touring">TOURING</option>
-                                <option value="off-road">OFF-ROAD</option>
+                                <option value="{{product.subcategory}}"> {{product.subcategory}}</option>
                             </select>
                         </div>
 
-                        <div class=" mb-3">
-                            <input type="radio" name="category" id="accessories" class="form-check-input"
-                                value="accessories" onclick= "makeEnable()" notchecked>
-                            <label class="form-check-label">ACCESSORIES</label>
-                            <label for="">CATEGORY</label>
-                            <select id="sub-category2" name="subcategory" class="form-select"
-                                placeholder="for-helmets">
-                                <option value="none"> Choose...</option>
-                                <option value="visors">VISORS</option>
-                                <option value="communications">COMMUNICATION</option>
-                                <option value="pads">PADS</option>
-                                <option value="others">OTHERS</option>
-                            </select>
-                        </div>
+                        
 
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" name="model" id="model" placeholder="">
+                            <input type="text" class="form-control" name="model" id="model" placeholder="" value="{{product.model}}">
                             <label for="">MODEL*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" name="modelname" id="" placeholder="">
+                            <input type="text" class="form-control" name="modelname" id="" placeholder="" value="{{product.modelDetails.name}}">
                             <label for="">NAME*</label>
                         </div>
 
@@ -78,7 +44,6 @@
                                     SMALL
                                 </label>
                             </div>
-
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="medium" value="M"
                                     id="" >
@@ -109,38 +74,52 @@
                             </div>
 
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="price" name="price">
+                            <input type="number" class="form-control" id="price" name="price" value="{{product.modelDetails.price}}">
                             <label for="">PRICE*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="stock" name="stock">
+                            <input type="number" class="form-control" id="stock" name="stock" value="{{product.modelDetails.stock}}">
                             <label for="">STOCK*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <textarea class="form-control" name="description"></textarea>
+                            <textarea class="form-control" name="description" >{{product.modelDetails.description}}</textarea>
                             <label for="">DESCRIPTION*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <textarea class="form-control" name="features"></textarea>
+                            <textarea class="form-control" name="features" aria-valuetext="">{{product.modelDetails.features}}</textarea>
                             <label for="">FEATURES*</label>
                         </div>
+                        <div class="p-3">
+                        <div class="custom-file  mb-3">
+                            <label for="image1">
+                            <img src="/images/product_images/{{product._id}}_1.jpg" alt="img" class="me-5" style="width:70px; cursor: pointer;" id="img1"  ></label>
 
-                        <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image1" name="image1"required >
-                            <label class="custom-file-label" for="customFile" >Choose file</label>
+                            <input type="file" class="custom-file-input" id="image1" name="image1" onchange="changePreview1(event)" hidden>
+
+                            <label class="custom-file-label" for="customFile" >Click to update image</label>
                         </div>
                         <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image2" name="image2" >
-                            <label class="custom-file-label" for="customFile" >Choose file</label>
+                            <label for="image2">
+                            <img src="/images/product_images/{{product._id}}_2.jpg" alt="img" class="me-5" style="width:70px; cursor: pointer;" id="img2">
+                            <input type="file" class="custom-file-input" id="image2" name="image2" onchange="changePreview2(event)" hidden></label>
+                            <label class="custom-file-label" for="customFile" >Click to update image</label>
                         </div>
                         <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image3" name="image3" >
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <label for="image3">
+                            <img src="/images/product_images/{{product._id}}_3.jpg" alt="img" class="me-5"  style="width:70px; cursor: pointer;" id="img3">
+                            <input type="file" class="custom-file-input" id="image3" name="image3" onchange="changePreview3(event)" hidden></label>
+                            <label class="custom-file-label" for="customFile">Click to update image</label>
                         </div>
                         <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image4" name="image4" >
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <label for="image4">
+                            <img src="/images/product_images/{{product._id}}_4.jpg" alt="img" class="me-5"  style="width:70px; cursor: pointer;" id="img4">
+                            <input type="file" class="custom-file-input" id="image4" name="image4" onchange="changePreview4(event)" hidden></label>
+                            <label class="custom-file-label" for="customFile">Click to update image</label>
                         </div>
+
+                        <input type="hidden" name="productId" value="{{product._id}}">
+
+                    </div>
                         <button class="btn active mb-3" type="submit">
                             ADD-PRODUCT
                             <span style="margin-left: 1em;"></span>
@@ -151,3 +130,20 @@
         </div>
     </div>
 </section>
+
+<script>
+    {{!-- change preview --}}
+
+    function changePreview1(event){
+document.getElementById('img1').src = URL.createObjectURL(event.target.files[0])
+    }
+    function changePreview2(event){
+document.getElementById('img2').src = URL.createObjectURL(event.target.files[0])
+    }
+    function changePreview3(event){
+document.getElementById('img3').src = URL.createObjectURL(event.target.files[0])
+    }
+    function changePreview4(event){
+document.getElementById('img4').src = URL.createObjectURL(event.target.files[0])
+    }
+</script>

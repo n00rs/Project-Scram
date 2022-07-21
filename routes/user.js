@@ -1,6 +1,7 @@
 const express = require('express') ;
 const router = express.Router() ;
 const userHelper = require('../helpers/userHelpers');
+const { route } = require('./admin');
 const verifyUser = (req,res,next) =>{
     if(req.session.loggedIn) next()
     else res.redirect('/login')
@@ -70,5 +71,50 @@ router.post('/signup',(req,res)=>{
 })
 
 
+router.get('/helmets',async (req,res)=>{
 
+    let helmetSection =await userHelper.fetchHelmets()
+
+    res.render('user/helmets',{user:true, helmetSection})
+})
+
+router.get('/helmets/:sub',async(req,res)=>{
+    try {
+        let subcategory=req.params.sub
+        let helmetSubcategory = await userHelper.fetchSub(subcategory);
+    
+        if(subcategory == 'racing')          res.render('user/helmet-racing',{user:true, helmetSubcategory });
+        else if(subcategory == 'sport')      res.render('user/helmet-sport',{user:true,  helmetSubcategory });
+        else if(subcategory == 'touring')    res.render('user/helmet-touring',{user:true, helmetSubcategory });
+        else if(subcategory == 'off-road')   res.render('user/helmet-off-road',{user:true, helmetSubcategory });
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+})
+
+router.get('/accessories', async (req,res)=>{
+    
+    let accessories = await userHelper.fetchAccessories()
+
+    res.render('user/accessories',{user:true, accessories})
+})
+
+router.get('/accessories/:sub',async (req,res)=>{
+    try {
+            let subcategory = req.params.sub
+            let accessoriesSub = await userHelper.fetchSub(subcategory);
+            
+        
+            if(subcategory == 'visors')               res.render('user/accessories-visors',{user:true, accessoriesSub});
+            else if (subcategory == 'communications')  res.render('user/accessories-communication',{user:true, accessoriesSub});
+            else if (subcategory == 'pads')            res.render('user/accessories-interiors',{user:true,accessoriesSub }) 
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+    
+})
 module.exports = router;

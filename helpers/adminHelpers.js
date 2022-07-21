@@ -119,12 +119,13 @@ module.exports = {
             "category": data.category,
             "subcategory": data.subcategory,
             "model": data.model,
-            "modeldetials": {
+            "modelDetails": {
                 "name": data.modelname,
                 "size": [data.small, data.medium, data.large, data.extra_extra_large, data.extra_large],
                 "price": parseInt(data.price),
                 "description": data.description,
                 "features": data.features,
+                "stock" : parseInt(data.stock)
             }
         }
         return new Promise((resolve, reject) => {
@@ -134,6 +135,61 @@ module.exports = {
             })
         })
     },
+
+    fetchAllProducts: ()=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.PRODUCTCOLLECTION).find().toArray().then((result)=>{
+                console.log(result[0]);
+                resolve(result)
+            })
+        })
+    },
+
+    deleteProduct: (productId) =>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.PRODUCTCOLLECTION).deleteOne({_id: objectId(productId)}).then((result)=>{
+                console.log(result,"delteprod");
+                resolve({itemRemoved:true})
+            })
+        })
+    },
+
+    fetchProduct: (productId)=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.PRODUCTCOLLECTION).findOne({_id: objectId(productId)}).then((result)=>{
+                resolve(result)
+            })
+        })
+    },
+
+    editProduct: (data) =>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.PRODUCTCOLLECTION).updateOne({_id: objectId(data.productId)},
+            {
+                $set:{
+                    category: data.category,
+                    subcategory: data.subcategory,
+                    model: data.model,
+                    'modelDetails.name': data.modelname,
+
+                    'modelDetails.size': [data.small, data.medium, data.large, data.extra_extra_large, data.extra_large],
+                    
+                    'modelDetails.price':parseInt( data.price),
+
+                    'modelDetails.stock' :parseInt( data.stock),
+                    
+                    'modelDetails.description': data.description,
+
+                    'modelDetails.features' : data.features
+
+                }
+            }).then((result)=>{
+                console.log(result);
+                resolve()
+            })            
+        })
+
+    } 
 
 
 

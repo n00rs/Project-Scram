@@ -2,8 +2,6 @@
 
 // USER BLOCKING 
 
-
-
 function blockFunc(userId,email,action){
     if(action == 'block'){
         swal({
@@ -98,4 +96,53 @@ function removeUser(userId,email) {
 function blockedUsers() {
     
 }
+
+function deleteProduct(productId) {
+    swal({
+        title : "delete this product  ?",
+        buttons: true,
+        icon:"warning",
+        closeOnClickOutside: false,
+
+    }).then((ok)=>{
+        if(ok){
+            $.ajax({
+                url:'deleteProduct',
+                data:{id: productId},
+                method: 'get',
+                success:(result)=>{
+                    if(result.itemRemoved){
+                        swal({title:"ProductRemoved",
+                        className:'swal'})
+                        setTimeout(()=>{
+                            location.reload()
+                        },1000)
+                    }
+                   
+                }
+            })
+        }
+    })
+}
+
+// function editProduct(productId) {
+//     swal({
+//         title : "Are you sure you wanna upadate this Product details ?",
+//         buttons: true,
+//         icon:"warning",
+//         closeOnClickOutside: false,
+//     }).then((ok)=>{
+//         if(ok){
+//             $.ajax({
+//                 url: "editProduct",
+//                 data: {id:productId},
+//                 method: get,
+//                 success: (result)=>{
+
+//                 }
+//             })
+//         }
+//     })
+    
+// }
 

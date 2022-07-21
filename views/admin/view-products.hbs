@@ -1,60 +1,64 @@
+
 <section>
-    <div class="container p-5">
-        <div class="row">
-        <div class="col-md-12 col-12">
-            <div>
-                <div class="all-prod ">
-                     <h3 class="tittle text-white">ALL PRODUCTS</h3>
-                     <table class="table ">
-  <thead>
-    <tr class="text-warning">
-      <th >#</th>
-      <th >Product Name</th>
-      <th>Model</th>
-      <th >Category</th>
-      <th >Sub-category</th>
-      <th>Available Sizes</th>
-      <th>Price</th>
-      <th>No.Of Stocks</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="text-white">
-      <th scope="text-warning">1</th>
-      <td>K6 AGV PISTA R</td>
-      <td>K6</td>
-      <td>HELMETS</td>
-      <td>RACING</td>
-      <td>S M L XL XXL</td>
-      <td>&#8377; 12345</td>
-      <td>123</td>
-      <td>
-        <button><i class="fa-solid fa-file-pen fs-5 text-info"></i></button>
-        <button><i class="fa-solid fa-trash-can fs-5 text-danger"></i></button>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
-                </div>
-                <div>
-                    
-                </div>
-            </div>
-            </div>
-            </div>
+  <div class=" container-fluid">
+    <div class="row ">
+      <div class="col-md-12 col-12">
+        <div>
+          <div class="all-prod" style=" overflow-x:auto">
+            <h3 class="tittle text-white">ALL PRODUCTS</h3>
+            <table class="table"  id="myTable">
+              <thead>
+                <tr class="text-warning" >
+                  <th scope="col">#</th>
+                  <th scope="col">Product Name</th>
+                  <th scope="col">Model</th>
+                  <th scope="col">Image</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Sub-category</th>
+                  <th scope="col">Available Sizes</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">No.Of Stocks</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each products}}
+                <tr class="text-white">
+                  <th scope="text-warning">{{@index}}</th>
+                  <td>{{this.modelDetails.name}}</td>
+                  <td>{{this.model}}</td>
+                  <td> <img src="/images/product_images/{{this._id}}_1.jpg" alt="" 
+                      style="width:3em ;"></td>
+                  <td>{{this.category}}</td>
+                  <td>{{this.subcategory}}</td>
+                  <td>{{this.modelDetails.size}}</td>
+                  <td>&#8377; {{this.modelDetails.price}}</td>
+                  <td>{{this.modelDetails.stock}}</td>
+                  <td>
+                    <a class="bg-black" href="/admin/edit-product/{{this._id}}"   ><i class="fa-solid fa-file-pen fs-5  text-info"></i></a>
+                    <button class="bg-black" onclick="deleteProduct('{{this._id}}') " ><i class="fa-solid fa-trash-can fs-5 text-danger"></i></button>
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div>
+
+          </div>
         </div>
-    
+      </div>
+    </div>
+  </div>
+
 </section>
+
+<script src="/javascripts/ajax.js"> </script>
+
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>

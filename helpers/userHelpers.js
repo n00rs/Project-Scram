@@ -53,5 +53,34 @@ userLogin: (data)=>{
         reject(error)
 
     })
-}
+},
+
+fetchHelmets : ()=>{
+    return new Promise((resolve, reject) => {
+        db.get().collection(collections.PRODUCTCOLLECTION).find({category : 'helmet'}).toArray().then((result)=>{
+            console.log(result);
+            resolve(result)
+    })
+    })
+},
+
+fetchAccessories : ()=>{
+    return new Promise((resolve, reject) => {
+        db.get().collection(collections.PRODUCTCOLLECTION).find({category: 'accessories'}).toArray().then((result)=>{
+            
+            resolve(result)
+        })
+    })
+},
+
+fetchSub: (data)=>{
+    return new Promise((resolve, reject) => {
+        db.get().collection(collections.PRODUCTCOLLECTION).find({subcategory: data }).toArray().then((result)=>{
+            console.log(result,'visors');
+            resolve(result);
+        })
+    })
+},
+
+
 }
