@@ -8,14 +8,14 @@
 
                 <form action="/login" id="login" method="post">
                     <div class="user-box">
-                        <input type="email" name="email" required>
+                        <input type="email" name="email" value="bin@123" required>
                         <label>Email</label>
                     </div>
                     {{#if idError}}
                     <p class="text-warning">"{{idError}}"" </p>
                     {{/if}}
                     <div class="user-box">
-                        <input type="password" name="password" required>
+                        <input type="password" name="password" value="12345678" required>
                         <label>Password</label>
                     </div>
                     <button type="submit" value="">

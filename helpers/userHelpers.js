@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { ObjectId } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig')
 
@@ -102,23 +102,130 @@ module.exports = {
         if (data.sortType === 'price low to high') {
             return new Promise((resolve, reject) => {
 
-            db.get().collection(collections.PRODUCTCOLLECTION).aggregate([{
-                $match: {
-                    $or: [
-                        { category: data.category }, { subcategory: data.category }
-                    ]
+                db.get().collection(collections.PRODUCTCOLLECTION).aggregate([{
+                    $match: {
+                        $or: [
+                            { category: data.category }, { subcategory: data.category }
+                        ]
+                    }
+                },
+                {
+                    $sort: { "modelDetails.price": 1 }
                 }
-            },
-            {
-                $sort: {"modelDetails.price": 1 }
-            }
-            ]).toArray().then((result)=>{
-                // console.log(result);
-                resolve(result)
+                ]).toArray().then((result) => {
+                    // console.log(result);
+                    resolve(result)
+                })
             })
-        })
+
+        } else if (data.sortType === 'Price High To Low') {
+            return new Promise((resolve, reject) => {
+                db.get().collection(collections.PRODUCTCOLLECTION).aggregate([{
+                    $match: {
+                        $or: [{ category: data.category }, { subcategory: data.category }]
+                    }
+                },
+                { $sort: { 'modelDetails.price': -1 } }
+                ]).toArray().then((result) => {
+                    resolve(result)
+                })
+            })
+        } else if (data.sortType === 'alphabetically') {
+            return new Promise((resolve, reject) => {
+                db.get().collection(collections.PRODUCTCOLLECTION).aggregate([])
+            })
+        }
+    },
+
+    addToCart: (data, userId) => {
+
+        let productObject = {
+
+            item: ObjectId(data.id),
+            name: data.name,
+            subcategory: data.subcategory,
+            category: data.category,
+            price: parseInt(data.price),
+
+            size: [data.size],
+            quantity: 1,
 
         }
+        console.log(productObject);
+        return new Promise(async (resolve, reject) => {
+            const cart = await db.get().collection(collections.CARTCOLLECTION).findOne({ user: ObjectId(userId) })
+
+            console.log(cart, 'check');
+            if (!cart) {
+                let cartItem = {
+                    user: ObjectId(userId),
+                    products: [productObject],
+                    total: parseInt(0),
+                }
+
+                db.get().collection(collections.CARTCOLLECTION).insertOne(cartItem).then((result) => {
+                    resolve(result);
+                    console.log(result);
+                })
+            } else {
+                // console.log(result.products.item);
+                const productExist = cart.products.findIndex(products => products.item == data.id)
+
+
+                console.log(productExist);
+                if (productExist != -1) {
+                    db.get().collection(collections.CARTCOLLECTION).updateOne({ user: ObjectId(userId), 'products.item': ObjectId(data.id) },
+                        {
+                            $inc: { "products.$.quantity": 1 }
+                        }).then(() => {
+                            resolve()
+                        })
+                } else {
+
+                    db.get().collection(collections.CARTCOLLECTION).updateOne({ user: ObjectId(userId) },
+                        {
+                            $push:
+                                { products: productObject }
+                        }).then((result) => {
+                            console.log(result);
+                            resolve(result);
+                        })
+
+                }
+            }
+        })
+
+    },
+
+    fetchCart: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.CARTCOLLECTION).find({ user: ObjectId(userId) }).toArray().then((result) => {
+                console.log(result[0]);
+                resolve(result[0])
+            })
+        })
+    },
+
+    fetchCartCount: (userId) => {
+        console.log(userId);
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.CARTCOLLECTION).aggregate([
+                { $match: { user: ObjectId(userId) } },
+                { $project: { quantity: { $sum: "$products.quantity" } } }
+            ]).toArray().then((result) => {
+                console.log(result[0]);
+                // count = resolve[0].quantity 
+                resolve(result[0].quantity)
+            })
+
+        })
+    },
+    changeQuantity:(data)=>{
+        return new Promise((resolve, reject) => {
+            let prodId = data.id;
+            let cartId = data.cartId;
+            db.get().collection(collections.CARTCOLLECTION).findOne({_id:ObjectId(cartId),})
+        })
     }
 
 

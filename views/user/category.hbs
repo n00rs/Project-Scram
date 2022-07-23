@@ -112,63 +112,81 @@
             <div class="row">
                 <div class="row">
                     <div class="col-md-3 p-2">
-                        {{!-- <select name="sort" id="" class="form-select" onchange="location.href='/sort?category={{category}}&sort=  ' "> --}}
-                        <select name="sort" id="" class="form-select" onchange="sort('{{category}}',this.value) ">
-                            <option value="price low to high" >price Low To High
-                            </option>
-                            <option value="Price High To Low">Price High To Low</option>
-                            <option value="alphabetically">By Name</option>
-                            <option value="top sellers" selected>Top Sellers</option>
-                            <option value="top rated">Top Rated</option>
-                        </select>
+                        {{!-- <select name="sort" id="" class="form-select"
+                            onchange="location.href='/sort?category={{category}}&sort=  ' "> --}}
+
+                            <select name="sort" id="" class="form-select" onchange="sort('{{category}}',this.value) ">
+                                <option value="price low to high">price Low To High
+                                </option>
+                                <option value="Price High To Low">Price High To Low</option>
+                                <option value="alphabetically">By Name</option>
+                                <option value="top sellers">Top Sellers</option>
+                                <option value="top rated">Top Rated</option>
+                            </select>
                     </div>
                 </div>
-                <div id="ajax">
-                {{#each product}}
 
+                <span id=" product"> {{#each product}} </span>
                 <div class="col-md-3 col-6 col-sm-4 product-men p-1">
                     <a href="/view-product/{{this._id}}">
                         <div class="product-shoe-info shoe ">
                             <div class="men-thumb-item">
                                 <img src="/images/product_images/{{this._id}}_1.jpg" class="img-fluid"
                                     style="width: 246px;height: 246px;">
-
-                            </div>
-                            <div class="item-info-product">
-                                <h6 class="">
-                                    <a href="shop-single.html" class="text-black">{{this.modelDetails.name}} </a>
-                                    <p class="item-info-category">{{this.subcategory}}</p>
-                                </h6>
-
-
-                                <div class="product_price">
-                                    <div class="grid-price">
-                                        <span class="money">&#8377; {{this.modelDetails.price}}</span>
-                                    </div>
-                                </div>
-                                {{!-- <ul class="stars ">
-                                    <li><a href="#"><span class="fa fa-star" style='color: #f3da35'
-                                                aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star" style='color: #f3da35'
-                                                aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
-                                                aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
-                                                aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star-o" style='color: #f3da35'
-                                                aria-hidden="true"></span></a></li>
-                                </ul> --}}
-                                <button class="btn active"><i class="fa-solid fa-cart-plus"></i> ADD TO CART </button>
-                                <button class="btn btn-outline-black"><i class="fa-regular fa-heart"></i></button>
-                            </div>
-                        </div>
                     </a>
-                </div>
-                {{/each}}
-                </div>
 
+                </div>
+                <div class="item-info-product">
+                    <h6 class="">
+                        <a href="/view-product/{{this._id}}" class="text-black">{{this.modelDetails.name}} </a>
+                        <p class="item-info-category">{{this.subcategory}}</p>
+                    </h6>
+
+
+                    <div class="product_price">
+                        <div class="grid-price">
+                            <span class="money">&#8377; {{this.modelDetails.price}}</span>
+                        </div>
+                    </div>
+                    {{!-- <ul class="stars ">
+                        <li><a href="#"><span class="fa fa-star" style='color: #f3da35' aria-hidden="true"></span></a>
+                        </li>
+                        <li><a href="#"><span class="fa fa-star" style='color: #f3da35' aria-hidden="true"></span></a>
+                        </li>
+                        <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
+                                    aria-hidden="true"></span></a></li>
+                        <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
+                                    aria-hidden="true"></span></a></li>
+                        <li><a href="#"><span class="fa fa-star-o" style='color: #f3da35' aria-hidden="true"></span></a>
+                        </li>
+                    </ul> --}}
+                    <button class="btn active" onclick="addToCart('{{this._id}}','{{this.modelDetails.name}}',
+                        '{{this.subcategory}}','{{category}}','{{this.modelDetails.price}}',
+                        '{{this.modelDetails.size}}')"><i class="fa-solid fa-cart-plus"></i> ADD TO CART </button>
+                    <button class="btn btn-outline-black"><i class="fa-regular fa-heart"></i></button>
+                </div>
             </div>
 
         </div>
+        {{/each}}
+
+
+    </div>
+
+    </div>
     </div>
 </section>
+
+
+{{!--
+<script>
+    function sortProduct(product, sortType) {
+        console.log(product[1].modelDetails)
+        if (sortType == 'price low to high') {
+            { { !-- for (i = 0; ) --} }
+            product.sort((a, b) => {
+                return a.modelDetails.price - b.modelDetails.price
+            })
+        }
+    }
+</script> --}}
