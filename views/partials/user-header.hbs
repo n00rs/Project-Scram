@@ -12,12 +12,12 @@
                 <label for="drop" class="toggle">Menu</label>
                 <input type="checkbox" id="drop" />
                 <ul class="menu mt-2">
-                    <li class="active"><a href="index.html">Home</a></li>
-                    <li><a href="/helmets">HELMETS</a></li>
-                    <li><a href="/accessories">ACCESSORIES</a></li>
+                    <li class="active"><a href="/">Home</a></li>
+                    <li><a href="/category/helmet">HELMETS</a></li>
+                    <li><a href="/category/accessories">ACCESSORIES</a></li>
                     <li>
                         <!-- First Tier Drop Down -->
-                        {{#if user}}
+                        {{#if user1}}
                           <label for="drop-2" class="toggle">{{user.firstName}}<span class="fa fa-angle-down"
                                 aria-hidden="true"></span> </label>
                         <a href="">{{user.firstName}}<span class="fa fa-angle-down" aria-hidden="true"></span></a>
@@ -30,7 +30,7 @@
                         <input type="checkbox" id="drop-2" />
                         <ul>
                             {{/if}}
-                            {{#if user}}
+                            {{#if user1}}
                             <li><a href="/logout" >LOGOUT</a></li>
                             <li><a href="/profil">PROFILE</a></li>
                             <li><a href="shop-single.html">ORDERS</a></li>

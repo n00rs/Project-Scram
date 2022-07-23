@@ -1,0 +1,174 @@
+<script src="/javascripts/ajax.js"></script>
+<section>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item active">{{category}}</li>
+    </ol>
+    <div class="">
+        <img src='/images/banners/{{category}}.jpg' class="img-fluid">
+    </div>
+    <div class="row">
+        <div class="side-bar col-lg-3">
+
+
+            <!--preference -->
+            <div class="left-side my-4">
+                <a class="btn active ms-3" data-bs-toggle="collapse" href="#collapseExample" role="button"
+                    aria-expanded="false" aria-controls="collapseExample">
+                    PRODUCTS
+                </a>
+
+
+                <div class="collapse" id="collapseExample">
+                    <div class="card card-body">
+                        <ul class="w3layouts-box-list">
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/racing'"
+                                    value="racing">
+                                <span class="span">RACING</span>
+                            </li>
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/sport'">
+                                <span class="span">SPORT</span>
+                            </li>
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/touring'">
+                                <span class="span">TOURING</span>
+                            </li>
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/off-road'">
+                                <span class="span">OFF-ROAD</span>
+                            </li>
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/visors'">
+                                <span class="span">VISORS</span>
+                            </li>
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/communications'">
+                                <span class="span">COMMUNICATIONS</span>
+                            </li>
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/pads'">
+                                <span class="span">PADS</span>
+                            </li>
+                            <li>
+                                <input type="radio" class="checked" onclick="location.href='/category/others'">
+                                <span class="span">OTHERS</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- // preference -->
+
+            <!-- sizes -->
+            <div class="left-side my-4">
+                <a class="btn active ms-3" data-bs-toggle="collapse" href="#sizecollapse" role="button"
+                    aria-expanded="false" aria-controls="collapseExample">
+                    SIZES
+                </a>
+
+
+                <div class="collapse" id="sizecollapse">
+                    <div class="card card-body">
+                        <ul class="w3layouts-box-list">
+                            <li>
+                                <input class="checked ms-3" type="checkbox" name="S" value="S">
+                                <span class="span">S</span>
+                            </li>
+
+                            <li>
+                                <input class="checked ms-3" type="checkbox" name="M" value="M">
+                                <span class="span">M</span>
+                            </li>
+                            <li>
+                                <input class="checked ms-3 " type="checkbox" name="L" value="L">
+                                <span class="span">L</span>
+
+                            </li>
+                            <li>
+                                <input class="checked ms-3" type="checkbox" name="XL" value="XL">
+                                <span class="span">XL</span>
+                            </li>
+
+                            <li>
+                                <input type="checkbox" name="XXL" value="XXL" class="ms-3 checked ">
+                                <span class="span">XXL</span>
+                            </li>
+
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- //sizes -->
+
+
+        </div>
+        <div class="left-ads-display col-lg-8">
+            <div class="row">
+                <div class="row">
+                    <div class="col-md-3 p-2">
+                        {{!-- <select name="sort" id="" class="form-select" onchange="location.href='/sort?category={{category}}&sort=  ' "> --}}
+                        <select name="sort" id="" class="form-select" onchange="sort('{{category}}',this.value) ">
+                            <option value="price low to high" >price Low To High
+                            </option>
+                            <option value="Price High To Low">Price High To Low</option>
+                            <option value="alphabetically">By Name</option>
+                            <option value="top sellers" selected>Top Sellers</option>
+                            <option value="top rated">Top Rated</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="ajax">
+                {{#each product}}
+
+                <div class="col-md-3 col-6 col-sm-4 product-men p-1">
+                    <a href="/view-product/{{this._id}}">
+                        <div class="product-shoe-info shoe ">
+                            <div class="men-thumb-item">
+                                <img src="/images/product_images/{{this._id}}_1.jpg" class="img-fluid"
+                                    style="width: 246px;height: 246px;">
+
+                            </div>
+                            <div class="item-info-product">
+                                <h6 class="">
+                                    <a href="shop-single.html" class="text-black">{{this.modelDetails.name}} </a>
+                                    <p class="item-info-category">{{this.subcategory}}</p>
+                                </h6>
+
+
+                                <div class="product_price">
+                                    <div class="grid-price">
+                                        <span class="money">&#8377; {{this.modelDetails.price}}</span>
+                                    </div>
+                                </div>
+                                {{!-- <ul class="stars ">
+                                    <li><a href="#"><span class="fa fa-star" style='color: #f3da35'
+                                                aria-hidden="true"></span></a></li>
+                                    <li><a href="#"><span class="fa fa-star" style='color: #f3da35'
+                                                aria-hidden="true"></span></a></li>
+                                    <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
+                                                aria-hidden="true"></span></a></li>
+                                    <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
+                                                aria-hidden="true"></span></a></li>
+                                    <li><a href="#"><span class="fa fa-star-o" style='color: #f3da35'
+                                                aria-hidden="true"></span></a></li>
+                                </ul> --}}
+                                <button class="btn active"><i class="fa-solid fa-cart-plus"></i> ADD TO CART </button>
+                                <button class="btn btn-outline-black"><i class="fa-regular fa-heart"></i></button>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {{/each}}
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>

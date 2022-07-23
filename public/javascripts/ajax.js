@@ -125,24 +125,21 @@ function deleteProduct(productId) {
     })
 }
 
-// function editProduct(productId) {
-//     swal({
-//         title : "Are you sure you wanna upadate this Product details ?",
-//         buttons: true,
-//         icon:"warning",
-//         closeOnClickOutside: false,
-//     }).then((ok)=>{
-//         if(ok){
-//             $.ajax({
-//                 url: "editProduct",
-//                 data: {id:productId},
-//                 method: get,
-//                 success: (result)=>{
+function sort(category,type){
+    console.log(type);
+    $.ajax ({
+        url:'/sort',
+        data:{category:category,
+        sortType: type},
+        method: 'get',
+        success:(result) =>{
 
-//                 }
-//             })
-//         }
-//     })
-    
-// }
+           $('#ajax').html(result)
+            // document.getSelection('ajax') ==result;
+
+            // location.reload()
+alert('success')
+        }
+    })
+}
 

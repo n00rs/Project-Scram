@@ -10,9 +10,9 @@ const verifyUser = (req,res,next) =>{
 
 
 router.get('/', (req, res) => {
-     let user = req.session.user;
-     console.log(user);
-res.render("user/landing-page",{user});
+     let user1 = req.session.user;
+     console.log(user1);
+res.render("user/landing-page",{user:true});
 })
 
 
@@ -71,22 +71,27 @@ router.post('/signup',(req,res)=>{
 })
 
 
-router.get('/helmets',async (req,res)=>{
+// router.get('/helmets',async (req,res)=>{
 
-    let helmetSection =await userHelper.fetchHelmets()
+//     let helmetSection =await userHelper.fetchHelmets()
 
-    res.render('user/helmets',{user:true, helmetSection})
-})
+//     res.render('user/helmets',{user:true, helmetSection})
+// })
 
-router.get('/helmets/:sub',async(req,res)=>{
+router.get('/category/:sub',async(req,res)=>{
     try {
-        let subcategory=req.params.sub
-        let helmetSubcategory = await userHelper.fetchSub(subcategory);
-    
-        if(subcategory == 'racing')          res.render('user/helmet-racing',{user:true, helmetSubcategory });
-        else if(subcategory == 'sport')      res.render('user/helmet-sport',{user:true,  helmetSubcategory });
-        else if(subcategory == 'touring')    res.render('user/helmet-touring',{user:true, helmetSubcategory });
-        else if(subcategory == 'off-road')   res.render('user/helmet-off-road',{user:true, helmetSubcategory });
+        let category = req.params.sub
+        
+        console.log(category);
+
+        let product = await userHelper.fetchCategory(category);
+        res.render('user/category',{user:true, category,product});
+
+        // res.json({result:true})
+        // if(subcategory == 'racing')          res.render('user/helmet-racing',{user:true, helmetSubcategory });
+        // else if(subcategory == 'sport')      res.render('user/helmet-sport',{user:true,  helmetSubcategory });
+        // else if(subcategory == 'touring')    res.render('user/helmet-touring',{user:true, helmetSubcategory });
+        // else if(subcategory == 'off-road')   res.render('user/helmet-off-road',{user:true, helmetSubcategory });
         
     } catch (error) {
         console.log(error);
@@ -94,27 +99,41 @@ router.get('/helmets/:sub',async(req,res)=>{
 
 })
 
-router.get('/accessories', async (req,res)=>{
+// router.get('/accessories', async (req,res)=>{
     
-    let accessories = await userHelper.fetchAccessories()
+//     let accessories = await userHelper.fetchAccessories()
 
-    res.render('user/accessories',{user:true, accessories})
-})
+//     res.render('user/accessories',{user:true, accessories})
+// })
 
-router.get('/accessories/:sub',async (req,res)=>{
-    try {
-            let subcategory = req.params.sub
-            let accessoriesSub = await userHelper.fetchSub(subcategory);
+// router.get('/accessories/:sub',async (req,res)=>{
+//     try {
+//             let subcategory = req.params.sub
+//             let accessoriesSub = await userHelper.fetchSub(subcategory);
             
         
-            if(subcategory == 'visors')               res.render('user/accessories-visors',{user:true, accessoriesSub});
-            else if (subcategory == 'communications')  res.render('user/accessories-communication',{user:true, accessoriesSub});
-            else if (subcategory == 'pads')            res.render('user/accessories-interiors',{user:true,accessoriesSub }) 
+//             if(subcategory == 'visors')               res.render('user/accessories-visors',{user:true, accessoriesSub});
+//             else if (subcategory == 'communications')  res.render('user/accessories-communication',{user:true, accessoriesSub});
+//             else if (subcategory == 'pads')            res.render('user/accessories-interiors',{user:true,accessoriesSub }) 
         
-    } catch (error) {
-        console.log(error);
-    }
+//     } catch (error) {
+//         console.log(error);
+//     }
+// })
+router.get('/view-product/:id', async (req,res)=>{
+    let id = req.params.id
+    let product = await userHelper.fetchProduct(id)
+    res.render('user/view-product',{user:true,product })
+})
 
+router.get('/sort',(req,res)=>{
+    console.log(req.query);
+    console.log(req.query.sortType);
     
+    userHelper.sortProduct(req.query).then((result)=>{
+        console.log(result);
+        res.json( result);
+
+    })
 })
 module.exports = router;

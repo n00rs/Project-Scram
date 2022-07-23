@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { ObjectId } = require('mongodb');
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig')
 
@@ -32,55 +33,93 @@ module.exports = {
     },
 
 
-userLogin: (data)=>{
-    return new Promise( async (resolve, reject) => {
-        
-        let error = "Id or password dosen't match";
+    userLogin: (data) => {
+        return new Promise(async (resolve, reject) => {
 
-        let response = {};
-        let user  = await db.get().collection(collections.USERCOLLECTION).findOne({email: data.email})
-        if(user && !user.block){
-            await bcrypt.compare(data.password,user.password).then((res)=>{
-                if(res){
-                    response.status = true;
-                    response.user = user;
-                    resolve(response);
-                }else{
-                    reject(error)
-                }
+            let error = "Id or password dosen't match";
+
+            let response = {};
+            let user = await db.get().collection(collections.USERCOLLECTION).findOne({ email: data.email })
+            if (user && !user.block) {
+                await bcrypt.compare(data.password, user.password).then((res) => {
+                    if (res) {
+                        response.status = true;
+                        response.user = user;
+                        resolve(response);
+                    } else {
+                        reject(error)
+                    }
+                })
+            } else if (user && user.block) error = 'user blocked';
+            reject(error)
+
+        })
+    },
+
+    // fetchHelmets : ()=>{
+    //     return new Promise((resolve, reject) => {
+    //         db.get().collection(collections.PRODUCTCOLLECTION).find({category : 'helmet'}).toArray().then((result)=>{
+    //             console.log(result);
+    //             resolve(result)
+    //     })
+    //     })
+    // },
+
+    // fetchAccessories : ()=>{
+    //     return new Promise((resolve, reject) => {
+    //         db.get().collection(collections.PRODUCTCOLLECTION).find({category: 'accessories'}).toArray().then((result)=>{
+
+    //             resolve(result)
+    //         })
+    //     })
+    // },
+
+    fetchCategory: (data) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.PRODUCTCOLLECTION).find({
+                $or:
+                    [
+                        { category: data }, { subcategory: data }
+                    ]
+            }).toArray().then((result) => {
+
+                resolve(result);
             })
-        }else if(user && user.block)  error = 'user blocked' ;
-        reject(error)
-
-    })
-},
-
-fetchHelmets : ()=>{
-    return new Promise((resolve, reject) => {
-        db.get().collection(collections.PRODUCTCOLLECTION).find({category : 'helmet'}).toArray().then((result)=>{
-            console.log(result);
-            resolve(result)
-    })
-    })
-},
-
-fetchAccessories : ()=>{
-    return new Promise((resolve, reject) => {
-        db.get().collection(collections.PRODUCTCOLLECTION).find({category: 'accessories'}).toArray().then((result)=>{
-            
-            resolve(result)
         })
-    })
-},
+    },
 
-fetchSub: (data)=>{
-    return new Promise((resolve, reject) => {
-        db.get().collection(collections.PRODUCTCOLLECTION).find({subcategory: data }).toArray().then((result)=>{
-            console.log(result,'visors');
-            resolve(result);
+    fetchProduct: (data) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.PRODUCTCOLLECTION).findOne({ _id: ObjectId(data) }).then((result) => {
+                // console.log(result);
+                resolve(result);
+            })
         })
-    })
-},
+    },
+
+    sortProduct: (data) => {
+        console.log(data);
+        if (data.sortType === 'price low to high') {
+            return new Promise((resolve, reject) => {
+
+            db.get().collection(collections.PRODUCTCOLLECTION).aggregate([{
+                $match: {
+                    $or: [
+                        { category: data.category }, { subcategory: data.category }
+                    ]
+                }
+            },
+            {
+                $sort: {"modelDetails.price": 1 }
+            }
+            ]).toArray().then((result)=>{
+                // console.log(result);
+                resolve(result)
+            })
+        })
+
+        }
+    }
 
 
 }

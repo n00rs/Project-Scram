@@ -444,6 +444,7 @@ a:hover {
 }
 .product-inf ul li:first-child {
     margin-right: 15px;
+    ;
 }
 .product-inf ul li {
     padding: 10px 30px;
@@ -459,6 +460,7 @@ a:hover {
     color: #000;
     font-size: 18px;
     font-weight: 500;
+    
 }
 .product-inf ul li a:hover {
     text-decoration: none;
@@ -473,8 +475,8 @@ a:hover {
 }
 
 .custom-btn {
-    background: #000;
-    color: #fff;
+    background: #feff31;
+    color: #000;
     display: block;
     width: 200px;
     text-align: center;
