@@ -1,4 +1,6 @@
 <script src="/javascripts/ajax.js"></script>
+
+
 <section class="h-100 h-custom">
   <div class="container h-100 py-5">
     <div class="row d-flex r  h-100">
@@ -18,25 +20,23 @@
                 <th scope="row">
                   <div class="d-flex align-items-center">
                     <img src="/images/product_images/{{this.item}}_1.jpg" class="img-fluid rounded-3"
-                      style="width: 120px;" alt="Book">
+                      style="width: 120px;" alt="img">
                     <div class="flex-column ms-4">
-                      <p class="mb-2">{{this.name}}</p>
+                      <p class="mb-0">{{this.name}}</p>
                       <p class="mb-0">{{this.subcategory}}</p>
                     </div>
                   </div>
                 </th>
                 <td class="align-middle">
-                  <p class="mb-0" style="font-weight: 500;">{{this.category}}</p>
+                  <p class="e-auto" style="font-weight: 500;">{{this.category}}</p>
                 </td>
                 <td class="align-middle">
                   <div class="d-flex flex-row">
-                    <button class="btn btn-link px-2"
+                    <button class="btn btn-link "
                       onclick="changeQuantity('{{this.item}}','{{../cartItems._id}}',-1)">
                       <i class="fas fa-minus"></i>
                     </button>
-
-                    <input id="form1" min="0" name="quantity" value="{{this.quantity}}" type="number"
-                      class="form-control form-control-sm" style="width: 38px;" />
+                    <span id={{this.item}} class="mt-2">{{this.quantity}}</span>
 
                     <button class="btn btn-link px-2"
                       onclick="changeQuantity('{{this.item}}','{{../cartItems._id}}',1)">
@@ -45,7 +45,10 @@
                   </div>
                 </td>
                 <td class="align-middle">
-                  <p class="" style="font-weight: 500;">&#8377; {{this.price}}</p>
+                  <m class="" style="font-weight: 500;">&#8377; {{this.price}}</m>
+                </td>
+                <td>
+                  <a onclick="removeItem('{{../cartItems._id}}','{{this.item}}','{{this.name}}',)"><i class="fa-regular fa-circle-xmark fs-5 text-danger"></i></a>
                 </td>
               </tr>
              {{/each}}
@@ -67,7 +70,16 @@
                     <div class="flex-column ms-4">
                       <p class="mb-0">{{this.name}}</p>
                       <p class="mb-0">{{this.subcategory}}</p>
-                      <p class="mb-0">size:</p>
+                      <p class="mb-0">size:
+                         
+                         <select name="size" id="" required>
+                          <option>Select</option>
+                          {{#each this.size}}
+                          
+                          <option value="{{this}}">{{this}}</option>
+                      {{/each}}    
+                      </select>
+                      </p>
                       <p class="mb-0">quantity: {{this.quantity}}</p>
 
                     </div>
@@ -93,19 +105,19 @@
               
                 <div class="d-flex justify-content-between" style="font-weight: 500;">
                   <p class="mb-2">Subtotal</p>
-                  <p class="mb-2">{{cartItems.total}}</p>
+                  <p class="mb-2" id="">&#8377; <span id="total"> {{total.total}}</span></p>
                 </div>
 
                 <div class="d-flex justify-content-between" style="font-weight: 500;">
                   <p class="mb-0">Shipping</p>
-                  <p class="mb-0">$2.99</p>
+                  <p class="mb-0">&#8377; 20</p>
                 </div>
 
                 <hr class="my-4">
 
                 <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
                   <p class="mb-2">Total (tax included)</p>
-                  <p class="mb-2">$26.48</p>
+                  <p class="mb-2" id="grantTotal">{{total.total}}</p>
                 </div>
 
                 <button type="" class="btn btn-success btn-block ">

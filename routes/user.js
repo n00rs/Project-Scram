@@ -132,7 +132,8 @@ router.get('/category/:sub', async (req, res) => {
 // })
 router.get('/view-product/:id', async (req, res) => {
     let id = req.params.id
-    let product = await userHelper.fetchProduct(id)
+    let product = await userHelper.fetchProduct(id);
+    console.log(product);
     res.render('user/view-product', { user: true, product })
 })
 
@@ -157,7 +158,7 @@ router.get('/add-to-cart', (req, res) => {
         let prodsize = req.query.size
         // console.log(req.query);
         let userId = req.session.user._id
-        // console.log(prodId,userId);
+        console.log(prodsize,'size');
 
         userHelper.addToCart(req.query, userId).then(() => {
             res.json({ status: true })
@@ -173,11 +174,13 @@ router.get('/cart', async (req, res) => {
 
         const userId = req.session.user._id;
 
-        let cartItems = await userHelper.fetchCart(userId)
+        let cartItems = await userHelper.fetchCart(userId);
 
-        console.log(cartItems);
+        let total = await userHelper.totalAmount(cartItems._id)
 
-        res.render('user/cart', { user: true, cartItems })
+        // console.log(cartItems);
+        console.log(total);
+        res.render('user/cart', { user: true, cartItems,total })
 
     }
     catch (error) {
@@ -186,11 +189,42 @@ router.get('/cart', async (req, res) => {
 })
 
 router.post('/changeQuantity',(req,res)=>{
-    console.log(req.body,'body');
-    console.log(req.query);
-    userHelper.changecartQuantity(req.body).then(()=>{
-        
+    // console.log(req.body,'body');
+    // console.log(req.query);
+    userHelper.changeCartQuantity(req.body).then( async (result)=>{
+
+         result.total = await userHelper.totalAmount(req.body.cartId)
+         console.log(result.total);
+        res.json(result)
     })
+})
+
+router.get("/remove-cart-item/:cartId/:prodId",(req,res)=>{
+console.log(req.params);
+
+    userHelper.removeCartItem( req.params).then((result)=>{
+        res.json(result)
+    })
+
+})
+
+router.get('/profile',verifyUser, async (req,res)=>{
+    const userId = req.session.user._id 
+    // const user1= req.session.user;
+    try {
+        
+     let user1 = await userHelper.fetchUserData(userId);
+     res.render('user/user-profile',{user:true,user1})
+        
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.post('/profile',(req,res)=>{
+    
+    console.log(req.body);
+
 })
 
 module.exports = router;

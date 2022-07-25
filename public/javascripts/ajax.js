@@ -153,6 +153,10 @@ function sort(category, type) {
 
 function addToCart(prodId, prodName, subcategory, category, prodPrice, prodSize) {
     console.log(prodId, prodName, prodPrice, subcategory, category, prodSize)
+    // size = [...prodSize]
+    // console.log(size);
+    const size = prodSize.split(',')
+    console.log(size);
     $.ajax({
         url: "/add-to-cart",
         data: {
@@ -161,7 +165,7 @@ function addToCart(prodId, prodName, subcategory, category, prodPrice, prodSize)
             subcategory: subcategory,
             category: category,
             price: prodPrice,
-            size: prodSize
+            size: size
         },
         method: 'get',
         success: (result) => {
@@ -180,15 +184,65 @@ function addToCart(prodId, prodName, subcategory, category, prodPrice, prodSize)
 
 }
 
-function changeQuantity(prodId,cartId,count) {
-    console.log(prodId,"prod",cartId,'cart',count);
+function changeQuantity(prodId, cartId, count) {
+    // console.log(prodId,"prod",cartId,'cart',count);
+    let quantity = document.getElementById(prodId).innerHTML
+    console.log(quantity);
     $.ajax({
         url: "/changeQuantity",
-        data:{id:prodId,cartId:cartId},
+        data: {
+            id: prodId,
+            cartId: cartId,
+            count: count,
+            quantity: quantity
+        },
         method: 'post',
-        success: (response)=>{
-            alert(response)
+        success: (response) => {
+            if (response.productRemoved) {
+                swal({ title: "Item Removed from the cart" })
+                setTimeout(() => {
+                    location.reload()
+                }, 1000)
+
+            } else {
+                document.getElementById(prodId).innerHTML = parseInt(quantity) + count;
+                let total = response.total.total
+                // console.log(result);
+
+                document.getElementById('total').innerHTML = total;
+                document.getElementById('grantTotal').innerHTML = total+20;
+
+
+            }
         }
+    })
+}
+
+function removeItem(cartId,prodId,prodName) {
+    
+    swal({
+        title: "Remove "+prodName+ " from your cart  ? ",
+        buttons: true,
+        icon: 'warning',
+    }).then((ok)=>{
+        if(ok){
+            $.ajax({
+                url: "/remove-cart-item/"+cartId+"/"+prodId,
+    
+                method:'get',
+                success:  (result)=>{
+                    if(result.itemRemoved){
+                        
+                    swal({title: "Item removed from your cart"})
+                    setTimeout(()=>{
+                        location.reload()
+                    },1000)
+                    }
+                }
+            })
+        }
+    }).catch((err)=>{
+        swal({title:'opps Somtheing went wrong'+err})
     })
 }
 

@@ -66,16 +66,16 @@
             <!-- sizes -->
             <div class="left-side my-4">
                 <a class="btn active ms-3" data-bs-toggle="collapse" href="#sizecollapse" role="button"
-                    aria-expanded="false" aria-controls="collapseExample">
+                    aria-expanded="true" aria-controls="">
                     SIZES
                 </a>
 
 
                 <div class="collapse" id="sizecollapse">
                     <div class="card card-body">
-                        <ul class="w3layouts-box-list">
+                        <ul class="w3layouts-box-list" >
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="S" value="S">
+                                <input class="checked ms-3" type="checkbox" name="S" value="S" onclick= `location.href='/fiter/"this.value"'  `>
                                 <span class="span">S</span>
                             </li>
 
@@ -94,7 +94,7 @@
                             </li>
 
                             <li>
-                                <input type="checkbox" name="XXL" value="XXL" class="ms-3 checked ">
+                                <input type="checkbox" name="XXL" value="XXL" class="ms-3">
                                 <span class="span">XXL</span>
                             </li>
 
