@@ -345,10 +345,10 @@ module.exports = {
         return new Promise((resolve, reject) => {
             db.get().collection(collections.USERCOLLECTION).updateOne({ _id: userId },
                 {
-                    $push: { address: address},
+                    $push: { address: address },
                     $set: { addressAdded: true }
-                }, 
-               ).then((result) => {
+                },
+            ).then((result) => {
                 console.log(result);
                 resolve()
             })
@@ -376,6 +376,75 @@ module.exports = {
 
     },
 
+    removeAddress: (data) => {
+        const userId = ObjectId(data.userId);
+        const addressId = ObjectId(data.addressId);
 
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.USERCOLLECTION).updateOne({ _id: userId },
+                {
+                    $pull: {
+                        address: { _id: addressId }
+                    }
+                }).then((result) => {
+
+                    console.log(result, 'itemremoved');
+
+                    resolve(result)
+                })
+                .catch((err) => {
+                    console.error(err, 'db mafun');
+                    reject(err)
+                })
+        })
+    },
+
+    checkEmail: (data) => {
+        console.log(data);
+        console.log(`+91 ${data.userInput}`);
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.USERCOLLECTION).find({
+                $or:
+                    [{ email: data.userInput },
+                    { phone: `+91${data.userInput}` }
+                    ]
+            }).toArray().then((result) => {
+                console.log(result);
+                if (result[0] != null) resolve()
+                else reject()
+            })
+                .catch((err) => {
+                    console.log(err);
+                })
+        })
+    },
+    changePassword: (data)=>{
+
+
+        return new Promise( async (resolve, reject) => {
+            const userInput = data.userInput;
+            const newPassword = await bcrypt.hash(data.newPassword,10);
+
+            db.get().collection(collections.USERCOLLECTION).updateOne({
+                $or:[
+                    { email: userInput},
+                    { phone: `+91${userInput}`}
+                ]
+            },{
+                $set:{password: newPassword}
+            })
+            .then((result)=>{
+
+                console.log(result);
+                resolve()
+
+            })
+            .catch((err)=>{
+                console.log(err);
+                let Error = "something wrong on server"
+                reject(Error);
+            })
+        })
+    }
 
 }

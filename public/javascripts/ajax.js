@@ -274,6 +274,7 @@ $(document).ready(function () {
                 if (result.status) {
                     // location.reload()
                     $("#address").load(location.href + " #address");        //to reload only div
+                    $('#add-address').load(location.href + " #add-address")
                 } else {
                     swal("oops ")
                 }
@@ -282,7 +283,7 @@ $(document).ready(function () {
     })
 })
 
-$("#nameUpdate").click( ()=> {
+$("#nameUpdate").click(() => {
     $("#updateName").toggle();
 });
 
@@ -313,7 +314,62 @@ $(document).ready(function () {
     })
 })
 
-$("#add-address").click(function (){
+$("#add-address").click(function () {
     $("#address-form").toggle();
 })
+
+
+function removeAddress(addressId, userId) {
+    swal({
+        title: "remove this address field ? ",
+        buttons: true,
+        icons: 'warning',
+        closeOnClickOutside: false,
+
+    }).then((ok) => {
+        if (ok) {
+            console.log(addressId, 'address', userId, 'user');
+            $.ajax({
+                url: "/profile/remove-address",
+                data: {
+                    addressId: addressId,
+                    userId: userId
+                },
+                method: 'get',
+                success: (result) => {
+                    if (result.status) {
+                        $('#address').load(location.href + " #address")
+                    } else {
+                        swal({ title: "oops something went wrong ...!" })
+                    }
+                }
+
+            })
+        }
+    })
+}
+
+$('#updatePhone').click(function () {
+    $("#verifyPhone").toggle();
+})
+
+function confirmEmail(userInput) {
+    console.log(userInput);
+    $.ajax({
+        url: "/change-password/check-user",
+        data: { userInput: userInput },
+        method: 'get',
+        success: function (result) {
+            if (result.status) {
+
+                document.getElementById('checkResult').innerHTML = "<i class='text-success fa-solid fa-check'></i> User confirmed "
+                document.getElementById('change-password').disabled = false;
+            } else {
+
+                document.getElementById('checkResult').innerHTML = " <i class= 'text-danger fa-solid fa-xmark' ></i> User not found"
+                document.getElementById('change-password').disabled = true;
+            }
+        }
+    })
+}
 

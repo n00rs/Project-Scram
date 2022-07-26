@@ -235,8 +235,8 @@ router.post('/verifyPhone', (req, res) => {
 
     twilio.sendOtp(phone).then((result) => {
 
-        res.render('user/otp', { phone, })
-        
+        res.render('user/otp', {user:true, phone, })
+
     }).catch((err) => {
         req.session.otpError = "Server not responding try again later"
         res.redirect('/profile')
@@ -253,7 +253,7 @@ router.post('/otp', verifyUser, (req, res) => {
 
     twilio.verifyOtp(otp, phone).then((result) => {
 
-        userHelper.verifyPhone(userId,phone).then(() => {
+        userHelper.verifyPhone(userId, phone).then(() => {
 
             res.redirect('/profile');
         })
@@ -265,47 +265,101 @@ router.post('/otp', verifyUser, (req, res) => {
     })
 })
 
-router.post('/profile/image-upload',verifyUser,(req,res)=>{
+router.post('/profile/image-upload', verifyUser, (req, res) => {
     try {
 
         if (req.files) {
             const userImage = req.files.userImage
             const id = req.session.user._id;
 
-            userImage.mv('./public/images/user_images/'+id+".jpg")
+            userImage.mv('./public/images/user_images/' + id + ".jpg")
             res.redirect('/profile')
         } else {
             // req.session.imgError = 
             res.redirect('/profile')
         }
-        
+
     } catch (error) {
         console.log(error);
     }
-    
+
 })
 
-router.post('/profile/add-address',(req,res)=>{
+router.post('/profile/add-address', (req, res) => {
     try {
-        
+
         console.log(req.body);
-        userHelpers.addAddress(req.body).then(()=>{
-            res.json({status:true})
-            
+        userHelpers.addAddress(req.body).then(() => {
+            res.json({ status: true })
+
         })
 
     } catch (error) {
         console.log(error);
     }
 })
-router.post("/profile/update-name",(req,res)=>{
+router.post("/profile/update-name", (req, res) => {
     try {
         console.log(req.body);
-        userHelpers.updateName(req.body).then((result)=>{
-            res.json({status:true})
+        userHelpers.updateName(req.body).then((result) => {
+            res.json({ status: true })
         })
     } catch (error) {
         console.log(error);
+    }
+})
+
+router.get("/profile/remove-address", (req, res) => {
+    console.log(req.query);
+    try {
+
+        userHelpers.removeAddress(req.query).then((result) => {
+            res.json({ status: true })
+        })
+            .catch((err) => {
+                console.log(`error ${err}`);
+                res.json({ status: false })
+            })
+
+    } catch (error) {
+        console.log(error, "remove-address");
+    }
+})
+
+router.get("/change-password",(req,res)=>{{
+
+    res.render('user/change-password',{user:true,"error":req.session.changePasswordErr})
+    req.session.changePasswordErr=false;
+
+}})
+
+router.get('/change-password/check-user',(req,res)=>{
+    try {
+        // console.log(req.query,"get");
+
+        userHelpers.checkEmail(req.query).then((result)=>{
+            res.json({status:true})
+        })
+        .catch((err)=>{
+            res.json({status:false})
+        })
+    } catch (error) {
+        
+    }
+})
+router.post("/change-password",(req,res)=>{
+    console.log(req.body);
+    try {
+        userHelpers.changePassword(req.body).then((result)=>{
+
+            res.redirect('/profile') ;
+
+        }).catch((err)=>{
+            req.session.changePasswordErr = err;
+            res.redirect('/change-password')
+        })
+    } catch (error) {
+        
     }
 })
 module.exports = router;
