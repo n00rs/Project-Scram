@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-// const { resolve } = require('promise');
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig')
@@ -307,14 +306,76 @@ module.exports = {
         })
 
     },
-    fetchUserData: (userId)=>{
+    fetchUserData: (userId) => {
 
         return new Promise((resolve, reject) => {
-            db.get().collection(collections.USERCOLLECTION).findOne({_id: ObjectId(userId)}).then((result)=>{
+            db.get().collection(collections.USERCOLLECTION).findOne({ _id: ObjectId(userId) }).then((result) => {
                 console.log(result);
                 resolve(result);
             })
         })
-    }
+    },
+
+    verifyPhone: (userId, newPhone) => {
+        return new Promise((resolve, reject) => {
+
+            db.get().collection(collections.USERCOLLECTION).updateOne({ _id: ObjectId(userId) },
+                {
+                    $set: {
+                        phoneVerified: true,
+                        phone: newPhone
+                    }
+                }).then((result) => {
+                    console.log(result, "numberverify");
+                    resolve()
+                })
+        })
+    },
+
+    addAddress: (data) => {
+        const userId = ObjectId(data.userId);
+        const address = {
+            _id: ObjectId(),
+            building_name: data.building_name,
+            street: data.street,
+            city: data.city,
+            country: data.country,
+            pincode: data.pincode,
+        }
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.USERCOLLECTION).updateOne({ _id: userId },
+                {
+                    $push: { address: address},
+                    $set: { addressAdded: true }
+                }, 
+               ).then((result) => {
+                console.log(result);
+                resolve()
+            })
+        })
+    },
+
+    updateName: (data) => {
+        const userId = ObjectId(data.userId);
+        const firstName = data.firstName;
+        const lastName = data.lastName;
+        return new Promise((resolve, reject) => {
+
+            db.get().collection(collections.USERCOLLECTION).updateOne({ _id: userId },
+                {
+                    $set:
+                    {
+                        firstName: firstName,
+                        lastName: lastName,
+                    }
+                }).then((result) => {
+                    console.log(result);
+                    resolve()
+                })
+        })
+
+    },
+
+
 
 }

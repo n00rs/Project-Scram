@@ -210,7 +210,7 @@ function changeQuantity(prodId, cartId, count) {
                 // console.log(result);
 
                 document.getElementById('total').innerHTML = total;
-                document.getElementById('grantTotal').innerHTML = total+20;
+                document.getElementById('grantTotal').innerHTML = total + 20;
 
 
             }
@@ -218,31 +218,102 @@ function changeQuantity(prodId, cartId, count) {
     })
 }
 
-function removeItem(cartId,prodId,prodName) {
-    
+function removeItem(cartId, prodId, prodName) {
+
     swal({
-        title: "Remove "+prodName+ " from your cart  ? ",
+        title: "Remove " + prodName + " from your cart  ? ",
         buttons: true,
         icon: 'warning',
-    }).then((ok)=>{
-        if(ok){
+    }).then((ok) => {
+        if (ok) {
             $.ajax({
-                url: "/remove-cart-item/"+cartId+"/"+prodId,
-    
-                method:'get',
-                success:  (result)=>{
-                    if(result.itemRemoved){
-                        
-                    swal({title: "Item removed from your cart"})
-                    setTimeout(()=>{
-                        location.reload()
-                    },1000)
+                url: "/remove-cart-item/" + cartId + "/" + prodId,
+
+                method: 'get',
+                success: (result) => {
+                    if (result.itemRemoved) {
+
+                        swal({ title: "Item removed from your cart" })
+                        setTimeout(() => {
+                            location.reload()
+                        }, 1000)
                     }
                 }
             })
         }
-    }).catch((err)=>{
-        swal({title:'opps Somtheing went wrong'+err})
+    }).catch((err) => {
+        swal({ title: 'opps Somtheing went wrong' + err })
     })
 }
+
+// USER- SIDE PROFILE UPDATE
+
+$(document).ready(function () {
+    $('#address-form').on('submit', function (event) {
+        event.preventDefault();
+        const building_name = $("#building_no").val()
+        const street = $('#street').val();
+        const city = $('#city').val();
+        const country = $("#country").val();
+        const pincode = $("#pincode").val();
+        const userId = $('#userId').val();
+
+        console.log(building_name, street, city, country, pincode, userId);
+        $.ajax({
+            url: "/profile/add-address",
+            data: {
+                building_name: building_name,
+                street: street,
+                city: city,
+                country: country,
+                pincode: pincode,
+                userId: userId,
+            },
+            method: "post",
+            success: (result) => {
+                if (result.status) {
+                    // location.reload()
+                    $("#address").load(location.href + " #address");        //to reload only div
+                } else {
+                    swal("oops ")
+                }
+            }
+        })
+    })
+})
+
+$("#nameUpdate").click( ()=> {
+    $("#updateName").toggle();
+});
+
+$(document).ready(function () {
+    $('#updateName').on('submit', function (event) {
+        event.preventDefault();
+        const firstName = $('#firstName').val();
+        const lastName = $('#lastName').val();
+        const userId = $("#userId").val();
+
+        console.log(firstName, lastName);
+        $.ajax({
+            url: "/profile/update-name",
+            data: {
+                firstName: firstName,
+                lastName: lastName,
+                userId: userId,
+            },
+            method: 'post',
+            success: (result) => {
+                if (result.status)
+                    $("#name").load(location.href + " #name");
+                else
+                    swal({ title: "oops somthing went wrong" })
+            }
+        })
+
+    })
+})
+
+$("#add-address").click(function (){
+    $("#address-form").toggle();
+})
 

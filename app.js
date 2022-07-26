@@ -28,7 +28,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({ secret: "qwerty", resave: false, saveUninitialized:true , cookie: {maxAge: 999999} }));
+app.use(session({ secret: "qwerty", resave: false, saveUninitialized:true , cookie: {maxAge: 999999999} }));
 app.use(fileUpload());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname,'images')))

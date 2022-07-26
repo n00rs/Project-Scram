@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const userHelper = require('../helpers/userHelpers');
-const { route } = require('./admin');
+const twilio = require('../config/twilio');
+const userHelpers = require('../helpers/userHelpers');
+require('dotenv').config
 const verifyUser = (req, res, next) => {
     if (req.session.loggedIn) next()
     else res.redirect('/login')
@@ -84,18 +86,18 @@ router.post('/signup', (req, res) => {
 
 router.get('/category/:sub', async (req, res) => {
     try {
-         let user1 = req.session.user;
-         let cartCount = null;
-         if (user1) {
-             cartCount = await userHelper.fetchCartCount(user1._id)
-         }
-         let category = req.params.sub
+        let user1 = req.session.user;
+        let cartCount = null;
+        if (user1) {
+            cartCount = await userHelper.fetchCartCount(user1._id)
+        }
+        let category = req.params.sub
 
         console.log(category);
 
         let product = await userHelper.fetchCategory(category);
 
-        res.render('user/category', { user: true,user1, category,cartCount, product });
+        res.render('user/category', { user: true, user1, category, cartCount, product });
 
         // res.json({result:true})
         // if(subcategory == 'racing')          res.render('user/helmet-racing',{user:true, helmetSubcategory });
@@ -158,7 +160,7 @@ router.get('/add-to-cart', (req, res) => {
         let prodsize = req.query.size
         // console.log(req.query);
         let userId = req.session.user._id
-        console.log(prodsize,'size');
+        console.log(prodsize, 'size');
 
         userHelper.addToCart(req.query, userId).then(() => {
             res.json({ status: true })
@@ -180,7 +182,7 @@ router.get('/cart', async (req, res) => {
 
         // console.log(cartItems);
         console.log(total);
-        res.render('user/cart', { user: true, cartItems,total })
+        res.render('user/cart', { user: true, cartItems, total })
 
     }
     catch (error) {
@@ -188,43 +190,122 @@ router.get('/cart', async (req, res) => {
     }
 })
 
-router.post('/changeQuantity',(req,res)=>{
+router.post('/changeQuantity', (req, res) => {
     // console.log(req.body,'body');
     // console.log(req.query);
-    userHelper.changeCartQuantity(req.body).then( async (result)=>{
+    userHelper.changeCartQuantity(req.body).then(async (result) => {
 
-         result.total = await userHelper.totalAmount(req.body.cartId)
-         console.log(result.total);
+        result.total = await userHelper.totalAmount(req.body.cartId)
+        console.log(result.total);
         res.json(result)
     })
 })
 
-router.get("/remove-cart-item/:cartId/:prodId",(req,res)=>{
-console.log(req.params);
+router.get("/remove-cart-item/:cartId/:prodId", (req, res) => {
+    console.log(req.params);
 
-    userHelper.removeCartItem( req.params).then((result)=>{
+    userHelper.removeCartItem(req.params).then((result) => {
         res.json(result)
     })
 
 })
 
-router.get('/profile',verifyUser, async (req,res)=>{
-    const userId = req.session.user._id 
+router.get('/profile', verifyUser, async (req, res) => {
+    const userId = req.session.user._id
     // const user1= req.session.user;
     try {
-        
-     let user1 = await userHelper.fetchUserData(userId);
-     res.render('user/user-profile',{user:true,user1})
-        
+
+        let user1 = await userHelper.fetchUserData(userId);
+        res.render('user/user-profile', {
+            user: true, user1,
+            twilioError: req.session.otpError
+        })
+        req.session.otpError = false;
+
     } catch (error) {
         console.log(error);
     }
 })
 
-router.post('/profile',(req,res)=>{
-    
-    console.log(req.body);
+
+router.post('/verifyPhone', (req, res) => {
+
+    let phone = "+91" + req.body.phone
+    // console.log(phone);
+
+    twilio.sendOtp(phone).then((result) => {
+
+        res.render('user/otp', { phone, })
+        
+    }).catch((err) => {
+        req.session.otpError = "Server not responding try again later"
+        res.redirect('/profile')
+    })
+
 
 })
 
+router.post('/otp', verifyUser, (req, res) => {
+
+    const userId = req.session.user._id;
+    const otp = req.body.otp.join('');         //otp from form was in array converted it into string
+    const phone = req.body.phone;
+
+    twilio.verifyOtp(otp, phone).then((result) => {
+
+        userHelper.verifyPhone(userId,phone).then(() => {
+
+            res.redirect('/profile');
+        })
+
+    }).catch((err) => {
+
+        req.session.otpError = err;
+        res.redirect('/profile')
+    })
+})
+
+router.post('/profile/image-upload',verifyUser,(req,res)=>{
+    try {
+
+        if (req.files) {
+            const userImage = req.files.userImage
+            const id = req.session.user._id;
+
+            userImage.mv('./public/images/user_images/'+id+".jpg")
+            res.redirect('/profile')
+        } else {
+            // req.session.imgError = 
+            res.redirect('/profile')
+        }
+        
+    } catch (error) {
+        console.log(error);
+    }
+    
+})
+
+router.post('/profile/add-address',(req,res)=>{
+    try {
+        
+        console.log(req.body);
+        userHelpers.addAddress(req.body).then(()=>{
+            res.json({status:true})
+            
+        })
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+router.post("/profile/update-name",(req,res)=>{
+    try {
+        console.log(req.body);
+        userHelpers.updateName(req.body).then((result)=>{
+            res.json({status:true})
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
 module.exports = router;

@@ -1,105 +1,47 @@
-{{!-- <div class="container rounded bg-white mt-5 mb-5">
-    <div class="row">
-        <div class="col-md-3 border-right">
-            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5"
-                    width="150px"
-                    src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span
-                    class="font-weight-bold">Edogaru</span><span class="text-black-50">edogaru@mail.com.my</span><span>
-                </span></div>
-        </div>
-        <div class="col-md-5 border-right">
-            <div class="p-3 py-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="text-right">Profile Settings</h4>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-6"><label class="labels">Name</label><input type="text" class="form-control"
-                            placeholder="first name" value=""></div>
-                    <div class="col-md-6"><label class="labels">Surname</label><input type="text" class="form-control"
-                            value="" placeholder="surname"></div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12"><label class="labels">Mobile Number</label><input type="text"
-                            class="form-control" placeholder="enter phone number" value=""></div>
-                    <div class="col-md-12"><label class="labels">Address Line 1</label><input type="text"
-                            class="form-control" placeholder="enter address line 1" value=""></div>
-                    <div class="col-md-12"><label class="labels">Address Line 2</label><input type="text"
-                            class="form-control" placeholder="enter address line 2" value=""></div>
-                    <div class="col-md-12"><label class="labels">Postcode</label><input type="text" class="form-control"
-                            placeholder="enter address line 2" value=""></div>
-                    <div class="col-md-12"><label class="labels">State</label><input type="text" class="form-control"
-                            placeholder="enter address line 2" value=""></div>
-                    <div class="col-md-12"><label class="labels">Area</label><input type="text" class="form-control"
-                            placeholder="enter address line 2" value=""></div>
-                    <div class="col-md-12"><label class="labels">Email ID</label><input type="text" class="form-control"
-                            placeholder="enter email id" value=""></div>
-                    <div class="col-md-12"><label class="labels">Education</label><input type="text"
-                            class="form-control" placeholder="education" value=""></div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-6"><label class="labels">Country</label><input type="text" class="form-control"
-                            placeholder="country" value=""></div>
-                    <div class="col-md-6"><label class="labels">State/Region</label><input type="text"
-                            class="form-control" value="" placeholder="state"></div>
-                </div>
-                <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save
-                        Profile</button></div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-3 py-5">
-                <div class="d-flex justify-content-between align-items-center experience"><span>Edit
-                        Experience</span><span class="border px-3 p-1 add-experience"><i
-                            class="fa fa-plus"></i>&nbsp;Experience</span></div><br>
-                <div class="col-md-12"><label class="labels">Experience in Designing</label><input type="text"
-                        class="form-control" placeholder="experience" value=""></div> <br>
-                <div class="col-md-12"><label class="labels">Additional Details</label><input type="text"
-                        class="form-control" placeholder="additional details" value=""></div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-</div> --}}
-
-
-
 <link rel="stylesheet" href="/stylesheets/user-profile.css">
-
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 
 <div class="container emp-profile">
-    <form method="post">
+    
         <div class="row">
             <div class="col-md-4">
-                <div class="profile-img">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog"
-                        alt="" />
-                    <div class="file btn btn-lg btn-primary">
-                        Change Photo
-                        <input type="file" name="file" />
+                <form action="/profile/image-upload" method="post" enctype="multipart/form-data">
+
+
+                    <div class="profile-img text-center">
+                        <label for="userImage">
+
+                            <img src="/images/user_images/{{user1._id}}.jpg" id="imageUser" alt=""
+                                style="cursor: pointer; width: 165.5px; height: 120px;"
+                                class="img-fluid  rounded-circle">
+
+                            <input type="file" name="userImage" id="userImage" onchange="imgPreview(event)" hidden
+                                required accept="image/*"></label>
+
+                        <button class="btn btn-large" type="submit" value="Click To upload"><i
+                                class="fa-solid fa-camera-retro"></i> UPLOAD </button>
                     </div>
-                </div>
+                </form>
             </div>
             <div class="col-md-6">
                 <div class="profile-head">
                     <h5>
-                        Kshiti Ghelani
+                        {{user1.firstName}} {{user1.lastName}}
                     </h5>
+
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
                                 aria-controls="home" aria-selected="true">About</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#address" role="tab"
-                                aria-controls="profile" aria-selected="true">Timeline</a>
-                        </li>
                     </ul>
                 </div>
+            </div>
+            <div class="col-md-2">
+                <a class="profile-edit-btn" href="/update-user-data">Edit Profile</a>
             </div>
 
         </div>
@@ -107,9 +49,9 @@
             <div class="col-md-4">
                 <div class="profile-work">
                     <p>WORK LINK</p>
-                    <a href="">Website Link</a><br />
-                    <a href="">Bootsnipp Profile</a><br />
-                    <a href="">Bootply Profile</a>
+                    <a href="">View Cart</a><br />
+                    <a href="">View Wishlist</a><br />
+                    <a href="">View Orders</a>
                     <p>SKILLS</p>
                     <a href="">Web Designer</a><br />
                     <a href="">Web Developer</a><br />
@@ -133,8 +75,37 @@
                             <div class="col-md-6">
                                 <label>Name</label>
                             </div>
-                            <div class="col-md-6">
-                                <p>{{user1.firstName}} {{user1.secondName}}</p>
+
+{{!-- UPDATE NAME WITH AJAX --}}
+
+                            <div id="name" class="col-md-6">
+
+                                <p>{{user1.firstName}} {{user1.lastName}}
+                                    <button class=" btn" style="border-color: #fff ;" id="nameUpdate">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </button>
+                                </p>
+
+                                <form id="updateName" style="display:none" method="post">
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-6">
+                                            <input type="text" maxlength="15" class="form-control" id="firstName"
+                                                value="jhon" name="firstName" placeholder="firstName">
+
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <input type="text" maxlength="15" class="form-control" id="lastName"
+                                                value="doe" name="lastName" placeholder="second name">
+                                        </div>
+
+                                        <input type="hidden" name="userId" value="{{user1._id}}" id="userId">
+
+                                        <button class="btn btn-large" type="submit" id="submit" value="submit">
+                                            <i class="fa-solid fa-angles-up"></i>
+                                            Update </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                         <div class="row">
@@ -145,36 +116,111 @@
                                 <p>{{user1.email}}</p>
                             </div>
                         </div>
+
+{{!-- VERIFY PHONE NUMBER --}}
+
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Phone</label>
                             </div>
+
+                            {{#if user1.phoneVerified}}
                             <div class="col-md-6">
-                                <form action="profile/verifyPhone" id="verifyPhone" method="post" >
+                                <p>{{user1.phone}} <i class="text-success fa-regular fa-circle-check"></i> </p>
+                            </div>
+                            {{else}}
+
+                            <div class="col-md-6">
+
+                                {{#if twilioError}}
+                                <h6 class="text-danger">{{twilioError}}</h6>
+                                {{/if}}
+                                <form action="/verifyPhone" id="verifyPhone" method="post">
                                     <div class="row ">
                                         <div class="col-sm">
-                                            
-                                            <input type="text" name="phone" title="ENTER 10 DIGIT NUMBER" maxlength="10" class="form-control" pattern="[1-9]{1}[0-9]{9}" value={{user1.phone}}> 
+
+                                            <input type="text" name="phone" title="ENTER 10 DIGIT NUMBER" maxlength="10"
+                                                class="form-control" pattern="[1-9]{1}[0-9]{9}" value={{user1.phone}}>
 
                                             <button type="submit" class="profile-edit-btn">verifyPhone</button>
                                         </div>
                                 </form>
                             </div>
-
-
-
+                            {{/if}}
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Address</label>
-                        </div>
-                        <div class="col-md-6">
-                            <p>{{user1.address}}</p>
+
+{{!-- ADD ADDRESS /DELETE ADDRESS --}}
+                    
+                        <div class="row" id="address">
+                            <div class="col-md-6">
+                                <label>Address</label>
+                            </div>
+                            {{!-- {{#if user1.mainAddress}} --}}
+                            <div class="col-md-6">
+                                {{#each user1.address}}
+
+                                <p>{{this.building_name}},{{this.street}} <br><i class="fa-regular fa-circle-xmark fs-5 text-danger"></i>
+                                    {{this.city}},{{this.country}},<br>{{this.pincode}}</p>
+                                    {{/each}}
+                                <button class="btn btn-large" type="" id="add-address" name="add-address">
+                                    <i class="fa-regular fa-address-card"></i>
+                                    Add Address </button>
+
+                            </div>
+
+                            {{!-- {{else}} --}}
+
+                            <div class="col-md-6 mt-3">
+                                <form id="address-form" style="display:none" method="post">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputAddress1">Flat/House </label>
+
+                                            <input type="text" maxlength="15" class="form-control" id="building_no"
+                                                name="building_no" placeholder="Flat/House no." value="xcross">
+
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputStreet">Street</label>
+                                            <input type="text" maxlength="15" class="form-control" id="street"
+                                                name="street" placeholder="Street" value="baker street">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputCity">City</label>
+                                            <input type="text" maxlength="15" class="form-control" id="city" name="city"
+                                                placeholder="City" value="london">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputCountry">Country</label>
+                                            <input type="text" class="form-control" id="country" name="country"
+                                                placeholder="Country" value="UK">
+                                        </div>
+
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputZip">Pin</label>
+                                            <input type="text" class="form-control" maxlength="8" id="pincode"
+                                                name="pincode" placeholder="pin" value="123456">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+
+                                    </div>
+                                    <input type="hidden" name="userId" value="{{user1._id}}" id="userId">
+                                    <button class="btn btn-large" type="submit" id="submit" value="submit">
+                                        <i class="fa-regular fa-address-card"></i>
+                                        Update Address </button>
+                                </form>
+                            </div>
+                            {{!-- {{/if}} --}}
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="profile-tab">
+                {{!--
+                <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                     <div class="row">
                         <div class="col-md-6">
                             <label>Experience</label>
@@ -221,19 +267,15 @@
                             <p>Your detail description</p>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
 </div>
-</form>
-</div>
-
+<script src="/javascripts/ajax.js"></script>
+{{!-- { { !--CHANGE PROFILE IMAGE PREVIEW-- } } --}}
 <script>
-    function validateForm(){
-        const phone = document.getElementById('phone').value
-        if(phone.length<10 && phone.length>10){
-            alert('number must be 10 digits')
-            return false
-        }
+    function imgPreview(event) {
+        document.getElementById('imageUser').src = URL.createObjectURL(event.target.files[0])
     }
+
 </script>
