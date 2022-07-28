@@ -4,9 +4,19 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 
+<section>
+  <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item active">Profile</li>
+    </ol>
 <div class="container emp-profile">
 
     <div class="row">
+
+{{!-- UPLOAD PROFILE IMAGE --}}
+
         <div class="col-md-4">
             <form action="/profile/image-upload" method="post" enctype="multipart/form-data">
 
@@ -217,6 +227,8 @@
         </div>
     </div>
 </div>
+</section>
+
 <script src="/javascripts/ajax.js"></script>
 {{!-- { { !--CHANGE PROFILE IMAGE PREVIEW-- } } --}}
 <script>

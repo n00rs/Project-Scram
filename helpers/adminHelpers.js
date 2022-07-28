@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const db = require('../config/mongoConfig');
 const collection = require('../config/collections');
+// const collection = require('../config/collection');
 const objectId = require('mongodb').ObjectId
 
 
@@ -125,7 +126,7 @@ module.exports = {
                 "price": parseInt(data.price),
                 "description": data.description,
                 "features": data.features,
-                "stock" : parseInt(data.stock)
+                "stock": parseInt(data.stock)
             }
         }
         return new Promise((resolve, reject) => {
@@ -136,61 +137,115 @@ module.exports = {
         })
     },
 
-    fetchAllProducts: ()=>{
+    fetchAllProducts: () => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.PRODUCTCOLLECTION).find().toArray().then((result)=>{
+            db.get().collection(collection.PRODUCTCOLLECTION).find().toArray().then((result) => {
                 console.log(result[0]);
                 resolve(result)
             })
         })
     },
 
-    deleteProduct: (productId) =>{
+    deleteProduct: (productId) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.PRODUCTCOLLECTION).deleteOne({_id: objectId(productId)}).then((result)=>{
-                console.log(result,"delteprod");
-                resolve({itemRemoved:true})
+            db.get().collection(collection.PRODUCTCOLLECTION).deleteOne({ _id: objectId(productId) }).then((result) => {
+                console.log(result, "delteprod");
+                resolve({ itemRemoved: true })
             })
         })
     },
 
-    fetchProduct: (productId)=>{
+    fetchProduct: (productId) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.PRODUCTCOLLECTION).findOne({_id: objectId(productId)}).then((result)=>{
+            db.get().collection(collection.PRODUCTCOLLECTION).findOne({ _id: objectId(productId) }).then((result) => {
                 resolve(result)
             })
         })
     },
 
-    editProduct: (data) =>{
+    editProduct: (data) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.PRODUCTCOLLECTION).updateOne({_id: objectId(data.productId)},
-            {
-                $set:{
-                    category: data.category,
-                    subcategory: data.subcategory,
-                    model: data.model,
-                    'modelDetails.name': data.modelname,
+            db.get().collection(collection.PRODUCTCOLLECTION).updateOne({ _id: objectId(data.productId) },
+                {
+                    $set: {
+                        category: data.category,
+                        subcategory: data.subcategory,
+                        model: data.model,
+                        'modelDetails.name': data.modelname,
 
-                    'modelDetails.size': [data.small, data.medium, data.large, data.extra_extra_large, data.extra_large],
-                    
-                    'modelDetails.price':parseInt( data.price),
+                        'modelDetails.size': [data.small, data.medium, data.large, data.extra_extra_large, data.extra_large],
 
-                    'modelDetails.stock' :parseInt( data.stock),
-                    
-                    'modelDetails.description': data.description,
+                        'modelDetails.price': parseInt(data.price),
 
-                    'modelDetails.features' : data.features
+                        'modelDetails.stock': parseInt(data.stock),
 
-                }
-            }).then((result)=>{
-                console.log(result);
-                resolve()
-            })            
+                        'modelDetails.description': data.description,
+
+                        'modelDetails.features': data.features
+
+                    }
+                }).then((result) => {
+                    console.log(result);
+                    resolve()
+                })
         })
 
-    } 
+    },
 
+    fetchCoupons: ()=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.COUPONCOLLECTION).find().toArray().then((result)=>{
+                console.log(result);
+                resolve(result);
+            })
+        })
+    },
+
+    addCoupon: (data) => {
+        const oneDay = 1000 * 60 * 60 * 24;
+        const coupon = {
+            couponName: data.couponName.toUpperCase(),
+            category: data.category,
+            discount: {
+                price: parseInt(data.discountPrice),
+
+                percentage: parseFloat(data.discountPercent / 100)
+            },
+            couponExpires: new Date(new Date().getTime() + (oneDay * parseInt(data.expiry))) 
+
+            // couponExpires: new Date(new Date().getTime() + 5000) 
+        }
+
+        console.log(coupon, 'adminhelper');
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.COUPONCOLLECTION).find().toArray().then((result) => {
+                console.log(result,"check");
+                if (result[0] == null) {
+
+                    db.get().collection(collection.COUPONCOLLECTION).createIndex({ "couponName": 1 }, { unique: true })
+
+                    db.get().collection(collection.COUPONCOLLECTION).createIndex({ "couponExpires": 1 }, { expireAfterSeconds: 0 })
+
+                    db.get().collection(collection.COUPONCOLLECTION).insertOne(coupon).then((result) => {
+                        console.log(result,"after insertion");
+                        resolve({couponAdded:true})
+                    })
+                }else {
+                    db.get().collection(collection.COUPONCOLLECTION).insertOne(coupon).then((result)=>{
+                        console.log(result,"second insertion");
+                        resolve({couponAdded:true})
+                    })
+                    .catch((err)=>{
+                        console.log(err,"second err");
+                        reject({couponAdded:false});
+                    })
+                }
+            })
+
+
+        })
+
+    }
 
 
 

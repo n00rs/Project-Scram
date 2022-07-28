@@ -210,8 +210,6 @@ function changeQuantity(prodId, cartId, count) {
                 // console.log(result);
 
                 document.getElementById('total').innerHTML = total;
-                document.getElementById('grantTotal').innerHTML = total + 20;
-
 
             }
         }
@@ -243,6 +241,44 @@ function removeItem(cartId, prodId, prodName) {
         }
     }).catch((err) => {
         swal({ title: 'opps Somtheing went wrong' + err })
+    })
+}
+
+function checkCouponCode(couponCode,total){
+    console.log(total);
+    $.ajax({
+        url:"/cart/confirm-coupon",
+        data:{
+            code: couponCode,
+            cartTotal : total
+        },
+        method: 'post',
+        success: (result)=>{
+            console.log(result);
+            if(result.validCoupon){
+
+            $('#couponValid').html('<i class="text-success fa-regular fa-circle-check"></i>  Valid Code')
+
+            let discount = $('#discount').html();
+            discount = parseInt(discount) + result.discount ;
+           $("#discount").html(discount) ;
+
+          let total =  $("#grantTotal").html() ;
+          newTotal = parseInt(total) - result.discount;
+          $('#grantTotal').html(newTotal);
+
+            }
+
+
+            else {
+                $('#couponValid').html('<i class="fa-solid text-danger fa-xmark"></i> Invalid Code')
+                $("#discount").html(0)
+                setTimeout(()=>{
+                    $('#couponValid').hide()
+                },3000)
+            }
+        }
+        
     })
 }
 
@@ -372,4 +408,71 @@ function confirmEmail(userInput) {
         }
     })
 }
+
+//  WISHLIST functions
+
+function addToWishlist(prodId) {
+    console.log(prodId)
+    $.ajax({
+        url: "/add-to-wishlist",
+        data: {
+            productId: prodId,
+        },
+        method: 'post',
+        success: (result) => {
+            if (result) {
+
+                let count = $("#wishCount").html();
+
+                count = parseInt(count) + 1 ;
+
+                $('#wishCount').html(count) ;
+                swal({ title: result.success }) ;
+                setTimeout(() => {
+                    swal.close()
+                }, 1000)
+            } else {
+                swal({ title: result.err })
+            }
+        }
+
+    })
+}
+
+function removeWishlistItem(wishlistId, prodId) {
+
+    // console.log(wishlistId, 'wishlist', prodId, 'prodid')
+    swal({
+        title: "Remove this item from wishlist",
+        buttons: true,
+        icon: "warning",
+        closeOnClickOutside: false
+    }).then((ok) => {
+        if (ok) {
+            $.ajax({
+
+                url: "/wishlist/remove-item/" + wishlistId + "/" + prodId,
+
+                method: "delete",
+                success: (result) => {
+                    if (result.status) {
+
+                        swal({ title: result.status })
+                        setTimeout(() => {
+                            $('#wishlistItems').load(location.href + " #wishlistItems")
+                            swal.close()
+                        }, 1000)
+                    }
+                }
+            })
+        }
+    })
+}
+
+
+
+
+
+
+
 

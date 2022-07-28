@@ -1,0 +1,153 @@
+<link rel="stylesheet" href="/stylesheets/user-profile.css">
+
+
+<section id="couponsDiv">
+    <div class="container emp-profile" >
+        <div class="row">
+            <div class=" container-fluid">
+                <div class="row ">
+                    <div class="col-md-12 col-12">
+                        <div >
+                            
+                            <div class="all-prod" style=" overflow-x:auto">
+                                 <div class=" col-md-4 mt-5 ms-auto">
+
+                                    <button id="couponAddBtn" class="" onclick="$('#addCouponFrm').toggle()">Genrate
+                                        Coupon</button>
+                                </div>
+                                <form method="post" style="display:none ;" id="addCouponFrm">
+
+                                    <div class="conatainer ms-5 ">
+                                        <div class=" row col-md-6">
+                                            <div class="col-5 mb-3">
+                                                <label class="text-white">Name</label>
+                                                <input type="text" class="form-control" placeholder="Coupon Name" id="couponName"
+                                                    name="couponName" maxlength="15" minlength=3 required>
+                                            </div>
+
+                                            <div class="col-5 mb-3">
+                                                <label class="text-white">Category</label>
+                                                <input type="text" class="form-control" placeholder="Category" id="category"
+                                                    name="category" maxlength="15" minlength=3 required>
+                                            </div>
+
+                                            <div class="col-5 mb-3">
+                                                <label class="text-white">Discount Price</label>
+                                                <input type="number" class="form-control" placeholder="Discount Price" id="discountPrice"
+                                                    name="discountPrice" value=0 minlength=1 required>
+                                            </div>
+
+
+                                            {{!-- <div class="col-md-6"> --}}
+                                                <div class="col-5 mb-3">
+                                                    <label class="text-white">Discount %</label>
+                                                    <input type="number" class="form-control"  max=99
+                                                        placeholder="Discount %" name="discountPercentage" id="discountPercentage" value=0 minlength=1 required>
+                                                </div>
+
+                                                <div class="col-5 mb-3">
+                                                    <label class="text-white">Coupon expiry</label>
+                                                    <input type="number" class="form-control" value=1 max=365
+                                                        placeholder="Coupon expiry" name="expiryDays" id="expiryDays" minlength=1 required>
+                                                    <p>in days</p>
+                                                </div>
+                                            </div>
+
+                                            <button class="btn active" id="submit" type="submit">
+                                                GENERATE
+                                            </button>
+                                        </div>
+                                </form>
+                               
+                                <h3 class="tittle text-white">ALL PRODUCTS</h3>
+
+
+                                <table class="table" id="myTable">
+                                    <thead >
+                                        <tr class="text-warning">
+                                            <th scope="col">#</th>
+                                            <th scope="col">Coupon Name</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Discount Price</th>
+                                            <th scope="col">Discount Percentage</th>
+                                            <th scope="col">Coupon Expiry</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each coupons}}
+                                        <tr class="text-white">
+                                            <th scope="text-warning">{{ count @index }}</th>
+                                            <td>{{this.couponName}}</td>
+                                            <td>{{this.category}}</td>
+
+                                            <td>&#8377;{{this.discount.price}}</td>
+                                            <td>{{this.discount.percentage}}</td>
+                                            <td>{{dateFormat this.couponExpires "dddd, MMMM Do YYYY, h:mm:ss a"}}</td>
+                                            <td>
+                                                <a class="bg-black" href="/admin/edit-product/{{this._id}}"><i
+                                                        class="fa-solid fa-file-pen fs-5  text-info"></i></a>
+                                                <button class="bg-black" onclick="deleteProduct('{{this._id}}') "><i
+                                                        class="fa-solid fa-trash-can fs-5 text-danger"></i></button>
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+    $('#addCouponFrm').on('submit', function (event) {
+        event.preventDefault();
+        const couponName = $('#couponName').val() ;
+        const category = $('#category').val();
+        const discountPrice = $("#discountPrice").val();
+        const discountPercent = $('#discountPercentage').val();
+        const expiry =  $('#expiryDays').val();
+
+        //console.log(couponName,category,discountPrice,discountPercent,expiry)
+        
+        $.ajax({
+            url:"/admin/manage-coupons",
+            data:{
+                couponName:couponName,
+                category:category,
+                discountPrice:discountPrice,
+                discountPercent:discountPercent,
+                expiry:expiry,
+            },
+            method:'post',
+            success:(result)=>{
+                if(result.couponAdded){
+                    swal({title:"added"})
+                    setTimeout(()=>{
+                        swal.close()
+                        $('#couponsDiv').load(location.href +  " #couponsDiv>*")
+                    },1000)
+                }else{
+                    swal({title:"name already exists"})
+                    setTimeout(()=>{
+                        swal.close()
+                    },1000)
+                }
+            }
+        })
+    })
+})
+
+</script>
+
+

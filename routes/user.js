@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const userHelper = require('../helpers/userHelpers');
 const twilio = require('../config/twilio');
 const userHelpers = require('../helpers/userHelpers');
 require('dotenv').config
@@ -14,11 +13,13 @@ const verifyUser = (req, res, next) => {
 router.get('/', async (req, res) => {
     let user1 = req.session.user;
     let cartCount = null;
+    let wishlistCount = null ;
     if (user1) {
-        cartCount = await userHelper.fetchCartCount(user1._id)
+        cartCount = await userHelpers.fetchCartCount(user1._id) ;
+        wishlistCount = await userHelpers.fetchWishlistCount(user1._id)
     }
     console.log(cartCount);
-    res.render("user/landing-page", { user: true, cartCount, user1 });
+    res.render("user/landing-page", { user: true, cartCount, user1 ,wishlistCount });
 })
 
 
@@ -36,7 +37,7 @@ router.get('/login', (req, res) => {
 
 router.post('/login', (req, res) => {
     console.log(req.body);
-    userHelper.userLogin(req.body).then((result) => {
+    userHelpers.userLogin(req.body).then((result) => {
         if (result.status) {
             req.session.loggedIn = true;
             req.session.user = result.user;
@@ -66,7 +67,7 @@ router.get('/signup', (req, res) => {
 
 router.post('/signup', (req, res) => {
     console.log(req.body);
-    userHelper.userSignup(req.body).then((result) => {
+    userHelpers.userSignup(req.body).then((result) => {
         res.redirect('/login')
     })
         .catch((err) => {
@@ -79,7 +80,7 @@ router.post('/signup', (req, res) => {
 
 // router.get('/helmets',async (req,res)=>{
 
-//     let helmetSection =await userHelper.fetchHelmets()
+//     let helmetSection =await userHelpers.fetchHelmets()
 
 //     res.render('user/helmets',{user:true, helmetSection})
 // })
@@ -88,16 +89,20 @@ router.get('/category/:sub', async (req, res) => {
     try {
         let user1 = req.session.user;
         let cartCount = null;
+        let wishlistCount =null ;
         if (user1) {
-            cartCount = await userHelper.fetchCartCount(user1._id)
+            cartCount = await userHelpers.fetchCartCount(user1._id);
+
+             wishlistCount = await userHelpers.fetchWishlistCount(user1._id) ;
+
         }
         let category = req.params.sub
 
         console.log(category);
 
-        let product = await userHelper.fetchCategory(category);
+        let product = await userHelpers.fetchCategory(category);
 
-        res.render('user/category', { user: true, user1, category, cartCount, product });
+        res.render('user/category', { user: true, user1, category, cartCount, product, wishlistCount});
 
         // res.json({result:true})
         // if(subcategory == 'racing')          res.render('user/helmet-racing',{user:true, helmetSubcategory });
@@ -113,7 +118,7 @@ router.get('/category/:sub', async (req, res) => {
 
 // router.get('/accessories', async (req,res)=>{
 
-//     let accessories = await userHelper.fetchAccessories()
+//     let accessories = await userHelpers.fetchAccessories()
 
 //     res.render('user/accessories',{user:true, accessories})
 // })
@@ -121,7 +126,7 @@ router.get('/category/:sub', async (req, res) => {
 // router.get('/accessories/:sub',async (req,res)=>{
 //     try {
 //             let subcategory = req.params.sub
-//             let accessoriesSub = await userHelper.fetchSub(subcategory);
+//             let accessoriesSub = await userHelpers.fetchSub(subcategory);
 
 
 //             if(subcategory == 'visors')               res.render('user/accessories-visors',{user:true, accessoriesSub});
@@ -134,7 +139,7 @@ router.get('/category/:sub', async (req, res) => {
 // })
 router.get('/view-product/:id', async (req, res) => {
     let id = req.params.id
-    let product = await userHelper.fetchProduct(id);
+    let product = await userHelpers.fetchProduct(id);
     console.log(product);
     res.render('user/view-product', { user: true, product })
 })
@@ -143,7 +148,7 @@ router.get('/sort', (req, res) => {
     console.log(req.query);
     console.log(req.query.sortType);
 
-    userHelper.sortProduct(req.query).then((result) => {
+    userHelpers.sortProduct(req.query).then((result) => {
         console.log(result);
         res.json(result);
 
@@ -152,17 +157,11 @@ router.get('/sort', (req, res) => {
 
 router.get('/add-to-cart', (req, res) => {
     try {
-        let prodId = req.query.id;
-        let prodName = req.query.name;
-        let prodSubcategory = req.query.subCategory;
-        let prodCategory = req.query.category;
-        let prodPrice = req.query.price;
-        let prodsize = req.query.size
+
         // console.log(req.query);
         let userId = req.session.user._id
-        console.log(prodsize, 'size');
 
-        userHelper.addToCart(req.query, userId).then(() => {
+        userHelpers.addToCart(req.query, userId).then(() => {
             res.json({ status: true })
         })
     } catch (error) {
@@ -176,9 +175,9 @@ router.get('/cart', async (req, res) => {
 
         const userId = req.session.user._id;
 
-        let cartItems = await userHelper.fetchCart(userId);
+        let cartItems = await userHelpers.fetchCart(userId);
 
-        let total = await userHelper.totalAmount(cartItems._id)
+        let total = await userHelpers.totalAmount(cartItems._id)
 
         // console.log(cartItems);
         console.log(total);
@@ -193,9 +192,9 @@ router.get('/cart', async (req, res) => {
 router.post('/changeQuantity', (req, res) => {
     // console.log(req.body,'body');
     // console.log(req.query);
-    userHelper.changeCartQuantity(req.body).then(async (result) => {
+    userHelpers.changeCartQuantity(req.body).then(async (result) => {
 
-        result.total = await userHelper.totalAmount(req.body.cartId)
+        result.total = await userHelpers.totalAmount(req.body.cartId)
         console.log(result.total);
         res.json(result)
     })
@@ -204,9 +203,77 @@ router.post('/changeQuantity', (req, res) => {
 router.get("/remove-cart-item/:cartId/:prodId", (req, res) => {
     console.log(req.params);
 
-    userHelper.removeCartItem(req.params).then((result) => {
+    userHelpers.removeCartItem(req.params).then((result) => {
         res.json(result)
     })
+
+})
+
+router.post('/cart/confirm-coupon',(req,res)=>{
+
+        let couponCode =  req.body.code ;
+        let cartTotal = req.body.cartTotal;
+
+        userHelpers.checkCouponCode(couponCode,cartTotal).then((result)=>{
+          console.log(result,'res.json');
+          res.json(result)
+        })
+        .catch((error)=>{
+            console.log(error);
+            res.json(error)
+        })
+})
+
+
+
+router.get('/wishlist', async (req, res) => {
+    try {
+        let userId = req.session.user._id ;
+        let wishlistCount = await userHelpers.fetchWishlistCount(userId) ;
+        let wishlist =   await userHelpers.fetchWishlist(userId)
+
+        res.render('user/wishlist', { user: true, wishlist, wishlistCount})
+        
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.post('/add-to-wishlist', (req, res) => {
+    console.log(req.body);
+    try {
+        const userId = req.session.user._id;
+        const prodId = req.body.productId;
+        userHelpers.addToWishlist( userId, prodId ).then((result) => {
+            console.log(result,'user.js');
+            res.json(result)
+        })
+        .catch((error)=>{
+            res.json(error)
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.delete('/wishlist/remove-item/:wid/:pid', (req,res)=>{                                   //wid & pid is sent from ajax
+
+    // console.log(`query${req.query},body${req.body}, param${req.params}` );
+
+    try {
+        const wishlistId = req.params.wid
+        const prodId = req.params.pid
+
+        userHelpers.removeWishlistItem(wishlistId,prodId).then((result)=>{ 
+            res.json(result)
+        })
+        .catch((error)=>{
+            res.json(error)
+        })
+
+    } catch (error) {
+        console.log(error);
+    }
 
 })
 
@@ -215,7 +282,7 @@ router.get('/profile', verifyUser, async (req, res) => {
     // const user1= req.session.user;
     try {
 
-        let user1 = await userHelper.fetchUserData(userId);
+        let user1 = await userHelpers.fetchUserData(userId);
         res.render('user/user-profile', {
             user: true, user1,
             twilioError: req.session.otpError
@@ -235,7 +302,7 @@ router.post('/verifyPhone', (req, res) => {
 
     twilio.sendOtp(phone).then((result) => {
 
-        res.render('user/otp', {user:true, phone, })
+        res.render('user/otp', { user: true, phone, })
 
     }).catch((err) => {
         req.session.otpError = "Server not responding try again later"
@@ -253,7 +320,7 @@ router.post('/otp', verifyUser, (req, res) => {
 
     twilio.verifyOtp(otp, phone).then((result) => {
 
-        userHelper.verifyPhone(userId, phone).then(() => {
+        userHelpers.verifyPhone(userId, phone).then(() => {
 
             res.redirect('/profile');
         })
@@ -326,40 +393,51 @@ router.get("/profile/remove-address", (req, res) => {
     }
 })
 
-router.get("/change-password",(req,res)=>{{
+router.get("/change-password", (req, res) => {
+    {
 
-    res.render('user/change-password',{user:true,"error":req.session.changePasswordErr})
-    req.session.changePasswordErr=false;
+        res.render('user/change-password', { user: true, "error": req.session.changePasswordErr })
+        req.session.changePasswordErr = false;
 
-}})
+    }
+})
 
-router.get('/change-password/check-user',(req,res)=>{
+router.get('/change-password/check-user', (req, res) => {
     try {
         // console.log(req.query,"get");
 
-        userHelpers.checkEmail(req.query).then((result)=>{
-            res.json({status:true})
+        userHelpers.checkEmail(req.query).then((result) => {
+            res.json({ status: true })
         })
-        .catch((err)=>{
-            res.json({status:false})
-        })
+            .catch((err) => {
+                res.json({ status: false })
+            })
     } catch (error) {
-        
+
     }
 })
-router.post("/change-password",(req,res)=>{
+router.post("/change-password", (req, res) => {
     console.log(req.body);
     try {
-        userHelpers.changePassword(req.body).then((result)=>{
+        userHelpers.changePassword(req.body).then((result) => {
 
-            res.redirect('/profile') ;
+            res.redirect('/profile');
 
-        }).catch((err)=>{
+        }).catch((err) => {
             req.session.changePasswordErr = err;
             res.redirect('/change-password')
         })
     } catch (error) {
-        
+
     }
 })
+
+router.get("/contactus" , (req,res)=>{
+    res.render('user/contactus',{user:true,})
+})
+
+
+
+
+
 module.exports = router;

@@ -5,8 +5,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const hbs = require('express-handlebars');
+const helper = require('./helpers/handlebarHelpers')
 const fileUpload = require('express-fileupload');
 const dataBase = require('./config/mongoConfig');        //DB connection
+
+// const methodOverride = require('method-override')
 
 const adminRouter = require('./routes/admin')
 const userRouter = require('./routes/user')
@@ -17,10 +20,11 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.engine('hbs', hbs.engine({
-  extname:"hbs",
-  defaultLayout:'layout',
-  layoutsDir:__dirname+'/views/layout',
-  partialsDir:__dirname+'/views/partials'
+  extname: "hbs",
+  defaultLayout: 'layout',
+  layoutsDir: __dirname + '/views/layout',
+  partialsDir: __dirname + '/views/partials',
+  helpers: helper
 }))
 
 
@@ -28,30 +32,35 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({ secret: "qwerty", resave: false, saveUninitialized:true , cookie: {maxAge: 999999999} }));
+app.use(session({
+  secret: "qwerty", resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }
+}));
 app.use(fileUpload());
+// app.use( methodOverride() );
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname,'images')))
+app.use(express.static(path.join(__dirname, 'images')))
 
 /* mongodb connection*/
-dataBase.connect((err)=>{
-  if (err) console.log("mongoDb Error",err);
-  else console.log("mongoDB connected"); 
+dataBase.connect((err) => {
+  if (err) console.log("mongoDb Error", err);
+  else console.log("mongoDB connected");
 })
 
 
-app.use('/',userRouter);
-app.use('/admin',adminRouter);
+app.use('/', userRouter);
+app.use('/admin', adminRouter);
 
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

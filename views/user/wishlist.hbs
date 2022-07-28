@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="/stylesheets/user-profile.css">
+<section>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item active">Wishlist</li>
+    </ol>
+
+
+<div class="container emp-profile">
+
+  <div class="row" id="wishlistItems">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="h5">Wishlist</th>
+
+        </tr>
+      </thead>
+      <tbody id="">
+        {{#each wishlist.products}}
+        <tr>
+          <th scope="row">
+            <div class="d-flex align-items-center">
+              <img src="/images/product_images/{{this._id}}_1.jpg" class="img-fluid rounded-3" style="width: 120px;"
+                alt="img">
+              <div class="flex-column ms-4">
+                <p >{{this.modelDetails.name}}</p>
+                <p >{{this.subcategory}}</p>
+                
+            <p >{{this.category}}</p>
+              </div>
+            </div>
+          </th>
+          <td class="align-middle">
+            
+            {{#if this.modelDetails.stock}}
+            
+            <p class="text-primary">*INSTOCK</p>
+            {{this.modelDetails.stock}}
+            {{else}}
+            <p>*Out of stock</p>
+            {{/if}}
+
+          </td>
+
+          <td class="align-middle">
+            <m class="" style="font-weight: 500;">&#8377; {{this.modelDetails.price}}</m>
+          </td>
+          <td class="align-middle">
+            <button class="btn active " onclick="addToCart('{{this._id}}','{{this.modelDetails.name}}',
+                        '{{this.subcategory}}','{{category}}','{{this.modelDetails.price}}',
+                        '{{this.modelDetails.size}}')"><i class="fa-solid fa-cart-plus"></i> ADD TO CART </button>
+          </td>
+          <td>
+            <a style="cursor:pointer ;" onclick="removeWishlistItem('{{../wishlist._id}}','{{this._id}}')"><i
+                class="fa-regular fa-circle-xmark fs-5 text-danger"></i></a>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+ 
+</div>
+</section>
+<script src="/javascripts/ajax.js"></script>

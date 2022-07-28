@@ -1,57 +1,61 @@
+
 <section>
-<div class="main-banner inner" id="home">
-    <!-- header -->
-    <header class="header">
-        <div class="container-fluid px-lg-5">
-            <!-- nav -->
-            <nav class="py-4 col-12">
-                <div id="logo">
-                    <h1> <a href="/"><span class="fa-s fa-solid" aria-hidden="true"></span>cram</a></h1>
-                </div>
+    <div class="main-banner inner" id="home">
+        <!-- header -->
+        <header class="header">
+            <div class="container-fluid px-lg-5">
+                <!-- nav -->
+                <nav class="py-4 col-12">
+                    <div id="logo">
+                        <h1> <a href="/"><span class="fa-s fa-solid" aria-hidden="true"></span>cram</a></h1>
+                    </div>
 
-                <label for="drop" class="toggle">Menu</label>
-                <input type="checkbox" id="drop" />
-                <ul class="menu mt-2">
-                    <li class="active"><a href="/">Home</a></li>
-                    <li><a href="/category/helmet">HELMETS</a></li>
-                    <li><a href="/category/accessories">ACCESSORIES</a></li>
-                    <li>
-                        <!-- First Tier Drop Down -->
-                        {{#if user1}}
-                          <label for="drop-2" class="toggle">{{user.firstName}}<span class="fa fa-angle-down"
-                                aria-hidden="true"></span> </label>
-                        <a href="">{{user.firstName}}<span class="fa fa-angle-down" aria-hidden="true"></span></a>
-                        <input type="checkbox" id="drop-2" />
-                        <ul>
-                            {{else}}
-                        <label for="drop-2" class="toggle">LOGIN<span class="fa fa-angle-down"
-                                aria-hidden="true"></span> </label>
-                        <a href="#">LOGIN<span class="fa fa-angle-down" aria-hidden="true"></span></a>
-                        <input type="checkbox" id="drop-2" />
-                        <ul>
-                            {{/if}}
+                    <label for="drop" class="toggle">Menu</label>
+                    <input type="checkbox" id="drop" />
+                    <ul class="menu mt-2">
+                        <li class="active"><a href="/">Home</a></li>
+                        <li><a href="/category/helmet">HELMETS</a></li>
+                        <li><a href="/category/accessories">ACCESSORIES</a></li>
+                        <li>
+                            <!-- First Tier Drop Down -->
                             {{#if user1}}
-                            <li><a href="/logout" >LOGOUT</a></li>
-                            <li><a href="/profile">PROFILE</a></li>
-                            <li><a href="shop-single.html">ORDERS</a></li>
-                            {{else}}
-                            <li><a href="/login" >LOGIN</a></li>
-                            <li><a href="/signup">USER REGISTARTION</a></li>
-                            {{/if}}
-                            
-                        </ul>
-                    </li>
-                    <li><a href="/contactus">Contact</a></li>
-                    <li><a href="/cart" ><img src="/images/bag-09.svg"><span class="badge text-warning" id="cartCount">{{cartCount}}</span></a></li>
-                </ul>
-            </nav>
-            <!-- //nav -->
-        </div>
-    </header>
-    <!-- //header -->
-    <!--/banner-->
-  
-    
+                            <label for="drop-2" class="toggle">{{user1.firstName}}<span class="fa fa-angle-down"
+                                    aria-hidden="true"></span> </label>
+                            <a href="">{{user1.firstName}}<span class="fa fa-angle-down" aria-hidden="true"></span></a>
+                            <input type="checkbox" id="drop-2" />
+                            <ul>
+                                {{else}}
+                                <label for="drop-2" class="toggle">LOGIN<span class="fa fa-angle-down"
+                                        aria-hidden="true"></span> </label>
+                                <a href="#">LOGIN<span class="fa fa-angle-down" aria-hidden="true"></span></a>
+                                <input type="checkbox" id="drop-2" />
+                                <ul>
+                                    {{/if}}
+                                    {{#if user1}}
+                                    <li><a href="/logout">LOGOUT</a></li>
+                                    <li><a href="/profile">PROFILE</a></li>
+                                    <li><a href="shop-single.html">ORDERS</a></li>
+                                    {{else}}
+                                    <li><a href="/login">LOGIN</a></li>
+                                    <li><a href="/signup">USER REGISTARTION</a></li>
+                                    {{/if}}
 
-</div>
+                                </ul>
+                        </li>
+                        <li><a href="/contactus">Contact</a></li>
+                        <li><a href="/cart"><img src="/images/bag-09.svg"><span class="badge text-warning"
+                                    id="cartCount">{{cartCount}}</span></a></li>
+                        <li><a href="/wishlist"><i class="fa-regular fa-heart fs-5" style="margin-top: 5.5px"></i><span class="badge text-warning"
+                                    id="wishCount">{{wishlistCount}}</span></a></li>
+                    </ul>
+                </nav>
+                <!-- //nav -->
+            </div>
+        </header>
+        <!-- //header -->
+        <!--/banner-->
+
+
+
+    </div>
 </section>

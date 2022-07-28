@@ -137,6 +137,9 @@ module.exports = {
         }
     },
 
+    // CART SECTION
+
+
     addToCart: (data, userId) => {
 
         let productObject = {
@@ -306,6 +309,40 @@ module.exports = {
         })
 
     },
+
+    checkCouponCode: (couponCode, cartTotal) => {
+        const couponName = couponCode.toUpperCase();
+        console.log(couponCode);
+        return new Promise((resolve, reject) => {
+
+            db.get().collection(collections.COUPONCOLLECTION).findOne({ couponName: couponName }).then((result) => {
+                console.log(result, 'inside coupon');
+                if (result == null) reject({ validCoupon: false })
+
+                else {
+                    let discountValue =parseFloat( cartTotal * result.discount.percentage) ;
+console.log(discountValue);
+                    if (discountValue > result.discount.price) {
+
+                        resolve({
+                            validCoupon: true,
+                            discount: result.discount.price
+                        })
+                    } else {
+                        resolve({
+                            validCoupon: true,
+                            discount: discountValue
+                        })
+                    }
+                }
+            })
+        })
+    },
+
+
+
+    // USER PROFILE SECTION
+
     fetchUserData: (userId) => {
 
         return new Promise((resolve, reject) => {
@@ -418,33 +455,126 @@ module.exports = {
                 })
         })
     },
-    changePassword: (data)=>{
+    changePassword: (data) => {
 
 
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const userInput = data.userInput;
-            const newPassword = await bcrypt.hash(data.newPassword,10);
+            const newPassword = await bcrypt.hash(data.newPassword, 10);
 
             db.get().collection(collections.USERCOLLECTION).updateOne({
-                $or:[
-                    { email: userInput},
-                    { phone: `+91${userInput}`}
+                $or: [
+                    { email: userInput },
+                    { phone: `+91${userInput}` }
                 ]
-            },{
-                $set:{password: newPassword}
+            }, {
+                $set: { password: newPassword }
             })
-            .then((result)=>{
+                .then((result) => {
 
-                console.log(result);
-                resolve()
+                    console.log(result);
+                    resolve()
 
-            })
-            .catch((err)=>{
-                console.log(err);
-                let Error = "something wrong on server"
-                reject(Error);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    let Error = "something wrong on server"
+                    reject(Error);
+                })
+        })
+    },
+
+
+    // WISH LIST SECTION
+
+
+    addToWishlist: (userId, prodId) => {                                                         //doing this in a different way other than add to cart method  ("just to use an lookup in getting products sections")
+        const wishlist = {
+            user: ObjectId(userId),
+            products: [ObjectId(prodId)]
+        }
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user: ObjectId(userId) }).then((result) => {
+                console.log(result, 'wishlist');
+                if (result == null) {
+                    db.get().collection(collections.WISHLISTCOLLECTION).insertOne(wishlist).then((result) => {
+                        console.log(`add new wish ${result}`);
+                        resolve({ success: "Item added to wishlist" })
+                    })
+                } else {
+                    console.log(ObjectId(prodId), result.products, "check prod");
+                    const checkProd = result.products.find(product => product == prodId)
+                    console.log(`checkprodlog ${checkProd}`);
+                    if (checkProd != undefined) {
+                        let error = "product already exist in wishlist";
+                        reject({ err: error })
+                    } else {
+                        db.get().collection(collections.WISHLISTCOLLECTION).updateOne({ user: ObjectId(userId) },
+                            {
+                                $push: { products: ObjectId(prodId) }
+
+                            }).then((result) => {
+                                console.log(result, 'after push');
+                                resolve({ success: "wishlist updated " })
+                            })
+                    }
+
+                }
             })
         })
-    }
+    },
+
+    fetchWishlist: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.WISHLISTCOLLECTION).aggregate([
+                {
+                    $match:
+                        { user: ObjectId(userId) }
+                },
+                {
+                    $lookup: {
+                        from: collections.PRODUCTCOLLECTION,
+                        localField: "products",
+                        foreignField: "_id",
+                        as: "products"
+
+                    }
+                },
+                {
+                    $project: { products: 1 }
+                }
+            ]).toArray().then((result) => {
+                console.log(result[0]);
+                resolve(result[0])
+            })
+        })
+    },
+
+    removeWishlistItem: (wishlistId, prodId) => {
+
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.WISHLISTCOLLECTION).updateOne({ _id: ObjectId(wishlistId) },
+                {
+                    $pull: { products: ObjectId(prodId) }
+                }).then((result) => {
+                    console.log(result, 'wish remoed');
+
+                    resolve({ status: "item Removed from wishlist" })
+
+                }).catch((error) => {
+                    console.log(error, 'wishremove error');
+                    reject({ status: 'opps something went wrong try again later' })
+                })
+        })
+    },
+
+    fetchWishlistCount: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user: ObjectId(userId) }).then((result) => {
+                let count = result.products.length
+                resolve(count)
+            })
+        })
+    },
 
 }

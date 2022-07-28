@@ -214,4 +214,22 @@ router.post('/add-banners', (req, res) => {
     }
 })
 
+router.get('/manage-coupons', async (req,res)=>{
+
+    let coupons = await adminHelpers.fetchCoupons()
+    res.render("admin/manage-coupons",{admin:true, coupons})
+})
+
+router.post('/manage-coupons',(req,res)=>{
+
+    console.log(req.body);
+    adminHelpers.addCoupon(req.body).then((result)=>{
+        console.log(result);
+        res.json(result);
+    })
+    .catch((error)=>{
+        console.log(error,"ctcherr in ");
+        res.json(error);
+    })
+})
 module.exports = router;
