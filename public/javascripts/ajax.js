@@ -151,6 +151,10 @@ function sort(category, type) {
     })
 }
 
+
+//CART FUNCTIONS
+
+
 function addToCart(prodId, prodName, subcategory, category, prodPrice, prodSize) {
     console.log(prodId, prodName, prodPrice, subcategory, category, prodSize)
     // size = [...prodSize]
@@ -210,6 +214,7 @@ function changeQuantity(prodId, cartId, count) {
                 // console.log(result);
 
                 document.getElementById('total').innerHTML = total;
+                $('#grandTotal').html(total)
 
             }
         }
@@ -256,21 +261,23 @@ function checkCouponCode(couponCode,total){
         success: (result)=>{
             console.log(result);
             if(result.validCoupon){
-
+                $('#couponValid').show()
             $('#couponValid').html('<i class="text-success fa-regular fa-circle-check"></i>  Valid Code')
+            setTimeout(()=>{
+                $( "#couponInput" ).attr( "disabled" , "disabled")
+                // document.getElementById('couponValid').disabled = true ;
+                console.log('hi');
+            },3000)
 
-            let discount = $('#discount').html();
-            discount = parseInt(discount) + result.discount ;
-           $("#discount").html(discount) ;
+           $("#discount").html(result.discount) ;
 
-          let total =  $("#grantTotal").html() ;
+          let total =  $("#grandTotal").html() ;
           newTotal = parseInt(total) - result.discount;
-          $('#grantTotal').html(newTotal);
+          $('#grandTotal').html(newTotal);
 
             }
-
-
             else {
+                $('#couponValid').show()
                 $('#couponValid').html('<i class="fa-solid text-danger fa-xmark"></i> Invalid Code')
                 $("#discount").html(0)
                 setTimeout(()=>{
@@ -281,6 +288,32 @@ function checkCouponCode(couponCode,total){
         
     })
 }
+
+function updateSize(cartId,prodId,size){
+    // console.log(cartId); 
+    $.ajax({
+
+        url: "/cart/update-size" ,
+        data:{
+            cartId:cartId,
+            prodId:prodId,
+            selectedSize:size
+        },
+        method:'put',
+        success: (result)=>{
+            if(result.sizeSelected) 
+            $('#size').load(location.href + " #size")
+            else 
+            swal({title:"server busy try again"})
+            setTimeout(()=>{
+                swal.close
+            },4000)
+        }
+    })
+}
+
+
+
 
 // USER- SIDE PROFILE UPDATE
 
@@ -469,7 +502,10 @@ function removeWishlistItem(wishlistId, prodId) {
     })
 }
 
-
+function loadPlaceOrder(){
+    let total = $('#grandTotal').html()
+ location.href='/place-order?total='+total   ;
+}
 
 
 

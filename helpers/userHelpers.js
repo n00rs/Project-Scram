@@ -310,6 +310,35 @@ module.exports = {
 
     },
 
+    updateSize: (data) => {
+        try {
+            console.log(data);
+            const cartId = ObjectId(data.cartId);
+            const selctedsize = data.selectedSize;
+            const prodId = ObjectId(data.prodId);
+
+            return new Promise((resolve, reject) => {
+                db.get().collection(collections.CARTCOLLECTION).updateOne({
+                    _id: cartId,
+                    "products.item": prodId
+                },
+
+                    {
+                        $set: { 'products.$.selectedSize': selctedsize }
+                    }).then((result) => {
+                        console.log(result, ' aftr updar');
+                        resolve({sizeSelected : true})
+                    })
+                    .catch((error) => {
+                        console.error(error, 'update faile');
+                        reject({sizeSelected: false})
+                    })
+            })
+        } catch (error) {
+            console.log(error, 'try err in updatefunction');
+        }
+    },
+
     checkCouponCode: (couponCode, cartTotal) => {
         const couponName = couponCode.toUpperCase();
         console.log(couponCode);
@@ -320,8 +349,8 @@ module.exports = {
                 if (result == null) reject({ validCoupon: false })
 
                 else {
-                    let discountValue =parseFloat( cartTotal * result.discount.percentage) ;
-console.log(discountValue);
+                    let discountValue = parseFloat(cartTotal * result.discount.percentage);
+                    console.log(discountValue);
                     if (discountValue > result.discount.price) {
 
                         resolve({

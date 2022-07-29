@@ -1,0 +1,232 @@
+<style>
+    body {
+        background: -webkit-linear-gradient(left, #000, rgb(228, 228, 19));
+    }
+
+    .emp-profile {
+        padding: 3%;
+        margin-top: 3%;
+        margin-bottom: 3%;
+        border-radius: 0.5rem;
+        background: #fff;
+    }
+</style>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+{{!-- <section>
+    <div class="container emp-profile">
+        <div class="row">
+            <div class="col-md-8">
+
+            </div>
+            <div class="col-md-4 col-12">
+                <div class="container ">
+                    <th class="h5 ">ORDER SUMMARY</th>
+                    {{#each userCart.products}}
+                    <hr>
+
+                    <div class="d-flex align-items-center">
+                        <img src="/images/product_images/{{this.item}}_1.jpg" class="img-fluid rounded-3"
+                            style="width: 50px;" alt="Book">
+                        <div class="flex-column ms-4">
+                            <p class="mb-0">{{this.name}}</p>
+
+                        </div>
+                    </div>
+
+                    {{/each}}
+                </div>
+
+
+
+                <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
+                    <p class="mb-2">Total (tax included)</p>
+                    <p class="mb-2" id="grandTotal">{{total.total}}</p>
+
+                </div>
+
+                <button onclick="loadPlaceOrder()" class="btn btn-success btn-block ">
+                    <div class="d-flex justify-content-between">
+                        <span>Checkout</span>
+                        {{!-- <span>$26.48</span> --}}
+                    </div>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</section> --}}
+
+<section class="h-100 gradient-custom">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center my-4">
+            
+            <div class="col-md-8">
+                <div class="card mb-4" id="addressCard">
+                    {{!-- {{#if phoneVerified}} --}}
+                    <div class="card-header ">
+                        <a style="font-weight: 700;">SELECT ADDRESS</a>
+                    </div>
+                    <div class="ms-auto me-3">
+                        <button class="btn btn-large" type="" id="add-address" name="add-address">
+                            <i class="fa-regular fa-address-card"></i> Add Address </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Single item -->
+                        <div class="row">
+                            <div class="col-lg-12 col-md-6 mb-4 mb-lg-0 ">
+                                
+                                {{#each user1.address}}
+                                <div class="form-check">
+
+                                    <input class="form-check-input" type="radio" name="address" id="address" onclick=""
+                                        value="{{JSON this}}" > <br>
+                                    <div id="qwe">
+                                    <h5 class=" me-1 mb-1 text-black"><strong>{{this.building_name}},
+                                            {{this.street}}</strong></h5>
+                                    <h5 class=" me-1 mb-1 text-black"><strong>{{this.city}}, {{this.country}}</strong>
+                                    </h5>
+
+                                    <h5 class=" me-1 mb-1  text-black"><strong> Zip : </strong> {{this.pincode}}</h5>
+                                    
+                                    <h5 class=" me-1 mb-1  text-black"><strong> Email : </strong> {{../user1.email}}</h5>
+                                    <h5 class=" me-1 mb-0 text-black"><strong>Phone : </strong>{{../user1.phone}} </h5>
+                                    </div>
+
+                                </div>
+                                {{/each}}
+                            </div>
+                        </div>
+                        <hr class="my-4" />
+                        <div class="row">
+                            <div class="col-lg-12 col-md-6 mb-4 mb-lg-0 ">
+
+
+                                <form id="address-form" style="display:none" method="post">
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputAddress1">Flat/House </label>
+
+                                            <input type="text" maxlength="15" class="form-control" id="building_no"
+                                                name="building_no" placeholder="Flat/House no." value="xcross">
+
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputStreet">Street</label>
+                                            <input type="text" maxlength="15" class="form-control" id="street"
+                                                name="street" placeholder="Street" value="baker street">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputCity">City</label>
+                                            <input type="text" maxlength="15" class="form-control" id="city" name="city"
+                                                placeholder="City" value="london">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputCountry">Country</label>
+                                            <input type="text" class="form-control" id="country" name="country"
+                                                placeholder="Country" value="UK">
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputZip">Pin</label>
+                                            <input type="text" class="form-control" maxlength="8" id="pincode"
+                                                name="pincode" placeholder="pin" value="123456">
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="userId" value="{{user1._id}}" id="userId">
+
+                                    <button class="btn btn-large mt-3" type="submit" id="submit">
+                                        <i class="fa-regular fa-address-card"></i> Update Address </button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+
+                        <a style="font-weight: 700;">CHOOSE PAYEMENT OPTION</a>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+
+                            {{#each userCart.products}}
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                <img src="/images/product_images/{{this.item}}_1.jpg" class="img-fluid rounded-3"
+                                    style="width: 50px;" alt="Book">
+                                <span>{{this.name}}</span>
+                            </li>
+                            {{/each}}
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Shipping
+                                <span>Gratis</span>
+                            </li>
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                <div>
+                                    <strong>Total amount</strong>
+                                    <strong>
+                                        <p class="mb-0">(including VAT)</p>
+                                    </strong>
+                                </div>
+                                <span><strong> &#8377; {{grandTotal}}</strong></span>
+                            </li>
+                        </ul>
+                        <div class="list-group">
+                            <a 
+                                class="list-group-item list-group-item-action flex-column align-items-start ">
+                                <div class="d-flex w-100 justify-content-between">
+                                      <input class="form-check-input" type="radio" name="paymentOption" id="paymentOption" value="cod" required>
+                                    <h5 class="mb-1">   <img src="/images/COD.jpg" class="img-fluid rounded-3"
+                            style="width: 90px;" ></h5>
+                                    <small></small>
+                                </div>
+                                <p class="mb-1">Donec id elit non mi porta gravida at eget metus.</p>
+                                <small>PAY ON DELIVERY</small>
+                            </a>
+                               <a 
+                                class="list-group-item list-group-item-action flex-column align-items-start ">
+                                <div class="d-flex w-100 justify-content-between">
+                                      <input class="form-check-input" type="radio" name="paymentOption" id="paymentOption" value= 'razorpay' required>
+                                    <h5 class="mb-1">   <img src="/images/razorpay.svg" class=" bg-black img-fluid rounded-3"
+                            style="width: 90px;" ></h5>
+                                    <small></small>
+                                </div>
+                                <p class="mb-1">Safe payment online. Credit card needed. PayPal account is not necessary.</p>
+                                <small>PAY ON DELIVERY</small>
+                            </a>
+                               <a 
+                                class="list-group-item list-group-item-action flex-column align-items-start ">
+                                <div class="d-flex w-100 justify-content-between">
+                                      <input class="form-check-input" type="radio" name="paymentOption" id="paymentOption" value="stripe" required>
+                                    <h5 class="mb-1">   <img src="/images/stripe.png" class="img-fluid rounded-3"
+                            style="width: 90px;" ></h5>
+                                    <small></small>
+                                </div>
+                                <p class="mb-1">Safe money transfer using your bank account. Safe payment online. Credit card needed. Visa, Maestro, Discover, American Express.</p>
+                                <small>PAY ON DELIVERY</small>
+                            </a>
+                            <input type="hidden" name="orderData" id="orderData" value="{{orderData user1 userCart grandTotal }}">
+                        </div>
+                        <button class="btn btn-success btn-block" onclick="placeOrder()">
+                            <div class="d-flex justify-content-between">
+                                <span>Checkout</span>
+                                {{!-- <span>$26.48</span> --}}
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script src="javascripts/place-order.js"></script>

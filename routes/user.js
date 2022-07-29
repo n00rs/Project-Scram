@@ -1,3 +1,4 @@
+const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
 const twilio = require('../config/twilio');
@@ -155,6 +156,9 @@ router.get('/sort', (req, res) => {
     })
 })
 
+// CART  ROUTES
+
+
 router.get('/add-to-cart', (req, res) => {
     try {
 
@@ -171,7 +175,7 @@ router.get('/add-to-cart', (req, res) => {
 })
 
 router.get('/cart', async (req, res) => {
-    try {
+    
 
         const userId = req.session.user._id;
 
@@ -182,11 +186,6 @@ router.get('/cart', async (req, res) => {
         // console.log(cartItems);
         console.log(total);
         res.render('user/cart', { user: true, cartItems, total })
-
-    }
-    catch (error) {
-        res.status(500, "opps something went wrong")
-    }
 })
 
 router.post('/changeQuantity', (req, res) => {
@@ -224,7 +223,24 @@ router.post('/cart/confirm-coupon',(req,res)=>{
         })
 })
 
+router.put('/cart/update-size',(req,res)=>{
+    console.log(`${req.body.cartId} body ${req.query.cartId} query ${req.params.cartId}`);
+try {
 
+    userHelpers.updateSize(req.body).then((result)=>{
+        console.log(result,'result in then');
+        res.json(result)
+    })
+    .catch((error)=>{
+        console.log(error,'catch in res.');
+        res.json(error)
+    })
+
+} catch (error) {
+    console.log(error,'err in try');
+}
+
+})
 
 router.get('/wishlist', async (req, res) => {
     try {
@@ -355,7 +371,7 @@ router.post('/profile/image-upload', verifyUser, (req, res) => {
 router.post('/profile/add-address', (req, res) => {
     try {
 
-        console.log(req.body);
+        console.log(req.body,'profile');
         userHelpers.addAddress(req.body).then(() => {
             res.json({ status: true })
 
@@ -437,6 +453,26 @@ router.get("/contactus" , (req,res)=>{
 })
 
 
+// ORDER PLACING 
+
+router.get('/place-order', async (req,res)=>{
+try {
+    const userId = req.session.user._id
+    const grandTotal = req.query.total ;
+    const user1 = await userHelpers.fetchUserData(userId)
+    const userCart = await userHelpers.fetchCart(userId)
+
+    console.log(`${userId}user ${grandTotal} cart amount  ${user1} user  ${userCart} cart`);
+
+    res.render('user/place-order',{user:true,grandTotal,user1,userCart})    
+} catch (error) {
+    console.log(error,"try err fetching place order");
+}
+
+
+
+
+})
 
 
 
