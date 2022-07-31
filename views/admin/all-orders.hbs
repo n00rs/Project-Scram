@@ -1,0 +1,123 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" charset="utf8"
+    src=" https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf8"
+    src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+
+<section>
+    <div class=" container-fluid">
+        <div class="row ">
+            <div class="col-md-12 col-12">
+                <div>
+                    <div class="all-prod" style=" overflow-x:auto">
+                        <h3 class="tittle text-white">ALL PRODUCTS</h3>
+                        <table class="table" id="myTable">
+                            <thead>
+                                <tr class="text-warning">
+                                    <th scope="col">#</th>
+                                    <th scope="col">order Id</th>
+                                    <th scope="col">User Id</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col"> Payment Method</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Order Confirm</th>
+                                    <th scope="col">Order Shipped</th>
+                                    <th scope="col">Cancel</th>
+                                    <th scope="col">Delivered</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each orders}}
+                                <tr class="text-white">
+                                    <th scope="text-warning">{{count @index}}</th>
+
+                                    <td><a href="/admin/see">{{this._id}}</a></td>
+
+                                    <td>{{this.address.email}}</td>
+
+                                    <td>
+                                        <div class="col-md-8">
+                                            {{expandAddress this.address}}
+                                        </div>
+                                    </td>
+
+                                    <td>{{this.date}}</td>
+
+                                    <td>{{this.paymentMethod}}</td>
+
+                                    <td>&#8377; {{this.orderData.amount}}</td>
+
+                                    {{#if this.confirmed }}
+                                    <td class="">
+                                        <i class="fa-regular fa-circle-check text-success "></i>
+                                        Order Confirmed
+                                    </td>
+                                    {{else}}
+
+                                    <td>
+                                        <button class="btn text-white" id="confirmOrder" value="confirmed" onclick="orderStatus(this.value,'{{this._id}}')">
+                                            <i class="fa-regular fa-circle-check text-success "></i>
+                                            Confirm
+                                        </button>
+                                    </td>
+
+                                    {{/if}}
+
+                                    {{#if this.shipped}}
+                                    <td class="">
+                                        <i class="fa-solid fa-truck-arrow-right text-success"></i>
+                                        Order Shipped
+                                    </td>
+                                    {{else}}
+                                    <td>
+                                        <button class="btn text-white" id="updateShipping" value="shipped" onclick="orderStatus(this.value,'{{this._id}}')" >
+                                            <i class="fa-solid fa-truck-arrow-right text-success"></i>
+                                            Dispatch
+                                        </button>
+                                    </td>
+                                    {{/if}}
+                                    <td> <button class="btn text-white" id="cancelOrder" value="cancel" onclick="orderStatus(this.value,'{{this._id}}')">
+                                            <i class="fa-solid fa-ban text-danger"></i>
+                                            Cancel
+                                        </button>
+                                    </td>
+                                    
+                                        {{#if delivered}}
+                                    <td class="">
+                                        <i class="fa-solid fa-truck-arrow-right text-success"></i> Delivered
+                                       
+                                    </td>
+                                    {{else}}
+                                    <td>
+                                        <button class="btn text-info" value="delivered" id="deliveryUpdate" onclick="orderStatus(this.value,'{{this._id}}')" >
+                                            Update
+                                        </button>
+                                    </td>
+                                    {{/if}}
+                                    
+
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script src="/javascripts/ajax.js"> </script>

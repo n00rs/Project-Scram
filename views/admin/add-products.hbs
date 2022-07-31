@@ -3,7 +3,7 @@
     function makeDisable() {
         var x = document.getElementById("sub-category2")
         var y = document.getElementById("sub-category1")
-        x.hidden = true 
+        x.hidden = true
         x.value = null
         y.hidden = false
 
@@ -11,7 +11,7 @@
     function makeEnable() {
         var x = document.getElementById("sub-category2")
         var y = document.getElementById("sub-category1")
-        y.hidden = true 
+        y.hidden = true
         y.value = null
         x.hidden = false
     }
@@ -31,15 +31,14 @@
                     <div class="col-md-8">
                         <div class="mb-3">
                             <input type="radio" name="category" id="helmet" class="form-check-input" value="helmet"
-                                onclick="makeDisable()" checked>
+                                onclick="makeDisable()" >
 
                             <label class="form-check-label">HELMET</label>
                             <label for="">CATEGORY</label>
 
-                            <select id="sub-category1" name="subcategory" class="form-select"
-                                placeholder="for-helmets">
+                            <select id="sub-category1" name="subcategory" class="form-select" placeholder="for-helmets"
+                                >
                                 <label for="">choose</label>
-                                <option value="none"> Choose...</option>
                                 <option value="racing">RACING</option>
                                 <option value="sport">SPORT</option>
                                 <option value="touring">TOURING</option>
@@ -49,12 +48,10 @@
 
                         <div class=" mb-3">
                             <input type="radio" name="category" id="accessories" class="form-check-input"
-                                value="accessories" onclick= "makeEnable()" notchecked>
+                                value="accessories" onclick="makeEnable()" notchecked>
                             <label class="form-check-label">ACCESSORIES</label>
                             <label for="">CATEGORY</label>
-                            <select id="sub-category2" name="subcategory" class="form-select"
-                                placeholder="for-helmets">
-                                <option value="none"> Choose...</option>
+                            <select id="sub-category2" name="subcategory" class="form-select" placeholder="for-helmets">
                                 <option value="visors">VISORS</option>
                                 <option value="communications">COMMUNICATION</option>
                                 <option value="pads">PADS</option>
@@ -63,82 +60,139 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" name="model" id="model" placeholder="">
+                            <input type="text" class="form-control" name="model" id="model" placeholder="" minlength="2" maxlength="15" required>
                             <label for="">MODEL*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" name="modelname" id="" placeholder="">
+                            <input type="text" class="form-control" name="modelname" id="" minlength="2" maxlength="15" placeholder="" required>
                             <label for="">NAME*</label>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="small" value="S"
+                                            id="small" onclick="$('#smallInput').toggle().val('')">
+                                        <label class="form-check-label" for="">
+                                            SMALL
+                                        </label>
 
-                            <div class="form-check col-md-6">
-                                <input class="form-check-input" type="checkbox" name="small" value="S"
-                                    id="" >
-                                <label class="form-check-label" for="">
-                                    SMALL
-                                </label>
-                            </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1" aria-label="Text input with checkbox"
+                                            name="small" id="smallInput" placeholder="no.of Stocks"
+                                            style="display:none ;">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="medium" value="M"
+                                            id="medium" onclick="$('#mediumInput').toggle().val('')">
+                                        <label class="form-check-label" for="">
+                                            MEDIUM
+                                        </label>
 
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="medium" value="M"
-                                    id="" >
-                                <label class="form-check-label" for="">
-                                    MEDIUM
-                                </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1" aria-label="Text input with checkbox"
+                                            name="medium" id="mediumInput" placeholder="no.of Stocks"
+                                            style="display:none ;">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="large" value="L"
+                                            id="large" onclick="$('#largeInput').toggle().val('') ">
+                                        <label class="form-check-label" for="">
+                                            LARGE
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1" aria-label="Text input with checkbox"
+                                            name="large" id="largeInput" placeholder="no.of Stocks"
+                                            style="display:none ;">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-check col-md-6">
-                                <input class="form-check-input" type="checkbox" name="large" value="L"
-                                    id="" >
-                                <label class="form-check-label" for="">
-                                    LARGE
-                                </label>
+                           <div class="col-md-6">
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="extra_large" value="XL"
+                                            id="extra_large" onclick="$('#extra_largeInput').toggle().val()" >
+                                        <label class="form-check-label" for="">
+                                            XL
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1" aria-label="Text input with checkbox"
+                                            name="extra_large" id="extra_largeInput" placeholder="no.of Stocks"
+                                            style="display:none ;">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="extra_extra_large" value="XXL"
+                                            id="extra_extra_large" onclick="$('#extra_extra_largeInput').toggle().val('')" >
+                                        <label class="form-check-label" for="">
+                                            XXL
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1" aria-label="Text input with checkbox"
+                                            name="extra_extra_large" id="extra_extra_largeInput" placeholder="no.of Stocks"
+                                            style="display:none ;">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="none" value="NONE"
+                                            id="none" onclick="$('#noneInput').toggle().val()" >
+                                        <label class="form-check-label" for="">
+                                            NONE
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1" aria-label="Text input with checkbox"
+                                            name="none" id="noneInput" placeholder="no.of Stocks"
+                                            style="display:none ;">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="extra_extra_large" value="XXL"
-                                    id="flexcheckboxDefault2" >
-                                <label class="form-check-label" for="flexcheckboxDefault2">
-                                    EXTRA EXTRA LARGE
-                                </label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="extra_large" value="XL"
-                                    id="flexcheckboxDefault2" >
-                                <label class="form-check-label" for="flexcheckboxDefault2">
-                                    EXTRA LARGE
-                                </label>
-                            </div>
+                        </div>
+
+
 
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="price" name="price">
+                            <input type="number" class="form-control" id="price" name="price" max="150000" required>
                             <label for="">PRICE*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="stock" name="stock">
-                            <label for="">STOCK*</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" name="description"></textarea>
+                            <textarea class="form-control" name="description" required></textarea>
                             <label for="">DESCRIPTION*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <textarea class="form-control" name="features"></textarea>
+                            <textarea class="form-control" name="features" required></textarea>
                             <label for="">FEATURES*</label>
                         </div>
 
                         <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image1" name="image1"required >
-                            <label class="custom-file-label" for="customFile" >Choose file</label>
-                        </div>
-                        <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image2" name="image2" >
-                            <label class="custom-file-label" for="customFile" >Choose file</label>
-                        </div>
-                        <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image3" name="image3" >
+                            <input type="file" class="custom-file-input" id="image1" name="image1">
                             <label class="custom-file-label" for="customFile">Choose file</label>
                         </div>
                         <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image4" name="image4" >
+                            <input type="file" class="custom-file-input" id="image2" name="image2">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="image3" name="image3">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="image4" name="image4">
                             <label class="custom-file-label" for="customFile">Choose file</label>
                         </div>
                         <button class="btn active mb-3" type="submit">

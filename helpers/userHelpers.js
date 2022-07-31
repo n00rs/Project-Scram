@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt');
+const { Db } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
-const db = require('../config/mongoConfig')
+const db = require('../config/mongoConfig');
+const { orderData } = require('./handlebarHelpers');
 
 module.exports = {
     userSignup: (data) => {
@@ -213,12 +215,15 @@ module.exports = {
         console.log(userId);
         return new Promise((resolve, reject) => {
             db.get().collection(collections.CARTCOLLECTION).aggregate([
+
                 { $match: { user: ObjectId(userId) } },
+
                 { $project: { quantity: { $sum: "$products.quantity" } } }
+
             ]).toArray().then((result) => {
-                console.log(result[0]);
-                // count = resolve[0].quantity 
-                resolve(result[0].quantity)
+                console.log(result);
+                if (result[0] == null) resolve(0);
+                else resolve(result[0].quantity)
             })
 
         })
@@ -327,11 +332,11 @@ module.exports = {
                         $set: { 'products.$.selectedSize': selctedsize }
                     }).then((result) => {
                         console.log(result, ' aftr updar');
-                        resolve({sizeSelected : true})
+                        resolve({ sizeSelected: true })
                     })
                     .catch((error) => {
                         console.error(error, 'update faile');
-                        reject({sizeSelected: false})
+                        reject({ sizeSelected: false })
                     })
             })
         } catch (error) {
@@ -401,7 +406,7 @@ module.exports = {
     addAddress: (data) => {
         const userId = ObjectId(data.userId);
         const address = {
-            _id: ObjectId(),
+            // _id: ObjectId(),
             building_name: data.building_name,
             street: data.street,
             city: data.city,
@@ -605,5 +610,42 @@ module.exports = {
             })
         })
     },
+
+    newOrder: (data, user) => {
+        const address = JSON.parse(data.address);
+        const orderData = JSON.parse(data.orderDetails);
+        const userId = ObjectId(user);
+        const orderObj = {
+            user: userId,
+            address: address,
+            orderData: orderData,
+            paymentMethod: data.paymentMethod,
+            status: 'order-placed',
+            date: new Date().toLocaleString(),
+        }
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.ORDERCOLLECTION).insertOne(orderObj).then((result) => {
+                console.log(result, 'new order');
+                db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
+
+                resolve({ orderPlaced: true })
+                
+
+            })
+                .catch((error) => {
+                    console.log(error, 'new order');
+                    reject({ orderPlaced: false })
+                })
+        })
+    },
+
+    fetchOders: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.ORDERCOLLECTION).find({user: ObjectId(userId)}).toArray().then((result)=>{
+                // console.log(result,'order');
+                resolve(result)
+            })
+        })
+    }
 
 }

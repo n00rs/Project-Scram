@@ -43,9 +43,31 @@ $(document).ready(function () {
 })
 
 function placeOrder() {
-  let address =   $('#address:checked').val() ;
-//   let result = JSON.stringify(address)
-let orderData = $('#orderData').val()
-let payment = $("#paymentOption:checked").val();
-  console.log(payment);
+
+    let address = $('#address:checked').val();
+    let orderData = $('#orderData').val()
+    let payment = $("#paymentOption:checked").val();
+
+    console.log(orderData);
+    $.ajax({
+        url: '/place-order',
+        data: {
+            address: address,
+            orderDetails: orderData,
+            paymentMethod: payment
+        },
+        method: 'post',
+        success: (result) => {
+            if (result.orderPlaced) {
+               location.href='/order-confirmation'
+            }else{
+                swal({
+                    title:"opps something went wrong",
+                    icon: 'error'
+                })
+            }
+        }
+    })
 }
+
+

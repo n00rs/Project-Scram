@@ -2,16 +2,18 @@
 <link rel="stylesheet" href="/stylesheets/user-profile.css">
 
 <section class="">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="/">Home</a>
-        </li>
-        <li class="breadcrumb-item active">Cart</li>
-    </ol>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item active">Cart</li>
+  </ol>
 
 
-<div class="container emp-profile">
+  <div class="container emp-profile">
+
     <div class="row d-flex r  h-100">
+      {{#if total}}
       <div class="col-12 col-md-7">
 
         <div class="table-responsive">
@@ -19,9 +21,9 @@
             <thead>
               <tr>
                 <th class="h5">SHOPPING CART</th>
-
               </tr>
             </thead>
+
             <tbody>
               {{#each cartItems.products}}
               <tr>
@@ -66,7 +68,7 @@
       </div>
 
       <div class="col-12 col-md-4 m5-1 ms-5">
- 
+
         <th class="h5 ">ORDER SUMMARY</th>
         {{#each cartItems.products}}
         <hr>
@@ -78,15 +80,16 @@
               <p class="mb-0">{{this.name}}</p>
               <p class="mb-0">size:
 
-                <select name="size" id="size" onchange="updateSize('{{../cartItems._id}}','{{this.item}}',this.value)" required>
-                  
+                <select name="size" id="size" onchange="updateSize('{{../cartItems._id}}','{{this.item}}',this.value)"
+                  required>
+
                   <option value="{{choosenSize selectedSize}}">{{choosenSize selectedSize}}</option>
-                  
+
                   {{#each this.size}}
 
                   <option value="{{this}}">{{this}}</option>
                   {{/each}}
-                  
+
                 </select>
               </p>
               <p class="mb-0">quantity: {{this.quantity}}</p>
@@ -96,10 +99,11 @@
         </tr>
         {{/each}}
         <div class="form-floating mb-3 p-5">
-               <input type="text" class="form-control" id="couponInput"  onchange="checkCouponCode(this.value,'{{total.total}}')">
-               <label for="">Apply Coupon</label>
-               <span class="" id="couponValid"></span>
-            </div>
+          <input type="text" class="form-control" id="couponInput"
+            onchange="checkCouponCode(this.value,'{{total.total}}')">
+          <label for="">Apply Coupon</label>
+          <span class="" id="couponValid"></span>
+        </div>
         <div class="d-flex justify-content-between" style="font-weight: 500;">
           <p class="mb-2">Subtotal</p>
           <p class="mb-2" id="">&#8377; <span id="total"> {{total.total}}</span></p>
@@ -115,16 +119,37 @@
         <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
           <p class="mb-2">Total (tax included)</p>
           <p class="mb-2" id="grandTotal">{{total.total}}</p>
-          
+
         </div>
 
         <button onclick="loadPlaceOrder()" class="btn btn-success btn-block ">
-          <div class="d-flex justify-content-between"  >
+          <div class="d-flex justify-content-between">
             <span>Checkout</span>
             {{!-- <span>$26.48</span> --}}
           </div>
         </button>
       </div>
+
+      {{else}}
+      <div class="col-md-12">
+        <div class="row">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="h5">CART IS EMPTY </th>
+              </tr>
+            </thead>
+          </table>
+          <div class="col-md-6">
+            <a href="/" class="custom-btn">HOME <i class="fa-solid fa-home"></i></a>
+          </div>
+          <div class="col-md-6">
+            <a href="/wishlist" class="custom-btn">GO TO WISH LIST <i class="fa-solid fa-heart"></i></a>
+
+          </div>
+        </div>
+
+        {{/if}}
+      </div>
     </div>
-  </div>
 </section>

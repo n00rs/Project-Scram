@@ -589,6 +589,6 @@ button.btn.active {
   /* SWAL  */
 
   .all-prod{
-    background-image: url('/images/login.png');
+    background: #000;
   }
 

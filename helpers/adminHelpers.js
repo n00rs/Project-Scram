@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const db = require('../config/mongoConfig');
 const collection = require('../config/collections');
+const { orderData } = require('./handlebarHelpers');
 // const collection = require('../config/collection');
 const objectId = require('mongodb').ObjectId
 
@@ -116,23 +117,32 @@ module.exports = {
     },
 
     addProduct: (data) => {
+
+        let sizeData = [data.small, data.medium,
+        data.large, data.extra_extra_large,
+        data.extra_large, data.none] ; 
+
+        sizeData = sizeData.filter(Boolean)                            //checking for any undefined values & coverting into array
+
+        let size = Object.fromEntries(sizeData);
+
         let product = {
             "category": data.category,
             "subcategory": data.subcategory,
             "model": data.model,
             "modelDetails": {
                 "name": data.modelname,
-                "size": [data.small, data.medium, data.large, data.extra_extra_large, data.extra_large],
+                "size": size,
                 "price": parseInt(data.price),
                 "description": data.description,
                 "features": data.features,
-                "stock": parseInt(data.stock)
             }
-        }
+        };
+
         return new Promise((resolve, reject) => {
             db.get().collection(collection.PRODUCTCOLLECTION).insertOne(product).then((result) => {
-                console.log(result);
-                resolve(result.insertedId)
+                // console.log(result);
+                resolve(result.insertedId) ;
             })
         })
     },
@@ -192,9 +202,9 @@ module.exports = {
 
     },
 
-    fetchCoupons: ()=>{
+    fetchCoupons: () => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.COUPONCOLLECTION).find().toArray().then((result)=>{
+            db.get().collection(collection.COUPONCOLLECTION).find().toArray().then((result) => {
                 console.log(result);
                 resolve(result);
             })
@@ -211,7 +221,7 @@ module.exports = {
 
                 percentage: parseFloat(data.discountPercent / 100)
             },
-            couponExpires: new Date(new Date().getTime() + (oneDay * parseInt(data.expiry))) 
+            couponExpires: new Date(new Date().getTime() + (oneDay * parseInt(data.expiry)))
 
             // couponExpires: new Date(new Date().getTime() + 5000) 
         }
@@ -219,7 +229,7 @@ module.exports = {
         console.log(coupon, 'adminhelper');
         return new Promise((resolve, reject) => {
             db.get().collection(collection.COUPONCOLLECTION).find().toArray().then((result) => {
-                console.log(result,"check");
+                console.log(result, "check");
                 if (result[0] == null) {
 
                     db.get().collection(collection.COUPONCOLLECTION).createIndex({ "couponName": 1 }, { unique: true })
@@ -227,25 +237,86 @@ module.exports = {
                     db.get().collection(collection.COUPONCOLLECTION).createIndex({ "couponExpires": 1 }, { expireAfterSeconds: 0 })
 
                     db.get().collection(collection.COUPONCOLLECTION).insertOne(coupon).then((result) => {
-                        console.log(result,"after insertion");
-                        resolve({couponAdded:true})
+                        console.log(result, "after insertion");
+                        resolve({ couponAdded: true })
                     })
-                }else {
-                    db.get().collection(collection.COUPONCOLLECTION).insertOne(coupon).then((result)=>{
-                        console.log(result,"second insertion");
-                        resolve({couponAdded:true})
+                } else {
+                    db.get().collection(collection.COUPONCOLLECTION).insertOne(coupon).then((result) => {
+                        console.log(result, "second insertion");
+                        resolve({ couponAdded: true })
                     })
-                    .catch((err)=>{
-                        console.log(err,"second err");
-                        reject({couponAdded:false});
-                    })
+                        .catch((err) => {
+                            console.log(err, "second err");
+                            reject({ couponAdded: false });
+                        })
                 }
             })
-
-
         })
+    },
 
+    fetchAllOrders: () => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.ORDERCOLLECTION).find().toArray().then((result) => {
+                console.log("al orders admin ", result);
+                resolve(result)
+            })
+        })
+    },
+
+    updateOrderStatus: (data) => {
+        const orderId = objectId(data.orderId);
+        var orderUpdate = data.status;
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.ORDERCOLLECTION).updateOne({ _id: orderId }, {
+                $set: {
+                    status: orderUpdate
+                }
+            })
+                .then((result) => {
+                    console.log(result, 'statusupdate');
+                    resolve({ statusUpdate: true })
+                    if (orderUpdate == 'shipped') {
+                        db.get().collection(collection.ORDERCOLLECTION).aggregate([
+                            { $match: { _id: orderId } },
+                            { $unwind: "$orderData.order" },
+                            {
+                                $project:
+                                {
+                                    item: { $toObjectId: "$orderData.order.item" },
+                                    quantity: "$orderData.order.quantity"
+                                }
+                            },
+                            {
+                                $lookup: {
+                                    from: collection.PRODUCTCOLLECTION,
+                                    localField: "item",
+                                    foreignField: "_id",
+                                    as: "orders"
+                                }
+                            },
+                            { $unwind: "$orders" },
+
+                            { $project: { product: "$orders._id", quantity: 1, stock: "$orders.modelDetails.stock" } },
+
+                            { $project: { product: 1, stockLeft: { $subtract: ["$stock", "$quantity"] } } }
+
+                        ]).toArray()
+                            .then((result) => {
+                                console.log(result, 'afteraggergation');
+                            })
+                    }
+                })
+                .catch((error) => {
+                    console.error(error, 'sstaus update');
+                    reject({ statusUpdate: false })
+                })
+        })
     }
+
+
+
+
+
 
 
 

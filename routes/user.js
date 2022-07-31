@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
@@ -14,13 +15,13 @@ const verifyUser = (req, res, next) => {
 router.get('/', async (req, res) => {
     let user1 = req.session.user;
     let cartCount = null;
-    let wishlistCount = null ;
+    let wishlistCount = null;
     if (user1) {
-        cartCount = await userHelpers.fetchCartCount(user1._id) ;
+        cartCount = await userHelpers.fetchCartCount(user1._id);
         wishlistCount = await userHelpers.fetchWishlistCount(user1._id)
     }
     console.log(cartCount);
-    res.render("user/landing-page", { user: true, cartCount, user1 ,wishlistCount });
+    res.render("user/landing-page", { user: true, cartCount, user1, wishlistCount });
 })
 
 
@@ -90,11 +91,11 @@ router.get('/category/:sub', async (req, res) => {
     try {
         let user1 = req.session.user;
         let cartCount = null;
-        let wishlistCount =null ;
+        let wishlistCount = null;
         if (user1) {
             cartCount = await userHelpers.fetchCartCount(user1._id);
 
-             wishlistCount = await userHelpers.fetchWishlistCount(user1._id) ;
+            wishlistCount = await userHelpers.fetchWishlistCount(user1._id);
 
         }
         let category = req.params.sub
@@ -103,7 +104,7 @@ router.get('/category/:sub', async (req, res) => {
 
         let product = await userHelpers.fetchCategory(category);
 
-        res.render('user/category', { user: true, user1, category, cartCount, product, wishlistCount});
+        res.render('user/category', { user: true, user1, category, cartCount, product, wishlistCount });
 
         // res.json({result:true})
         // if(subcategory == 'racing')          res.render('user/helmet-racing',{user:true, helmetSubcategory });
@@ -174,18 +175,20 @@ router.get('/add-to-cart', (req, res) => {
 
 })
 
-router.get('/cart', async (req, res) => {
-    
+router.get('/cart', verifyUser, async (req, res) => {
 
-        const userId = req.session.user._id;
 
-        let cartItems = await userHelpers.fetchCart(userId);
+    const userId = req.session.user._id;
 
-        let total = await userHelpers.totalAmount(cartItems._id)
+    let cartItems = await userHelpers.fetchCart(userId);
 
-        // console.log(cartItems);
-        console.log(total);
-        res.render('user/cart', { user: true, cartItems, total })
+    if (cartItems == null) var total = 0
+
+    else total = await userHelpers.totalAmount(cartItems._id)
+
+    // console.log(cartItems);
+    console.log(total);
+    res.render('user/cart', { user: true, cartItems, total })
 })
 
 router.post('/changeQuantity', (req, res) => {
@@ -208,48 +211,48 @@ router.get("/remove-cart-item/:cartId/:prodId", (req, res) => {
 
 })
 
-router.post('/cart/confirm-coupon',(req,res)=>{
+router.post('/cart/confirm-coupon', (req, res) => {
 
-        let couponCode =  req.body.code ;
-        let cartTotal = req.body.cartTotal;
+    let couponCode = req.body.code;
+    let cartTotal = req.body.cartTotal;
 
-        userHelpers.checkCouponCode(couponCode,cartTotal).then((result)=>{
-          console.log(result,'res.json');
-          res.json(result)
-        })
-        .catch((error)=>{
+    userHelpers.checkCouponCode(couponCode, cartTotal).then((result) => {
+        console.log(result, 'res.json');
+        res.json(result)
+    })
+        .catch((error) => {
             console.log(error);
             res.json(error)
         })
 })
 
-router.put('/cart/update-size',(req,res)=>{
+router.put('/cart/update-size', (req, res) => {
     console.log(`${req.body.cartId} body ${req.query.cartId} query ${req.params.cartId}`);
-try {
+    try {
 
-    userHelpers.updateSize(req.body).then((result)=>{
-        console.log(result,'result in then');
-        res.json(result)
-    })
-    .catch((error)=>{
-        console.log(error,'catch in res.');
-        res.json(error)
-    })
+        userHelpers.updateSize(req.body).then((result) => {
+            console.log(result, 'result in then');
+            res.json(result)
+        })
+            .catch((error) => {
+                console.log(error, 'catch in res.');
+                res.json(error)
+            })
 
-} catch (error) {
-    console.log(error,'err in try');
-}
+    } catch (error) {
+        console.log(error, 'err in try');
+    }
 
 })
 
 router.get('/wishlist', async (req, res) => {
     try {
-        let userId = req.session.user._id ;
-        let wishlistCount = await userHelpers.fetchWishlistCount(userId) ;
-        let wishlist =   await userHelpers.fetchWishlist(userId)
+        let userId = req.session.user._id;
+        let wishlistCount = await userHelpers.fetchWishlistCount(userId);
+        let wishlist = await userHelpers.fetchWishlist(userId)
 
-        res.render('user/wishlist', { user: true, wishlist, wishlistCount})
-        
+        res.render('user/wishlist', { user: true, wishlist, wishlistCount })
+
     } catch (error) {
         console.log(error);
     }
@@ -260,19 +263,19 @@ router.post('/add-to-wishlist', (req, res) => {
     try {
         const userId = req.session.user._id;
         const prodId = req.body.productId;
-        userHelpers.addToWishlist( userId, prodId ).then((result) => {
-            console.log(result,'user.js');
+        userHelpers.addToWishlist(userId, prodId).then((result) => {
+            console.log(result, 'user.js');
             res.json(result)
         })
-        .catch((error)=>{
-            res.json(error)
-        })
+            .catch((error) => {
+                res.json(error)
+            })
     } catch (error) {
         console.log(error);
     }
 })
 
-router.delete('/wishlist/remove-item/:wid/:pid', (req,res)=>{                                   //wid & pid is sent from ajax
+router.delete('/wishlist/remove-item/:wid/:pid', (req, res) => {                                   //wid & pid is sent from ajax
 
     // console.log(`query${req.query},body${req.body}, param${req.params}` );
 
@@ -280,12 +283,12 @@ router.delete('/wishlist/remove-item/:wid/:pid', (req,res)=>{                   
         const wishlistId = req.params.wid
         const prodId = req.params.pid
 
-        userHelpers.removeWishlistItem(wishlistId,prodId).then((result)=>{ 
+        userHelpers.removeWishlistItem(wishlistId, prodId).then((result) => {
             res.json(result)
         })
-        .catch((error)=>{
-            res.json(error)
-        })
+            .catch((error) => {
+                res.json(error)
+            })
 
     } catch (error) {
         console.log(error);
@@ -371,12 +374,11 @@ router.post('/profile/image-upload', verifyUser, (req, res) => {
 router.post('/profile/add-address', (req, res) => {
     try {
 
-        console.log(req.body,'profile');
+        console.log(req.body, 'profile');
         userHelpers.addAddress(req.body).then(() => {
             res.json({ status: true })
 
         })
-
     } catch (error) {
         console.log(error);
     }
@@ -448,32 +450,77 @@ router.post("/change-password", (req, res) => {
     }
 })
 
-router.get("/contactus" , (req,res)=>{
-    res.render('user/contactus',{user:true,})
+router.get("/contactus", (req, res) => {
+    res.render('user/contactus', { user: true, })
 })
 
 
 // ORDER PLACING 
 
-router.get('/place-order', async (req,res)=>{
-try {
-    const userId = req.session.user._id
-    const grandTotal = req.query.total ;
-    const user1 = await userHelpers.fetchUserData(userId)
-    const userCart = await userHelpers.fetchCart(userId)
+router.get('/place-order', async (req, res) => {
+    try {
+        const userId = req.session.user._id
+        const grandTotal = req.query.total;
+        const user1 = await userHelpers.fetchUserData(userId)
+        const userCart = await userHelpers.fetchCart(userId)
 
-    console.log(`${userId}user ${grandTotal} cart amount  ${user1} user  ${userCart} cart`);
+        console.log(`${userId}user ${grandTotal} cart amount  ${user1} user  ${userCart} cart`);
 
-    res.render('user/place-order',{user:true,grandTotal,user1,userCart})    
-} catch (error) {
-    console.log(error,"try err fetching place order");
-}
+        res.render('user/place-order', { user: true, grandTotal, user1, userCart })
+    } catch (error) {
+        console.log(error, "try err fetching place order");
+    }
 
 
 
 
 })
 
+router.post('/place-order', (req, res) => {
+    try {
 
+        const userId = req.session.user._id;
+        const paymentMethod = req.body.paymentMethod;
+        console.log(paymentMethod);                                                           //using switch just for a change
+        switch (paymentMethod) {
+            case 'cod':
+                userHelpers.newOrder(req.body, userId).then((result) => {
+                    res.json(result)
+                })
+                    .catch((error) => {
+                        console.error(error);
+                        res.json(error)
+                    })
 
+                break;
+
+            case 'stripe':
+                console.log("stripe");
+                break;
+
+            case 'razorpay':
+                console.log('razorpay');
+                break;
+            default:
+                console.log('switch failed');
+                break;
+        }
+
+    } catch (error) {
+
+    }
+})
+
+router.get('/order-confirmation',(req,res)=>{
+    res.render('user/order-confirmation',{user:true})
+})
+router.get('/orders', verifyUser, async (req,res)=>{
+    const userId = req.session.user._id;
+    const orders = await userHelpers.fetchOders(userId) ;
+    console.log(orders,'insid orders')
+    res.render('user/orders',{user:true,orders})
+})
+router.get("/view-order-details/:id",(req,res)=>{
+    let orderItems = 'asd'
+})
 module.exports = router;

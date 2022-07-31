@@ -507,7 +507,32 @@ function loadPlaceOrder(){
  location.href='/place-order?total='+total   ;
 }
 
+function orderStatus(value,orderId){
+    console.log(value,orderId);
+    $.ajax({
+        url:'/admin/update-order-status',
+    data:{
+        orderId : orderId,
+        status: value,
+    },
+method:'put',
+success: (result)=>{
+    if(result.statusUpdate){
 
+        location.reload()
+       
+        }else{
+            swal({title: "oops something went wrong"})
+            setTimeout(()=>{
+                location.reload()
+                swal.close()
+            },5000)
+        }
+    }
+   
+
+})
+}
 
 
 

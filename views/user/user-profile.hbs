@@ -133,6 +133,7 @@
                         <div class="col-md-6">
                             <p>{{user1.phone}} <i class="text-success fa-regular fa-circle-check"></i> </p>
                         </div>
+                        
                         {{/if}}
 
 
@@ -141,6 +142,7 @@
                             {{#if twilioError}}
                             <h6 class="text-danger">{{twilioError}}</h6>
                             {{/if}}
+                            
                             <form action="/verifyPhone" id="verifyPhone" style="display:none ;" method="post">
                                 <div class="row ">
                                     <div class="col-sm">
