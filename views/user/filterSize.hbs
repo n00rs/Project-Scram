@@ -63,13 +63,11 @@
             <!-- // preference -->
 
             <!-- sizes -->
-            <div class="left-side my-4" style={{sizeToggle category}}>
+            <div class="left-side my-4" {{sizeToggle category}}>
                 <a class="btn active ms-3" data-bs-toggle="collapse" href="#sizecollapse" role="button"
                     aria-expanded="true" aria-controls="">
                     SIZES
                 </a>
-
-
                 <div class="collapse" id="sizecollapse">
                     <div class="card card-body">
                         <ul class="w3layouts-box-list" >
@@ -121,7 +119,7 @@
                     </div>
                 </div>
 
-                <span id=" product"> {{#each product}} </span>
+                <span id=" product"> {{#each products}} </span>
                 <div class="col-md-3 col-6 col-sm-4 product-men p-1">
                     <a href="/view-product/{{this._id}}">
                         <div class="product-shoe-info shoe ">

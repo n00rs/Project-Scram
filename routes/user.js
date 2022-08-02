@@ -106,14 +106,8 @@ router.get('/category/:sub', async (req, res) => {
 
         res.render('user/category', { user: true, user1, category, cartCount, product, wishlistCount });
 
-        // res.json({result:true})
-        // if(subcategory == 'racing')          res.render('user/helmet-racing',{user:true, helmetSubcategory });
-        // else if(subcategory == 'sport')      res.render('user/helmet-sport',{user:true,  helmetSubcategory });
-        // else if(subcategory == 'touring')    res.render('user/helmet-touring',{user:true, helmetSubcategory });
-        // else if(subcategory == 'off-road')   res.render('user/helmet-off-road',{user:true, helmetSubcategory });
-
     } catch (error) {
-        console.log(error);
+        console.log(error,'error in loading category');
     }
 
 })
@@ -156,6 +150,28 @@ router.get('/sort', (req, res) => {
 
     })
 })
+
+router.get('/filter-size', async(req,res)=>{
+try {
+    console.log(req.query,'sort size');
+
+    let    category =  req.query.category ;
+    let filterSize = req.query.size ;
+   console.log(filterSize);
+         let products = await userHelpers.fetchCategory(category);
+         products = products.filter(x=> x.modelDetails.size.some(y =>  y.size == filterSize  ))
+    
+         console.log(products,'products',category,'category ',filterSize,'value','last');
+    
+    res.render('user/filterSize',{user:true, products, category})
+    
+} catch (error) {
+    console.log(error,"errrsort in");
+
+}
+
+})
+
 
 // CART  ROUTES
 

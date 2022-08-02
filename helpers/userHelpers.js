@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
-const { Db } = require('mongodb');
+
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig');
-const { orderData } = require('./handlebarHelpers');
+// const { orderData } = require('./handlebarHelpers');
 
 module.exports = {
     userSignup: (data) => {
@@ -138,7 +138,7 @@ module.exports = {
             })
         }
     },
-
+    
     // CART SECTION
 
 
@@ -406,7 +406,7 @@ module.exports = {
     addAddress: (data) => {
         const userId = ObjectId(data.userId);
         const address = {
-            // _id: ObjectId(),
+            _id: ObjectId(),
             building_name: data.building_name,
             street: data.street,
             city: data.city,

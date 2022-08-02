@@ -45,6 +45,15 @@ module.exports = {                                   //
    +address.pincode + " \n"  +address.phone + " "+address.email+ " " ;
    return deliveryAddress
    console.log(deliveryAddress);
-   }
+   },
+sizeToggle: (category)=>{
+   console.log(category);
+   if(category == 'accessories'|| category == 'visors'|| category == 'communications' || category == 'pads' || category == 'others') return "display:none ;"
 
+
+},
+
+editPage: (val)=>{
+   console.log(val);
+}
 }

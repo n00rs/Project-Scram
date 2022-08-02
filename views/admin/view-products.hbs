@@ -25,9 +25,8 @@
                   <th scope="col">Image</th>
                   <th scope="col">Category</th>
                   <th scope="col">Sub-category</th>
-                  <th scope="col">Available Sizes</th>
+                  <th scope="col">Available Sizes & stock</th>
                   <th scope="col">Price</th>
-                  <th scope="col">No.Of Stocks</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
@@ -41,9 +40,8 @@
                       style="width:3em ;"></td>
                   <td>{{this.category}}</td>
                   <td>{{this.subcategory}}</td>
-                  <td>{{this.modelDetails.size}}</td>
+                  <td>{{#each this.modelDetails.size}} {{this.size}}:{{this.stock}},  {{/each}}</td>
                   <td>&#8377; {{this.modelDetails.price}}</td>
-                  <td>{{this.modelDetails.stock}}</td>
                   <td>
                     <a class="bg-black" href="/admin/edit-product/{{this._id}}"   ><i class="fa-solid fa-file-pen fs-5  text-info"></i></a>
                     <button class="bg-black" onclick="deleteProduct('{{this._id}}') " ><i class="fa-solid fa-trash-can fs-5 text-danger"></i></button>

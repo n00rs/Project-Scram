@@ -7,6 +7,7 @@ const verifyAdmin = (req, res, next) => {
 }
 
 /*getting  admin routes */
+
 router.get('/', verifyAdmin, (req, res) => {
     let admin = req.session.admin
     res.render('admin/admin-dash', { admin })
@@ -60,7 +61,7 @@ router.post('/login', (req, res) => {
 
 router.get('/logout', (req, res) => {
     req.session.destroy()
-    res.redirect('/')
+    res.redirect('/admin')
 })
 //   USER MANAGEMENT FROM ADMIN SIDE
 
@@ -79,7 +80,7 @@ router.get('/blockUser', (req, res) => {
 })
 
 router.get('/removeUser', (req, res) => {
-    console.log(req.query.id);
+    // console.log(req.query.id);
     adminHelpers.removeUser(req.query.id).then((result) => {
 
         res.json(result)
@@ -87,9 +88,9 @@ router.get('/removeUser', (req, res) => {
 })
 
 router.get('/updateUserData', async (req, res) => {
-    console.log(req.query.id);
+    // console.log(req.query.id);
     let user = await adminHelpers.fetchUser(req.query.id);
-    console.log(user, "afterfetch");
+    // console.log(user, "afterfetch");
     res.render('admin/edit-user', { user })
 })
 
@@ -102,7 +103,7 @@ router.post('/updateUserData', (req, res) => {
 
 //   ADDING PRODUCTS 
 
-router.get('/add-products', (req, res) => {
+router.get('/add-products',verifyAdmin, (req, res) => {
     res.render('admin/add-products', { admin: true, })
 })
 
@@ -131,14 +132,14 @@ router.post('/add-products', (req, res) => {
 })
    
 
-router.get('/view-products', async (req, res) => {
+router.get('/view-products',verifyAdmin, async (req, res) => {
 
     let products = await adminHelpers.fetchAllProducts();
 
     res.render('admin/view-products', { admin: true, products })
 })
 
-router.get('/edit-product/:id', async (req, res) => {
+router.get('/edit-product/:id',verifyAdmin, async (req, res) => {
     console.log(req.params.id);
 
     let product = await adminHelpers.fetchProduct(req.params.id)
@@ -149,11 +150,10 @@ router.get('/edit-product/:id', async (req, res) => {
 })
 
 router.post('/edit-product', (req, res) => {
-    console.log(req.files);
-
-
+    try {
+    // console.log(req.body);
     adminHelpers.editProduct(req.body).then((result) => {
-        try {
+        
             if (req.files) {
 
                 let id = req.body.productId;
@@ -167,14 +167,12 @@ router.post('/edit-product', (req, res) => {
                 if (img3) img3.mv('./public/images/product_images/' + id + '_3.jpg');
                 if (img4) img4.mv('./public/images/product_images/' + id + '_4.jpg');
             }
-
-        } catch (error) {
-
-            console.log(error);
-
-        }
         res.redirect('/admin/view-products')
     })
+} catch (error) {
+    console.log(error,"post edit error");
+    res.status({error: error})
+}
 })
 
 router.get('/deleteProduct', (req, res) => {

@@ -1,4 +1,3 @@
-
 <section>
     <div class="container p-5">
         <div class="row  bg-light ">
@@ -13,8 +12,8 @@
 
                     <div class="col-md-8">
                         <div class="mb-3">
-                            <input type="radio" name="category" id="helmet" class="form-check-input" value="{{product.category}}"
-                                 readonly checked>
+                            <input type="radio" name="category" id="helmet" class="form-check-input"
+                                value="{{product.category}}" readonly checked>
 
                             <label class="form-check-label">{{product.category}}</label><br><br>
                             <label for="">CATEGORY</label>
@@ -26,100 +25,180 @@
                             </select>
                         </div>
 
-                        
+
 
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" name="model" id="model" placeholder="" value="{{product.model}}">
+                            <input type="text" class="form-control" name="model" id="model" placeholder="" minlength="2"
+                                maxlength="25" required value="{{product.model}}">
                             <label for="">MODEL*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" name="modelname" id="" placeholder="" value="{{product.modelDetails.name}}">
+                            <input type="text" class="form-control" name="modelname" id="" minlength="2" maxlength="25"
+                                placeholder="" required value="{{product.modelDetails.name}}">
                             <label for="">NAME*</label>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
 
-                            <div class="form-check col-md-6">
-                                <input class="form-check-input" type="checkbox" name="small" value="S"
-                                    id="" >
-                                <label class="form-check-label" for="">
-                                    SMALL
-                                </label>
+                                        <input class="form-check-input" type="checkbox" name="small" value="S" {{#if
+                                            product.modelDetails.size.S}} checked{{/if}}>
+                                        <label class="form-check-label" for="">
+                                            SMALL
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1"
+                                            aria-label="Text input with checkbox" name="small" id="smallInput"
+                                            placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
+                                            value="{{editPage product.modelDetails.size.1.size}}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="medium" value="M" {{#if
+                                            product.modelDetails.size.M}} checked{{/if}}>
+                                        <label class="form-check-label" for="">
+                                            MEDIUM
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1"
+                                            aria-label="Text input with checkbox" name="medium" id="mediumInput"
+                                            placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
+                                            value="{{product.modelDetails.size.M}}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="large" value="L"
+                                            id="large" {{#if product.modelDetails.size.L}} checked{{/if}}>
+                                        <label class="form-check-label" for="">
+                                            LARGE
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1"
+                                            aria-label="Text input with checkbox" name="large" id="largeInput"
+                                            placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
+                                            value="{{product.modelDetails.size.L}}">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="medium" value="M"
-                                    id="" >
-                                <label class="form-check-label" for="">
-                                    MEDIUM
-                                </label>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="extra_large" value="XL"
+                                            id="extra_l" {{#if product.modelDetails.size.XL}} checked{{/if}}>
+                                        <label class="form-check-label" for="">
+                                            XL
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1"
+                                            aria-label="Text input with checkbox" name="extra_large"
+                                            id="extra_largeInput" placeholder="no.of Stocks"
+                                            onchange="check(this.value,this.name,this.id)"
+                                            value="{{product.modelDetails.size.XL}}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="extra_extra_large"
+                                            value="XXL" id="extra_extra_large" {{#if product.modelDetails.size.XXL}}
+                                            checked{{/if}}>
+                                        <label class="form-check-label" for="">
+                                            XXL
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1"
+                                            aria-label="Text input with checkbox" name="extra_extra_large"
+                                            id="extra_extra_largeInput" placeholder="no.of Stocks"
+                                            onchange="check(this.value,this.name,this.id)"
+                                            value="{{product.modelDetails.size.XXL}}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-check col-md-6 ">
+                                        <input class="form-check-input" type="checkbox" name="none" value="NONE" {{#if
+                                            product.modelDetails.size.NONE}} checked{{/if}}>
+                                        <label class="form-check-label" for="">
+                                            NONE
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control p-1"
+                                            aria-label="Text input with checkbox" name="none" id="noneInput"
+                                            placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
+                                            value="{{product.modelDetails.size.NONE}}">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-check col-md-6">
-                                <input class="form-check-input" type="checkbox" name="large" value="L"
-                                    id="" >
-                                <label class="form-check-label" for="">
-                                    LARGE
-                                </label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="extra_extra_large" value="XXL"
-                                    id="flexcheckboxDefault2" >
-                                <label class="form-check-label" for="flexcheckboxDefault2">
-                                    EXTRA EXTRA LARGE
-                                </label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="extra_large" value="XL"
-                                    id="flexcheckboxDefault2" >
-                                <label class="form-check-label" for="flexcheckboxDefault2">
-                                    EXTRA LARGE
-                                </label>
-                            </div>
+                        </div>
+
 
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="price" name="price" value="{{product.modelDetails.price}}">
+                            <input type="number" class="form-control" id="price" name="price" max="150000" required
+                                value="{{product.modelDetails.price}}">
                             <label for="">PRICE*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="stock" name="stock" value="{{product.modelDetails.stock}}">
-                            <label for="">STOCK*</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" name="description" >{{product.modelDetails.description}}</textarea>
+                            <textarea class="form-control" name="description"
+                                required>{{product.modelDetails.description}}</textarea>
                             <label for="">DESCRIPTION*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <textarea class="form-control" name="features" aria-valuetext="">{{product.modelDetails.features}}</textarea>
+                            <textarea class="form-control" name="features"
+                                aria-valuetext="">{{product.modelDetails.features}}</textarea>
                             <label for="">FEATURES*</label>
                         </div>
                         <div class="p-3">
-                        <div class="custom-file  mb-3">
-                            <label for="image1">
-                            <img src="/images/product_images/{{product._id}}_1.jpg" alt="img" class="me-5" style="width:70px; cursor: pointer;" id="img1"  ></label>
+                            <div class="custom-file  mb-3">
+                                <label for="image1">
+                                    <img src="/images/product_images/{{product._id}}_1.jpg" alt="img" class="me-5"
+                                        style="width:70px; cursor: pointer;" id="img1"></label>
 
-                            <input type="file" class="custom-file-input" id="image1" name="image1" onchange="changePreview1(event)" hidden>
+                                <input type="file" class="custom-file-input" id="image1" name="image1"
+                                    onchange="changePreview1(event)" hidden>
 
-                            <label class="custom-file-label" for="customFile" >Click to update image</label>
-                        </div>
-                        <div class="custom-file mb-3">
-                            <label for="image2">
-                            <img src="/images/product_images/{{product._id}}_2.jpg" alt="img" class="me-5" style="width:70px; cursor: pointer;" id="img2">
-                            <input type="file" class="custom-file-input" id="image2" name="image2" onchange="changePreview2(event)" hidden></label>
-                            <label class="custom-file-label" for="customFile" >Click to update image</label>
-                        </div>
-                        <div class="custom-file mb-3">
-                            <label for="image3">
-                            <img src="/images/product_images/{{product._id}}_3.jpg" alt="img" class="me-5"  style="width:70px; cursor: pointer;" id="img3">
-                            <input type="file" class="custom-file-input" id="image3" name="image3" onchange="changePreview3(event)" hidden></label>
-                            <label class="custom-file-label" for="customFile">Click to update image</label>
-                        </div>
-                        <div class="custom-file mb-3">
-                            <label for="image4">
-                            <img src="/images/product_images/{{product._id}}_4.jpg" alt="img" class="me-5"  style="width:70px; cursor: pointer;" id="img4">
-                            <input type="file" class="custom-file-input" id="image4" name="image4" onchange="changePreview4(event)" hidden></label>
-                            <label class="custom-file-label" for="customFile">Click to update image</label>
-                        </div>
+                                <label class="custom-file-label" for="customFile">Click to update image</label>
+                            </div>
+                            <div class="custom-file mb-3">
+                                <label for="image2">
+                                    <img src="/images/product_images/{{product._id}}_2.jpg" alt="img" class="me-5"
+                                        style="width:70px; cursor: pointer;" id="img2">
+                                    <input type="file" class="custom-file-input" id="image2" name="image2"
+                                        onchange="changePreview2(event)" hidden></label>
+                                <label class="custom-file-label" for="customFile">Click to update image</label>
+                            </div>
+                            <div class="custom-file mb-3">
+                                <label for="image3">
+                                    <img src="/images/product_images/{{product._id}}_3.jpg" alt="img" class="me-5"
+                                        style="width:70px; cursor: pointer;" id="img3">
+                                    <input type="file" class="custom-file-input" id="image3" name="image3"
+                                        onchange="changePreview3(event)" hidden></label>
+                                <label class="custom-file-label" for="customFile">Click to update image</label>
+                            </div>
+                            <div class="custom-file mb-3">
+                                <label for="image4">
+                                    <img src="/images/product_images/{{product._id}}_4.jpg" alt="img" class="me-5"
+                                        style="width:70px; cursor: pointer;" id="img4">
+                                    <input type="file" class="custom-file-input" id="image4" name="image4"
+                                        onchange="changePreview4(event)" hidden></label>
+                                <label class="custom-file-label" for="customFile">Click to update image</label>
+                            </div>
 
-                        <input type="hidden" name="productId" value="{{product._id}}">
+                            <input type="hidden" name="productId" value="{{product._id}}">
 
-                    </div>
+                        </div>
                         <button class="btn active mb-3" type="submit">
                             UPDATE-PRODUCT
                             <span style="margin-left: 1em;"></span>
@@ -130,20 +209,39 @@
         </div>
     </div>
 </section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+   // { { !--change preview-- } }
+
+    function changePreview1(event) {
+        document.getElementById('img1').src = URL.createObjectURL(event.target.files[0])
+    }
+    function changePreview2(event) {
+        document.getElementById('img2').src = URL.createObjectURL(event.target.files[0])
+    }
+    function changePreview3(event) {
+        document.getElementById('img3').src = URL.createObjectURL(event.target.files[0])
+    }
+    function changePreview4(event) {
+        document.getElementById('img4').src = URL.createObjectURL(event.target.files[0])
+    }
+</script>
 
 <script>
-    {{!-- change preview --}}
+    function check(val, name, id) {
+        console.log(val, name, id)
+        if (val > 0) {
+            console.log('if')
 
-    function changePreview1(event){
-document.getElementById('img1').src = URL.createObjectURL(event.target.files[0])
-    }
-    function changePreview2(event){
-document.getElementById('img2').src = URL.createObjectURL(event.target.files[0])
-    }
-    function changePreview3(event){
-document.getElementById('img3').src = URL.createObjectURL(event.target.files[0])
-    }
-    function changePreview4(event){
-document.getElementById('img4').src = URL.createObjectURL(event.target.files[0])
+            $(`[name= ${name}]`).prop('checked', true);
+        }
+        else {
+
+            console.log('ElSE')
+
+            $(`#${id}`).val('')
+
+            $(`[name = ${name}`).prop(`checked`, false)
+        }
     }
 </script>

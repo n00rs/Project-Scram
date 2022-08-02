@@ -120,12 +120,13 @@ module.exports = {
 
         let sizeData = [data.small, data.medium,
         data.large, data.extra_extra_large,
-        data.extra_large, data.none] ; 
+        data.extra_large, data.none];
 
         sizeData = sizeData.filter(Boolean)                            //checking for any undefined values & coverting into array
 
         let size = Object.fromEntries(sizeData);
 
+        size = arraryConverter(size)
         let product = {
             "category": data.category,
             "subcategory": data.subcategory,
@@ -141,8 +142,8 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
             db.get().collection(collection.PRODUCTCOLLECTION).insertOne(product).then((result) => {
-                // console.log(result);
-                resolve(result.insertedId) ;
+
+                resolve(result.insertedId);
             })
         })
     },
@@ -174,6 +175,20 @@ module.exports = {
     },
 
     editProduct: (data) => {
+
+        let sizeData = [data.small, data.medium, data.large,
+        data.extra_extra_large, data.extra_large, data.none];
+
+        sizeData = sizeData.filter(Boolean)                            //checking for any undefined values & coverting into array
+
+        let size = Object.fromEntries(sizeData);
+
+        size = arraryConverter(size) ;
+
+        console.log(size, 'post edit product');
+
+
+
         return new Promise((resolve, reject) => {
             db.get().collection(collection.PRODUCTCOLLECTION).updateOne({ _id: objectId(data.productId) },
                 {
@@ -183,7 +198,7 @@ module.exports = {
                         model: data.model,
                         'modelDetails.name': data.modelname,
 
-                        'modelDetails.size': [data.small, data.medium, data.large, data.extra_extra_large, data.extra_large],
+                        'modelDetails.size': size,
 
                         'modelDetails.price': parseInt(data.price),
 
@@ -199,7 +214,6 @@ module.exports = {
                     resolve()
                 })
         })
-
     },
 
     fetchCoupons: () => {
@@ -321,3 +335,16 @@ module.exports = {
 
 
 }
+
+
+let arraryConverter = (obj)=>{
+    let keys = Object.keys(obj) 
+    let array = [];
+    for(let index=0 ; index < keys.length ; index++){
+       array.push({
+          size: keys[index],
+          stock: obj[keys[index]] 
+       })
+    }
+    return array;
+ }

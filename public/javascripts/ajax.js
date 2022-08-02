@@ -151,8 +151,30 @@ function sort(category, type) {
     })
 }
 
+function sortSize(value) {
+    console.log(value);
+    let sizeArray = [];
 
-//CART FUNCTIONS
+    $("input:checkbox[name=size]:checked").each(function () {
+        sizeArray.push($(this).val());
+    });
+    console.log(sizeArray);
+    location.href=onclick=`/filter-size?size=${sizeArray}&category=${value}` 
+
+    // $.ajax({
+    //     url: "/sort-size",
+    //     data:{
+    //         value: value ,
+    //         sortSize: sizeArray,
+    //     },
+    //     method: "get",
+    //     success: (result)=>{
+    //         location.href='/sort-size'
+    //     }
+    // })
+}
+
+// CART FUNCTIONS
 
 
 function addToCart(prodId, prodName, subcategory, category, prodPrice, prodSize) {
@@ -249,65 +271,65 @@ function removeItem(cartId, prodId, prodName) {
     })
 }
 
-function checkCouponCode(couponCode,total){
+function checkCouponCode(couponCode, total) {
     console.log(total);
     $.ajax({
-        url:"/cart/confirm-coupon",
-        data:{
+        url: "/cart/confirm-coupon",
+        data: {
             code: couponCode,
-            cartTotal : total
+            cartTotal: total
         },
         method: 'post',
-        success: (result)=>{
+        success: (result) => {
             console.log(result);
-            if(result.validCoupon){
+            if (result.validCoupon) {
                 $('#couponValid').show()
-            $('#couponValid').html('<i class="text-success fa-regular fa-circle-check"></i>  Valid Code')
-            setTimeout(()=>{
-                $( "#couponInput" ).attr( "disabled" , "disabled")
-                // document.getElementById('couponValid').disabled = true ;
-                console.log('hi');
-            },3000)
+                $('#couponValid').html('<i class="text-success fa-regular fa-circle-check"></i>  Valid Code')
+                setTimeout(() => {
+                    $("#couponInput").attr("disabled", "disabled")
+                    // document.getElementById('couponValid').disabled = true ;
+                    console.log('hi');
+                }, 3000)
 
-           $("#discount").html(result.discount) ;
+                $("#discount").html(result.discount);
 
-          let total =  $("#grandTotal").html() ;
-          newTotal = parseInt(total) - result.discount;
-          $('#grandTotal').html(newTotal);
+                let total = $("#grandTotal").html();
+                newTotal = parseInt(total) - result.discount;
+                $('#grandTotal').html(newTotal);
 
             }
             else {
                 $('#couponValid').show()
                 $('#couponValid').html('<i class="fa-solid text-danger fa-xmark"></i> Invalid Code')
                 $("#discount").html(0)
-                setTimeout(()=>{
+                setTimeout(() => {
                     $('#couponValid').hide()
-                },3000)
+                }, 3000)
             }
         }
-        
+
     })
 }
 
-function updateSize(cartId,prodId,size){
+function updateSize(cartId, prodId, size) {
     // console.log(cartId); 
     $.ajax({
 
-        url: "/cart/update-size" ,
-        data:{
-            cartId:cartId,
-            prodId:prodId,
-            selectedSize:size
+        url: "/cart/update-size",
+        data: {
+            cartId: cartId,
+            prodId: prodId,
+            selectedSize: size
         },
-        method:'put',
-        success: (result)=>{
-            if(result.sizeSelected) 
-            $('#size').load(location.href + " #size")
-            else 
-            swal({title:"server busy try again"})
-            setTimeout(()=>{
+        method: 'put',
+        success: (result) => {
+            if (result.sizeSelected)
+                $('#size').load(location.href + " #size")
+            else
+                swal({ title: "server busy try again" })
+            setTimeout(() => {
                 swal.close
-            },4000)
+            }, 4000)
         }
     })
 }
@@ -457,10 +479,10 @@ function addToWishlist(prodId) {
 
                 let count = $("#wishCount").html();
 
-                count = parseInt(count) + 1 ;
+                count = parseInt(count) + 1;
 
-                $('#wishCount').html(count) ;
-                swal({ title: result.success }) ;
+                $('#wishCount').html(count);
+                swal({ title: result.success });
                 setTimeout(() => {
                     swal.close()
                 }, 1000)
@@ -502,36 +524,36 @@ function removeWishlistItem(wishlistId, prodId) {
     })
 }
 
-function loadPlaceOrder(){
+function loadPlaceOrder() {
     let total = $('#grandTotal').html()
- location.href='/place-order?total='+total   ;
+    location.href = '/place-order?total=' + total;
 }
 
-function orderStatus(value,orderId){
-    console.log(value,orderId);
+function orderStatus(value, orderId) {
+    console.log(value, orderId);
     $.ajax({
-        url:'/admin/update-order-status',
-    data:{
-        orderId : orderId,
-        status: value,
-    },
-method:'put',
-success: (result)=>{
-    if(result.statusUpdate){
+        url: '/admin/update-order-status',
+        data: {
+            orderId: orderId,
+            status: value,
+        },
+        method: 'put',
+        success: (result) => {
+            if (result.statusUpdate) {
 
-        location.reload()
-       
-        }else{
-            swal({title: "oops something went wrong"})
-            setTimeout(()=>{
                 location.reload()
-                swal.close()
-            },5000)
-        }
-    }
-   
 
-})
+            } else {
+                swal({ title: "oops something went wrong" })
+                setTimeout(() => {
+                    location.reload()
+                    swal.close()
+                }, 5000)
+            }
+        }
+
+
+    })
 }
 
 
