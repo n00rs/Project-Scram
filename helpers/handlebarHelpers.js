@@ -55,5 +55,13 @@ sizeToggle: (category)=>{
 
 editPage: (val)=>{
    console.log(val);
+},
+check: (value1 , value2)=>{
+return  (value1 ===value2 ) ? "checked" : "notchecked"
+},
+
+checkSort: (value1 , value2)=>{
+   
+   return  (value1 ===value2 ) ? "selected" : "notselected"
 }
 }

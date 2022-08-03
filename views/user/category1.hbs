@@ -63,35 +63,42 @@
             <!-- // preference -->
 
             <!-- sizes -->
-            <div class="left-side my-4" {{sizeToggle category}}>
+            <div class="left-side my-4" style={{sizeToggle category}}>
                 <a class="btn active ms-3" data-bs-toggle="collapse" href="#sizecollapse" role="button"
                     aria-expanded="true" aria-controls="">
                     SIZES
                 </a>
+
+
                 <div class="collapse" id="sizecollapse">
                     <div class="card card-body">
-                        <ul class="w3layouts-box-list" >
+                        <ul class="w3layouts-box-list">
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="S" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="S"
+                                    onChange="sortSize('{{category}}')">
                                 <span class="span">S</span>
                             </li>
 
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="M" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="M"
+                                    onChange="sortSize('{{category}}')">
                                 <span class="span">M</span>
                             </li>
                             <li>
-                                <input class="checked ms-3 " type="checkbox" name="size" value="L" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3 " type="checkbox" name="size" value="L"
+                                    onChange="sortSize('{{category}}')">
                                 <span class="span">L</span>
 
                             </li>
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="XL" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="XL"
+                                    onChange="sortSize('{{category}}')">
                                 <span class="span">XL</span>
                             </li>
 
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="XXL" class="ms-3" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="XXL" class="ms-3"
+                                    onChange="sortSize('{{category}}')">
                                 <span class="span">XXL</span>
                             </li>
 
@@ -102,70 +109,25 @@
             <!-- //sizes -->
         </div>
         <div class="left-ads-display col-lg-8">
-            <div class="row"id="category">
+            <div class="row" id="category">
                 <div class="row">
                     <div class="col-md-3 p-2">
                         {{!-- <select name="sort" id="" class="form-select"
                             onchange="location.href='/sort?category={{category}}&sort=  ' "> --}}
 
-                            <select name="sort" id="" class="form-select" onchange="sort('{{category}}',this.value) ">
-                                <option value="price low to high">price Low To High
+                            <select name="sort" id="sortSelection" class="form-select"
+                                onchange="sortSize('{{category}}') ">
+                                <option value="price_asc">Price Low To High
                                 </option>
-                                <option value="Price High To Low">Price High To Low</option>
-                                <option value="alphabetically">By Name</option>
-                                <option value="top sellers">Top Sellers</option>
-                                <option value="top rated">Top Rated</option>
+                                <option value="price_desc">Price High To Low</option>
+                                <option value="new">What's New</option>
+                                <option value="top_sellers">Top Sellers</option>
+                                <option value="top_rated">Top Rated</option>
                             </select>
                     </div>
                 </div>
-
-                <span id=" product"> {{#each products}} </span>
-                <div class="col-md-3 col-6 col-sm-4 product-men p-1">
-                    <a href="/view-product/{{this._id}}">
-                        <div class="product-shoe-info shoe ">
-                            <div class="men-thumb-item">
-                                <img src="/images/product_images/{{this._id}}_1.jpg" class="img-fluid" alt="img"
-                                    style="width: 246px;height: 246px;">
-                    </a>
-
-                </div>
-                <div class="item-info-product">
-                    <h6 class="">
-                        <a href="/view-product/{{this._id}}" class="text-black">{{this.modelDetails.name}} </a>
-                        <p class="item-info-category">{{this.subcategory}}</p>
-                    </h6>
-
-
-                    <div class="product_price">
-                        <div class="grid-price">
-                            <span class="money">&#8377; {{this.modelDetails.price}}</span>
-                        </div>
-                    </div>
-                    {{!-- <ul class="stars ">
-                        <li><a href="#"><span class="fa fa-star" style='color: #f3da35' aria-hidden="true"></span></a>
-                        </li>
-                        <li><a href="#"><span class="fa fa-star" style='color: #f3da35' aria-hidden="true"></span></a>
-                        </li>
-                        <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
-                                    aria-hidden="true"></span></a></li>
-                        <li><a href="#"><span class="fa fa-star-half-o" style='color: #f3da35'
-                                    aria-hidden="true"></span></a></li>
-                        <li><a href="#"><span class="fa fa-star-o" style='color: #f3da35' aria-hidden="true"></span></a>
-                        </li>
-                    </ul> --}}
-                    <button class="btn active" onclick="addToCart('{{this._id}}','{{this.modelDetails.name}}',
-                        '{{this.subcategory}}','{{category}}','{{this.modelDetails.price}}',
-                        '{{this.modelDetails.size}}')"><i class="fa-solid fa-cart-plus"></i> ADD TO CART </button>
-                    <button class="btn btn-outline-black" onclick="addToWishlist('{{this._id}}')">
-                        <i class="fa-regular fa-heart"></i></button>
-                </div>
+                
             </div>
         </div>
-        {{/each}}
-    </div>
-
-    </div>
     </div>
 </section>
-
-

@@ -153,25 +153,16 @@ function sort(category, type) {
 
 function sortSize(value) {
     console.log(value);
+    const sortSelection = $('#sortSelection').val()
+    console.log(sortSelection);
     let sizeArray = [];
 
     $("input:checkbox[name=size]:checked").each(function () {
         sizeArray.push($(this).val());
     });
     console.log(sizeArray);
-    location.href=onclick=`/filter-size?size=${sizeArray}&category=${value}` 
+    location.href=onclick=`/category?size=${sizeArray}&category=${value}&sort=${sortSelection}` 
 
-    // $.ajax({
-    //     url: "/sort-size",
-    //     data:{
-    //         value: value ,
-    //         sortSize: sizeArray,
-    //     },
-    //     method: "get",
-    //     success: (result)=>{
-    //         location.href='/sort-size'
-    //     }
-    // })
 }
 
 // CART FUNCTIONS
@@ -475,7 +466,7 @@ function addToWishlist(prodId) {
         },
         method: 'post',
         success: (result) => {
-            if (result) {
+            if (result.success) {
 
                 let count = $("#wishCount").html();
 
@@ -487,7 +478,29 @@ function addToWishlist(prodId) {
                     swal.close()
                 }, 1000)
             } else {
-                swal({ title: result.err })
+                swal({
+                     title: result.error,
+                     text: "click to login",
+                     icon: "warning",
+                     buttons: {
+                        cancel: {
+                          text: "Cancel",
+                          value: null,
+                          visible: true,
+                          closeModal: true,
+                        },
+                        confirm: {
+                          text: "Login",
+                          value: true,
+                          visible: true,
+                          closeModal: true
+                        }
+                      }
+
+                }).then((login)=>{
+                    if(login) location.href = "/login"
+                })
+                setTimeout( ()=> swal.close() ,10000)
             }
         }
 

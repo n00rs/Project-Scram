@@ -24,36 +24,43 @@
                     <div class="card card-body">
                         <ul class="w3layouts-box-list">
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/racing'"
-                                    value="racing">
+                                <input type="radio" class="checked"  value="racing" onChange="sortSize(this.value)"
+                                    {{check category "racing" }}>
                                 <span class="span">RACING</span>
                             </li>
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/sport'">
+                                <input type="radio" class="checked" value="sport" onChange="sortSize(this.value)"
+                                    {{check category "sport" }}>
                                 <span class="span">SPORT</span>
                             </li>
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/touring'">
+                                <input type="radio" class="checked" value="touring" onChange="sortSize(this.value)" 
+                                    {{check category "touring" }}>
                                 <span class="span">TOURING</span>
                             </li>
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/off-road'">
+                                <input type="radio" class="checked" value="off-road" onChange="sortSize(this.value)" 
+                                    {{check category "off-road" }}>
                                 <span class="span">OFF-ROAD</span>
                             </li>
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/visors'">
+                                <input type="radio" class="checked" value="visors" onChange="sortSize(this.value)" 
+                                    {{check category "visors" }}>
                                 <span class="span">VISORS</span>
                             </li>
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/communications'">
+                                <input type="radio" class="checked" value="communications" onChange="sortSize(this.value)"
+                                     {{check category "communications" }}>
                                 <span class="span">COMMUNICATIONS</span>
                             </li>
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/pads'">
+                                <input type="radio" class="checked" value="pads" onChange="sortSize(this.value)" 
+                                 {{check category "pads" }} >
                                 <span class="span">PADS</span>
                             </li>
                             <li>
-                                <input type="radio" class="checked" onclick="location.href='/category/others'">
+                                <input type="radio" class="checked" value="others" onChange="sortSize(this.value)" 
+                                    {{check category "others" }}>
                                 <span class="span">OTHERS</span>
                             </li>
                         </ul>
@@ -62,38 +69,42 @@
             </div>
             <!-- // preference -->
 
-            <!-- sizes -->
-            <div class="left-side my-4" style={{sizeToggle category}}>
+            <!-- sizes -->          {{!--HELPER DEFINED IN HANDLEBARHELPERS.JS--}}
+
+            <div class="left-side my-4" style={{sizeToggle category}}>                                    
                 <a class="btn active ms-3" data-bs-toggle="collapse" href="#sizecollapse" role="button"
-                    aria-expanded="true" aria-controls="">
+                    aria-expanded="true" >
                     SIZES
                 </a>
-
-
                 <div class="collapse" id="sizecollapse">
                     <div class="card card-body">
-                        <ul class="w3layouts-box-list" >
+                        <ul class="w3layouts-box-list">
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="S" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="S"
+                                    onChange="sortSize('{{category}}')" {{check filterSize "S" }}>
                                 <span class="span">S</span>
                             </li>
 
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="M" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="M"
+                                    onChange="sortSize('{{category}}')" {{check filterSize "M" }}>
                                 <span class="span">M</span>
                             </li>
                             <li>
-                                <input class="checked ms-3 " type="checkbox" name="size" value="L" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3 " type="checkbox" name="size" value="L"
+                                    onChange="sortSize('{{category}}')" {{check filterSize "L" }}>
                                 <span class="span">L</span>
 
                             </li>
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="XL" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="XL"
+                                    onChange="sortSize('{{category}}')" {{check filterSize "XL" }}>
                                 <span class="span">XL</span>
                             </li>
 
                             <li>
-                                <input class="checked ms-3" type="checkbox" name="size" value="XXL" class="ms-3" onChange="sortSize('{{category}}')">
+                                <input class="checked ms-3" type="checkbox" name="size" value="XXL" class="ms-3"
+                                    onChange="sortSize('{{category}}')" {{check filterSize "XXL" }}>
                                 <span class="span">XXL</span>
                             </li>
 
@@ -104,24 +115,19 @@
             <!-- //sizes -->
         </div>
         <div class="left-ads-display col-lg-8">
-            <div class="row"id="category">
+            <div class="row" id="category">
                 <div class="row">
                     <div class="col-md-3 p-2">
-                        {{!-- <select name="sort" id="" class="form-select"
-                            onchange="location.href='/sort?category={{category}}&sort=  ' "> --}}
-
-                            <select name="sort" id="" class="form-select" onchange="sort('{{category}}',this.value) ">
-                                <option value="price low to high">price Low To High
-                                </option>
-                                <option value="Price High To Low">Price High To Low</option>
-                                <option value="alphabetically">By Name</option>
-                                <option value="top sellers">Top Sellers</option>
-                                <option value="top rated">Top Rated</option>
-                            </select>
+                        <select name="sort" id="sortSelection" class="form-select" onchange="sortSize('{{category}}')" >
+                            <option value="price_asc" {{checkSort sortBy "price_asc" }}> Price Low To High</option>
+                            <option value="price_desc" {{checkSort sortBy "price_desc" }} > Price High To Low</option>
+                            <option value="new" {{checkSort sortBy "new" }}> What's New</option>
+                            <option value="top_sellers" {{checkSort sortBy "top_sellers" }}> Top Sellers</option>
+                            <option value="top_rated" {{checkSort sortBy "top_rated" }}> Top Rated </option>
+                        </select>
                     </div>
                 </div>
-
-                <span id=" product"> {{#each product}} </span>
+                <span id=" product"> {{#each products}} </span>
                 <div class="col-md-3 col-6 col-sm-4 product-men p-1">
                     <a href="/view-product/{{this._id}}">
                         <div class="product-shoe-info shoe ">
@@ -154,11 +160,12 @@
                                     aria-hidden="true"></span></a></li>
                         <li><a href="#"><span class="fa fa-star-o" style='color: #f3da35' aria-hidden="true"></span></a>
                         </li>
-                    </ul> --}}
+                    </ul> 
                     <button class="btn active" onclick="addToCart('{{this._id}}','{{this.modelDetails.name}}',
                         '{{this.subcategory}}','{{category}}','{{this.modelDetails.price}}',
-                        '{{this.modelDetails.size}}')"><i class="fa-solid fa-cart-plus"></i> ADD TO CART </button>
-                    <button class="btn btn-outline-black" onclick="addToWishlist('{{this._id}}')">
+                        '{{this.modelDetails.size}}')"><i class="fa-solid fa-cart-plus"></i> ADD TO CART </button> --}}
+
+                    <button class= "btn active  btn-outline-black" onclick="addToWishlist('{{this._id}}')"> WISHLIST
                         <i class="fa-regular fa-heart"></i></button>
                 </div>
             </div>
@@ -169,5 +176,3 @@
     </div>
     </div>
 </section>
-
-

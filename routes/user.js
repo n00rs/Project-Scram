@@ -1,5 +1,5 @@
 const { json } = require('body-parser');
-const { Router } = require('express');
+
 const express = require('express');
 const router = express.Router();
 const twilio = require('../config/twilio');
@@ -13,6 +13,8 @@ const verifyUser = (req, res, next) => {
 
 
 router.get('/', async (req, res) => {
+    console.log(req.sessionID,'1sess');
+    console.log(req.session.id,"session id");
     let user1 = req.session.user;
     let cartCount = null;
     let wishlistCount = null;
@@ -79,15 +81,7 @@ router.post('/signup', (req, res) => {
 
 })
 
-
-// router.get('/helmets',async (req,res)=>{
-
-//     let helmetSection =await userHelpers.fetchHelmets()
-
-//     res.render('user/helmets',{user:true, helmetSection})
-// })
-
-router.get('/category/:sub', async (req, res) => {
+router.get('/category', async (req, res) => {
     try {
         let user1 = req.session.user;
         let cartCount = null;
@@ -98,16 +92,29 @@ router.get('/category/:sub', async (req, res) => {
             wishlistCount = await userHelpers.fetchWishlistCount(user1._id);
 
         }
-        let category = req.params.sub
+    console.log(req.query, "category");
+    if (!req.query)  throw new Error('opps something went wrong')
 
-        console.log(category);
+        let category = req.query.category ; 
+        let filterSize = req.query.size ;
+        let sortBy = req.query.sort ;
+        console.log(sortBy,filterSize,category, ) ;
 
-        let product = await userHelpers.fetchCategory(category);
+        let products = await userHelpers.fetchCategory(category) ;
 
-        res.render('user/category', { user: true, user1, category, cartCount, product, wishlistCount });
+        if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize)) ;
+
+        if(sortBy != '') products = sort(sortBy,products) ;
+
+        console.log(products,'after sorting');
+
+        console.log('products', category, 'category ', filterSize, 'value', 'last');
+
+        res.render('user/category', { user: true, user1,  category, products, filterSize , sortBy, cartCount, wishlistCount })
+
 
     } catch (error) {
-        console.log(error,'error in loading category');
+        console.log(error, 'error in loading category');
     }
 
 })
@@ -140,35 +147,42 @@ router.get('/view-product/:id', async (req, res) => {
     res.render('user/view-product', { user: true, product })
 })
 
-router.get('/sort', (req, res) => {
-    console.log(req.query);
-    console.log(req.query.sortType);
+// router.get('/sort', (req, res) => {
+//     console.log(req.query);
+//     console.log(req.query.sortType);
 
-    userHelpers.sortProduct(req.query).then((result) => {
-        console.log(result);
-        res.json(result);
+//     userHelpers.sortProduct(req.query).then((result) => {
+//         console.log(result);
+//         res.json(result);
 
-    })
-})
+//     })
+// })
 
-router.get('/filter-size', async(req,res)=>{
-try {
-    console.log(req.query,'sort size');
+router.get('/filter-size', async (req, res) => {
+    try {
+        // console.log(req.query, 'sort size');
 
-    let    category =  req.query.category ;
-    let filterSize = req.query.size ;
-   console.log(filterSize);
-         let products = await userHelpers.fetchCategory(category);
-         products = products.filter(x=> x.modelDetails.size.some(y =>  y.size == filterSize  ))
-    
-         console.log(products,'products',category,'category ',filterSize,'value','last');
-    
-    res.render('user/filterSize',{user:true, products, category})
-    
-} catch (error) {
-    console.log(error,"errrsort in");
+        // let category = req.query.category ;
+        // let filterSize = req.query.size ;
+        // let sortBy = req.query.sort ;
+        // console.log(sortBy) ;
+let category = "touring"
+        let products = await userHelpers.fetchCategory(category);
 
-}
+        // if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize))
+
+        // if(sortBy != '') products = sort(sortBy,products)
+
+        // console.log(products,'after sorting');
+
+        // console.log('products', category, 'category ', filterSize, 'value', 'last');
+
+        res.render('user/category', { user: true, products, })
+
+    } catch (error) {
+        console.log(error, "errrsort in");
+
+    }
 
 })
 
@@ -277,6 +291,7 @@ router.get('/wishlist', async (req, res) => {
 router.post('/add-to-wishlist', (req, res) => {
     console.log(req.body);
     try {
+        
         const userId = req.session.user._id;
         const prodId = req.body.productId;
         userHelpers.addToWishlist(userId, prodId).then((result) => {
@@ -287,7 +302,8 @@ router.post('/add-to-wishlist', (req, res) => {
                 res.json(error)
             })
     } catch (error) {
-        console.log(error);
+        console.log(error,'no user');
+        res.json({error: "please login and try again"})
     }
 })
 
@@ -527,16 +543,25 @@ router.post('/place-order', (req, res) => {
     }
 })
 
-router.get('/order-confirmation',(req,res)=>{
-    res.render('user/order-confirmation',{user:true})
+router.get('/order-confirmation', (req, res) => {
+    res.render('user/order-confirmation', { user: true })
 })
-router.get('/orders', verifyUser, async (req,res)=>{
+router.get('/orders', verifyUser, async (req, res) => {
     const userId = req.session.user._id;
-    const orders = await userHelpers.fetchOders(userId) ;
-    console.log(orders,'insid orders')
-    res.render('user/orders',{user:true,orders})
+    const orders = await userHelpers.fetchOders(userId);
+    console.log(orders, 'insid orders')
+    res.render('user/orders', { user: true, orders })
 })
-router.get("/view-order-details/:id",(req,res)=>{
+router.get("/view-order-details/:id", (req, res) => {
     let orderItems = 'asd'
 })
 module.exports = router;
+
+
+
+function sort(sortBy, array) {
+   return (sortBy === "price_asc") ? array.sort((a, b) => a.modelDetails.price - b.modelDetails.price)
+      : (sortBy === "price_desc") ? array.sort((a, b) => b.modelDetails.price - a.modelDetails.price)
+         : (sortBy === "new") ? array.reverse()
+            : array
+}

@@ -540,8 +540,8 @@ module.exports = {
                     const checkProd = result.products.find(product => product == prodId)
                     console.log(`checkprodlog ${checkProd}`);
                     if (checkProd != undefined) {
-                        let error = "product already exist in wishlist";
-                        reject({ err: error })
+                        let message = "product already exist in wishlist";
+                        reject({ success: message })
                     } else {
                         db.get().collection(collections.WISHLISTCOLLECTION).updateOne({ user: ObjectId(userId) },
                             {
