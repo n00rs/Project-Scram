@@ -35,7 +35,7 @@ module.exports = {
     },
 
 
-    userLogin: (data) => {
+    userLogin: (data, sessionId) => {
         return new Promise(async (resolve, reject) => {
 
             let error = "Id or password dosen't match";
@@ -44,7 +44,27 @@ module.exports = {
             let user = await db.get().collection(collections.USERCOLLECTION).findOne({ email: data.email })
             if (user && !user.block) {
                 await bcrypt.compare(data.password, user.password).then((res) => {
+
                     if (res) {
+                        db.get().collection(collections.WISHLISTCOLLECTION).findOneAndDelete({ user_or_sessionId: sessionId }).then((sessionWishlist) => {
+                            console.log(sessionWishlist);
+
+                            if (sessionWishlist.value) {
+                                let products = sessionWishlist.value.products
+
+                                console.log(products);
+
+                                db.get().collection(collections.WISHLISTCOLLECTION).updateOne({ user_or_sessionId: user._id.toString() },
+
+                                    {
+                                        $push:
+
+                                            { products: { $each: products } }
+                                    },
+                                    { upsert: true })
+                                    .then((res) => console.log(res))
+                            }
+                        })
                         response.status = true;
                         response.user = user;
                         resolve(response);
@@ -138,7 +158,7 @@ module.exports = {
             })
         }
     },
-    
+
     // CART SECTION
 
 
@@ -522,28 +542,44 @@ module.exports = {
     // WISH LIST SECTION
 
 
-    addToWishlist: (userId, prodId) => {                                                         //doing this in a different way other than add to cart method  ("just to use an lookup in getting products sections")
-        const wishlist = {
-            user: ObjectId(userId),
-            products: [ObjectId(prodId)]
+    addToWishlist: (id, prodId, user) => {                                                         //doing this in a different way other than add to cart method  ("just to use an lookup in getting products sections")
+        // console.log(id,"session", user,"user",prodId,"inside addto wish");
+        const oneDay = 1000 * 60 * 60 * 24;
+
+        if (user) {
+            var wishlist = {
+                user_or_sessionId: id,
+                products: [ObjectId(prodId)]
+            }
+        } else {
+            wishlist = {
+                user_or_sessionId: id,
+                products: [ObjectId(prodId)],
+                endSessionAt: new Date(new Date().getTime() + oneDay)                                                        //creating a field with date which removes the doc when it expires
+            }
         }
+        console.log(wishlist);
         return new Promise((resolve, reject) => {
-            db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user: ObjectId(userId) }).then((result) => {
+            db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user_or_sessionId: id }).then((result) => {
                 console.log(result, 'wishlist');
                 if (result == null) {
+
+                    db.get().collection(collections.WISHLISTCOLLECTION).createIndex({ "endSessionAt": 1 }, { expireAfterSeconds: 0 })             //creating index for date field to auto remove the doc past date
+
                     db.get().collection(collections.WISHLISTCOLLECTION).insertOne(wishlist).then((result) => {
+
                         console.log(`add new wish ${result}`);
                         resolve({ success: "Item added to wishlist" })
                     })
                 } else {
-                    console.log(ObjectId(prodId), result.products, "check prod");
                     const checkProd = result.products.find(product => product == prodId)
                     console.log(`checkprodlog ${checkProd}`);
                     if (checkProd != undefined) {
+
                         let message = "product already exist in wishlist";
                         reject({ success: message })
                     } else {
-                        db.get().collection(collections.WISHLISTCOLLECTION).updateOne({ user: ObjectId(userId) },
+                        db.get().collection(collections.WISHLISTCOLLECTION).updateOne({ user_or_sessionId: id },
                             {
                                 $push: { products: ObjectId(prodId) }
 
@@ -558,12 +594,13 @@ module.exports = {
         })
     },
 
-    fetchWishlist: (userId) => {
+    fetchWishlist: (wishId) => {
+        console.log(wishId);
         return new Promise((resolve, reject) => {
             db.get().collection(collections.WISHLISTCOLLECTION).aggregate([
                 {
                     $match:
-                        { user: ObjectId(userId) }
+                        { user_or_sessionId: wishId }
                 },
                 {
                     $lookup: {
@@ -602,10 +639,12 @@ module.exports = {
         })
     },
 
-    fetchWishlistCount: (userId) => {
+    fetchWishlistCount: (wishId) => {
+        console.log(wishId);
         return new Promise((resolve, reject) => {
-            db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user: ObjectId(userId) }).then((result) => {
-                let count = result.products.length
+            db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user_or_sessionId: wishId }).then((result) => {
+                let count = (result == null) ? 0 : result.products.length
+                // let count = result.products.length
                 resolve(count)
             })
         })
@@ -629,7 +668,7 @@ module.exports = {
                 db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
 
                 resolve({ orderPlaced: true })
-                
+
 
             })
                 .catch((error) => {
@@ -641,7 +680,7 @@ module.exports = {
 
     fetchOders: (userId) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collections.ORDERCOLLECTION).find({user: ObjectId(userId)}).toArray().then((result)=>{
+            db.get().collection(collections.ORDERCOLLECTION).find({ user: ObjectId(userId) }).toArray().then((result) => {
                 // console.log(result,'order');
                 resolve(result)
             })

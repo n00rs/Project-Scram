@@ -15,12 +15,13 @@ const verifyUser = (req, res, next) => {
 router.get('/', async (req, res) => {
     console.log(req.sessionID,'1sess');
     console.log(req.session.id,"session id");
-    let user1 = req.session.user;
+    let user1 = req.session.user ;
+    let wishId = (user1) ? user1._id : req.sessionID ;
     let cartCount = null;
     let wishlistCount = null;
+    wishlistCount = await userHelpers.fetchWishlistCount(wishId)
     if (user1) {
         cartCount = await userHelpers.fetchCartCount(user1._id);
-        wishlistCount = await userHelpers.fetchWishlistCount(user1._id)
     }
     console.log(cartCount);
     res.render("user/landing-page", { user: true, cartCount, user1, wishlistCount });
@@ -40,8 +41,8 @@ router.get('/login', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-    console.log(req.body);
-    userHelpers.userLogin(req.body).then((result) => {
+    let sessionId = req.sessionID
+    userHelpers.userLogin(req.body,sessionId).then((result) => {
         if (result.status) {
             req.session.loggedIn = true;
             req.session.user = result.user;
@@ -84,20 +85,21 @@ router.post('/signup', (req, res) => {
 router.get('/category', async (req, res) => {
     try {
         let user1 = req.session.user;
-        let cartCount = null;
-        let wishlistCount = null;
-        if (user1) {
-            cartCount = await userHelpers.fetchCartCount(user1._id);
-
-            wishlistCount = await userHelpers.fetchWishlistCount(user1._id);
-
-        }
-    console.log(req.query, "category");
-    if (!req.query)  throw new Error('opps something went wrong')
-
+        let wishId = (user1) ? user1._id: req.sessionID
         let category = req.query.category ; 
         let filterSize = req.query.size ;
         let sortBy = req.query.sort ;
+        let cartCount = null;
+        let wishlistCount = null;
+
+        wishlistCount = await userHelpers.fetchWishlistCount(wishId);
+
+        if (user1)  cartCount = await userHelpers.fetchCartCount(user1._id);
+
+    console.log(req.query, "category");
+    if (!req.query)  throw new Error('opps something went wrong')
+
+       
         console.log(sortBy,filterSize,category, ) ;
 
         let products = await userHelpers.fetchCategory(category) ;
@@ -105,10 +107,6 @@ router.get('/category', async (req, res) => {
         if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize)) ;
 
         if(sortBy != '') products = sort(sortBy,products) ;
-
-        console.log(products,'after sorting');
-
-        console.log('products', category, 'category ', filterSize, 'value', 'last');
 
         res.render('user/category', { user: true, user1,  category, products, filterSize , sortBy, cartCount, wishlistCount })
 
@@ -275,11 +273,14 @@ router.put('/cart/update-size', (req, res) => {
 
 })
 
+// WISHLIST
+
 router.get('/wishlist', async (req, res) => {
     try {
-        let userId = req.session.user._id;
-        let wishlistCount = await userHelpers.fetchWishlistCount(userId);
-        let wishlist = await userHelpers.fetchWishlist(userId)
+        
+        const wishId = (req.session.user) ? req.session.user._id : req.sessionID ;
+        let wishlistCount = await userHelpers.fetchWishlistCount(wishId);
+        let wishlist = await userHelpers.fetchWishlist(wishId)
 
         res.render('user/wishlist', { user: true, wishlist, wishlistCount })
 
@@ -291,19 +292,23 @@ router.get('/wishlist', async (req, res) => {
 router.post('/add-to-wishlist', (req, res) => {
     console.log(req.body);
     try {
-        
-        const userId = req.session.user._id;
+        const user = (req.session.user) ? true: false ;                   
+    
+        const id = (user) ? req.session.user._id : req.sessionID ;                                       
+
         const prodId = req.body.productId;
-        userHelpers.addToWishlist(userId, prodId).then((result) => {
+
+        userHelpers.addToWishlist(id, prodId, user).then((result) => {
             console.log(result, 'user.js');
             res.json(result)
         })
             .catch((error) => {
+                console.log(error,"catch in user wish");
                 res.json(error)
             })
     } catch (error) {
         console.log(error,'no user');
-        res.json({error: "please login and try again"})
+        // res.json({error: "please login and try again"})
     }
 })
 
