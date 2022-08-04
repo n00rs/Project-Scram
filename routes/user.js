@@ -188,17 +188,18 @@ let category = "touring"
 // CART  ROUTES
 
 
-router.get('/add-to-cart', (req, res) => {
+router.post('/add-to-cart', (req, res) => {
     try {
-
-        // console.log(req.query);
-        let userId = req.session.user._id
-
-        userHelpers.addToCart(req.query, userId).then(() => {
-            res.json({ status: true })
-        })
+        // console.log(req.body,"way to cart") ;
+        let user = req.session.user ;
+        if(!user) throw new Error ("no user")
+        
+        
+        userHelpers.addToCart(req.body, user._id).then(result => res.json(result))
     } catch (error) {
-        console.log(error);
+        console.log(error,'ths one');
+        let errorMsg = "Please Login and try again "
+        res.json({ error: errorMsg})
     }
 
 })
@@ -281,6 +282,8 @@ router.get('/wishlist', async (req, res) => {
         const wishId = (req.session.user) ? req.session.user._id : req.sessionID ;
         let wishlistCount = await userHelpers.fetchWishlistCount(wishId);
         let wishlist = await userHelpers.fetchWishlist(wishId)
+
+console.log(wishlist,"wishlist");
 
         res.render('user/wishlist', { user: true, wishlist, wishlistCount })
 

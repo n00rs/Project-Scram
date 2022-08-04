@@ -161,44 +161,61 @@ function sortSize(value) {
         sizeArray.push($(this).val());
     });
     console.log(sizeArray);
-    location.href=onclick=`/category?size=${sizeArray}&category=${value}&sort=${sortSelection}` 
+    location.href = onclick = `/category?size=${sizeArray}&category=${value}&sort=${sortSelection}`
 
 }
 
 // CART FUNCTIONS
 
-
-function addToCart(prodId, prodName, subcategory, category, prodPrice, prodSize) {
-    console.log(prodId, prodName, prodPrice, subcategory, category, prodSize)
-    // size = [...prodSize]
-    // console.log(size);
-    const size = prodSize.split(',')
-    console.log(size);
+function addToCart(prodId, prodName, subcategory, category, prodPrice, selectedSize, wishlistId) {
+    console.log(prodId, prodName, subcategory, category, prodPrice, selectedSize, wishlistId);
+    let body = {
+        id: prodId, name: prodName,
+        subcategory: subcategory, category: category,
+        price: prodPrice, selectedSize: selectedSize
+    }
     $.ajax({
         url: "/add-to-cart",
-        data: {
-            id: prodId,
-            name: prodName,
-            subcategory: subcategory,
-            category: category,
-            price: prodPrice,
-            size: size
-        },
-        method: 'get',
+        data: body,
+        method: 'post',
         success: (result) => {
-            if (result.status) {
+            if (result.success) {
 
                 let count = $("#cartCount").html()
                 count = parseInt(count) + 1;
                 $('#cartCount').html(count)
-                // swal({title:"item added to cart"})
 
+                swal({ title: result.success });
 
+                setTimeout(() => {                                                                                                   // just for fun  how many functions are there
+                    swal.close()
+                    if(wishlistId) removeWishlistItem(wishlistId, prodId) ; setTimeout(() => swal.close(), 5000)
+                }, 2000)
+            } else {
+                swal({
+                    title: result.error,
+                    text: "click to login",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "Cancel",
+                            value: null,
+                            visible: true,
+                            closeModal: true,
+                        },
+                        confirm: {
+                            text: "Login",
+                            value: true,
+                            visible: true,
+                            closeModal: true
+                        }
+                    }
+                }).then((login) => { if (login) location.href = "/login" })
+
+                setTimeout(() => swal.close(), 10000)
             }
-
         }
     })
-
 }
 
 function changeQuantity(prodId, cartId, count) {
@@ -479,28 +496,28 @@ function addToWishlist(prodId) {
                 }, 1000)
             } else {
                 swal({
-                     title: result.error,
-                     text: "click to login",
-                     icon: "warning",
-                     buttons: {
+                    title: result.error,
+                    text: "click to login",
+                    icon: "warning",
+                    buttons: {
                         cancel: {
-                          text: "Cancel",
-                          value: null,
-                          visible: true,
-                          closeModal: true,
+                            text: "Cancel",
+                            value: null,
+                            visible: true,
+                            closeModal: true,
                         },
                         confirm: {
-                          text: "Login",
-                          value: true,
-                          visible: true,
-                          closeModal: true
+                            text: "Login",
+                            value: true,
+                            visible: true,
+                            closeModal: true
                         }
-                      }
+                    }
 
-                }).then((login)=>{
-                    if(login) location.href = "/login"
+                }).then((login) => {
+                    if (login) location.href = "/login"
                 })
-                setTimeout( ()=> swal.close() ,10000)
+                setTimeout(() => swal.close(), 10000)
             }
         }
 

@@ -164,6 +164,8 @@ module.exports = {
 
     addToCart: (data, userId) => {
 
+        const selectedSize = data.selectedSize
+
         let productObject = {
 
             item: ObjectId(data.id),
@@ -171,51 +173,44 @@ module.exports = {
             subcategory: data.subcategory,
             category: data.category,
             price: parseInt(data.price),
-
-            size: data.size,
+            selectedSize: selectedSize,
             quantity: 1,
-
         }
-        // console.log(productObject);
+
+        const successMsg = { success: "Item added to the cart" }
+        console.log(productObject, "waytocart");
+
         return new Promise(async (resolve, reject) => {
             const cart = await db.get().collection(collections.CARTCOLLECTION).findOne({ user: ObjectId(userId) })
 
-            console.log(cart, 'check');
+            console.log(cart, 'cart check');
             if (!cart) {
                 let cartItem = {
                     user: ObjectId(userId),
                     products: [productObject],
                     total: parseInt(0),
                 }
-
-                db.get().collection(collections.CARTCOLLECTION).insertOne(cartItem).then((result) => {
-                    resolve(result);
-                    console.log(result);
-                })
-            } else {
+                db.get().collection(collections.CARTCOLLECTION).insertOne(cartItem).then((result) => { resolve(successMsg); console.log(result); })
+            }
+            else {
                 // console.log(result.products.item);
                 const productExist = cart.products.findIndex(products => products.item == data.id)
-
+                const checksize = cart.products.some(p => p.selectedSize === selectedSize)
 
                 console.log(productExist);
-                if (productExist != -1) {
+                if (productExist != -1 && checksize) {
                     db.get().collection(collections.CARTCOLLECTION).updateOne({ user: ObjectId(userId), 'products.item': ObjectId(data.id) },
                         {
                             $inc: { "products.$.quantity": 1 }
-                        }).then(() => {
-                            resolve()
-                        })
+
+                        }).then(() => resolve(successMsg))
                 } else {
 
                     db.get().collection(collections.CARTCOLLECTION).updateOne({ user: ObjectId(userId) },
                         {
                             $push:
                                 { products: productObject }
-                        }).then((result) => {
-                            console.log(result);
-                            resolve(result);
-                        })
-
+                        }).then((result) => { console.log(result); resolve(successMsg); })
                 }
             }
         })
@@ -336,10 +331,10 @@ module.exports = {
     },
 
     updateSize: (data) => {
-        try {
+    
             console.log(data);
             const cartId = ObjectId(data.cartId);
-            const selctedsize = data.selectedSize;
+            const selectedSize = data.selectedSize;
             const prodId = ObjectId(data.prodId);
 
             return new Promise((resolve, reject) => {
@@ -349,7 +344,7 @@ module.exports = {
                 },
 
                     {
-                        $set: { 'products.$.selectedSize': selctedsize }
+                        $set: { 'products.$.selectedSize': selectedSize }
                     }).then((result) => {
                         console.log(result, ' aftr updar');
                         resolve({ sizeSelected: true })
@@ -359,9 +354,7 @@ module.exports = {
                         reject({ sizeSelected: false })
                     })
             })
-        } catch (error) {
-            console.log(error, 'try err in updatefunction');
-        }
+
     },
 
     checkCouponCode: (couponCode, cartTotal) => {

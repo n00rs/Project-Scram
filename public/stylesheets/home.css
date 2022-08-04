@@ -311,11 +311,13 @@ a:hover {
 }
 
 .cart {
-    background: #fff;
+    background: #000;
+    opacity: .9;
     padding: 50px;
     border-radius: 20px;
     margin: 27px 50px;
     box-shadow: 0 0 15px 2px rgba(0,0,0,0.1);
+    color: rgb(190, 190, 190);
 }
 .row1 {
     display: flex;
@@ -326,7 +328,7 @@ a:hover {
     margin-bottom: 25px;
     transition: 0.4s;
 }
-.black,
+/* .black,
 .red,
 .white,
 .yellow {
@@ -392,7 +394,7 @@ a:hover {
     position: relative;
     top: 2px;
     left: 2px;
-}
+} */
 
 .colors {
     display: flex;
@@ -427,70 +429,42 @@ a:hover {
     line-height: 19px;
 }
 .reviews i {
-    color: #000;
+    color: #777;
 }
 .product-title {
     font-size: 35px;
-    font-weight: 700;
-    font-style: italic;
-    color: #000;
-}
-.product-inf {
-    margin-top: 20px;
-}
-.product-inf ul {
-    display: flex;
-    list-style: none;
-}
-.product-inf ul li:first-child {
-    margin-right: 15px;
-    ;
-}
-.product-inf ul li {
-    padding: 10px 30px;
-    border-radius: 10px;
-    transition: 0.3s;
-    cursor: pointer;
-}
-.product-inf ul li:hover {
-    border-radius: 5px;
-    background: #eee;
-}
-.product-inf ul li a {
-    color: #000;
-    font-size: 18px;
     font-weight: 500;
-    
+    font-family:'Courier New', Courier, monospace ;
+    color: #fff;
 }
-.product-inf ul li a:hover {
-    text-decoration: none;
-}
-.product-inf ul li.active {
-    border-bottom: 3px solid #000;
-    background: #eee;
-    transition: 0.3s;
-}
-#Details {
-    display: none;
-}
+
 
 .custom-btn {
     background: #feff31;
+    opacity: .8;
     color: #000;
     display: block;
     width: 200px;
     text-align: center;
     font-size: 16px;
-    border-radius: 25px;
+    border-radius: 25px ;
     padding: 10px;
     transition: 0.3s;
-    font-weight: 500;
-    margin-top: 20px;
+    font-weight: 400;
+    margin-top: 40px;
 }
+
 .custom-btn:hover {
-    text-decoration: none;
-    color: #fff;
-    opacity: 0.88;
+    /* text-decoration: none;
+    color:#000 ;
+    opacity: .4; */
+    background: #feff31;
+    color: #000;
+   
+    box-shadow: 0 0 5px #feff31,
+                0 0 15px #feff31,
+                0 0 35px #feff31,
+                0 0 5px #feff31;
 }
 
 .buttons .row .col-md-6 {

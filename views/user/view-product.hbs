@@ -1,5 +1,7 @@
-
 <script src="/javascripts/ajax.js"></script>
+<style>body{
+    background: -webkit-linear-gradient(left, #000, rgb(228, 228, 19));
+}</style>
 <section>
 
     <ol class="breadcrumb">
@@ -9,93 +11,78 @@
         <li class="breadcrumb-item active">{{product.model}}</li>
     </ol>
     <div class="container">
-        <div class="row">
-
-            <div class="cart">
-                <div class="row row1">
-                    <div class="col-md-4">
-                        <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" id="ProductImg">
-                        <div class="small-imgs">
-                            <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" class="small-img">
-                            <img src="/images/product_images/{{product._id}}_2.jpg" width="100%" class="small-img">
-                            <img src="/images/product_images/{{product._id}}_3.jpg" width="100%" class="small-img">
-                            <img src="/images/product_images/{{product._id}}_4.jpg" width="100%" class="small-img">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h1 class="product-title">{{product.modelDetails.name}}</h1>
-                        <div class="reviews">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <i class="far fa-star"></i>
-                            <p>240 reviews</p>
-                        </div>
-                        <div class="price">
-                            <span>&#8377; {{product.modelDetails.price}}</span>
-                            <span>$49.99</span>
-                        </div>
-                        <div class="row">
-
-                            <div class="col-md-4 sze">
-                                <h5>Size</h5>
-
-                                <select class="size custom-select" required>
-                                    <option> Select Size</option>
-                                    {{#each product.modelDetails.size}}
-                                    <option value="{{this}}">{{this}}</option>
-                                    {{/each}}
 
 
-                                </select>
-                            </div>
-                        </div>
-                        <div id="product" class="product-inf">
-                        </div>
-                        <div class="buttons">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <button href="#" class="custom-btn">WISH LIST <i class="fa-solid fa-heart-circle-plus"></i></button>
-                                </div>
-                                <div class="col-md-6">
-                                    <button class="custom-btn" onclick="addToCart('{{product._id}}','{{product.modelDetails.name}}',
-                        '{{product.subcategory}}','{{category}}','{{product.modelDetails.price}}',
-                        '{{product.modelDetails.size}}')">ADD TO CART<i class="fas fa-angle-right"></i></button>
-                                </div>
-                                
-                            </div>
-                        </div>
+        <div class="cart">
+            <div class="row row1">
+                <div class="col-md-4 col-12">
+                    <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" id="ProductImg">
+                    <div class="small-imgs">
+                        <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" class="small-img">
+                        <img src="/images/product_images/{{product._id}}_2.jpg" width="100%" class="small-img">
+                        <img src="/images/product_images/{{product._id}}_3.jpg" width="100%" class="small-img">
+                        <img src="/images/product_images/{{product._id}}_4.jpg" width="100%" class="small-img">
                     </div>
                 </div>
-                <div class="container text-center p-5">
+                <div class="col-md-6 col-12">
+                    <h1 class="product-title">{{product.modelDetails.name}}</h1>
+                    <div class="reviews">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <i class="far fa-star"></i>
+                        <p>240 reviews</p>
+                    </div>
+                    <div class="price">
+                        <span>&#8377; {{product.modelDetails.price}}</span>
+                        <span>$49.99</span>
+                    </div>
                     <div class="row">
-                        <div id="product" class="product-inf">
-                            <ul>
-                                <li class="active"><a href="#Description">Description</a></li>
-                                <li><a href="#Details">Features</a></li>
-                            </ul>
-                            <div class="tabs-content">
-                                <div id="Description">
-                                    <h5>{{product.modelDetails.description}}</h5>
-                                </div>
-                                <div id="Details">
-                                    <h5>{{product.modelDetails.features}}</h5>
-                                </div>
+
+                        <div class="col-md-4 sze">
+                            <h5>Size</h5>
+
+              <select class="form-select form-select-sm" id="selectedSize">
+
+                {{#each product.modelDetails.size}}
+                <option id="" value="{{this.size}}">{{this.size}}</option>
+                {{/each}}
+
+              </select>
+                        </div>
+                    </div>
+                    <div id="product" class="product-inf">
+                    </div>
+                    <div class="buttons">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button onclick="addToWishlist('{{product._id}}')" class="custom-btn">WISH LIST <i
+                                        class="fa-solid fa-heart-circle-plus"></i></button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="custom-btn" onclick="addToCart('{{product._id}}','{{product.modelDetails.name}}',
+                        '{{product.subcategory}}','{{product.category}}','{{product.modelDetails.price}}',
+                        $('#selectedSize').val())">ADD TO CART<i class="fas fa-angle-right"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row p-5">
+                <div class="col-md-6"> Description
+                    <h5>{{product.modelDetails.description}}</h5>
+                    Features
+                    <h5>{{product.modelDetails.features}}</h5>
 
+                </div>
+                <div class="col-md-6">
+
+                    <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" id="ProductImg">
+                    <img src="/images/product_images/{{product._id}}_3.jpg" width="100%" id="ProductImg">
+                </div>
             </div>
         </div>
-
-
-
-
-
-
-    </div>
     </div>
 </section>
 

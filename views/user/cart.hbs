@@ -28,18 +28,21 @@
               {{#each cartItems.products}}
               <tr>
                 <th scope="row">
-                  <div class="d-flex align-items-center">
-                    <img src="/images/product_images/{{this.item}}_1.jpg" class="img-fluid rounded-3"
-                      style="width: 120px;" alt="img">
-                    <div class="flex-column ms-4">
-                      <p class="mb-0">{{this.name}}</p>
-                      <p class="mb-0">{{this.subcategory}}</p>
-                    </div>
-                  </div>
-                </th>
-                <td class="align-middle">
-                  <p class="e-auto" style="font-weight: 500;">{{this.category}}</p>
+              <div class="d-flex align-items-center">
+                <img src="/images/product_images/{{this.item}}_1.jpg" class="img-fluid rounded-3" style="width: 120px;"
+                  alt="img">
+                  <td>
+                <div class="flex-column ms-4">
+                  <h6><strong>{{this.name}}</strong></h6>
+                  <h6 style="font-family:sans-serif;">{{this.subcategory}}</h6>
+
+                  <h6>{{this.category}}</h6>
+                </div>
                 </td>
+              </div>
+            </th>
+
+              
                 <td class="align-middle">
                   <div class="d-flex flex-row">
                     <button class="btn btn-link " onclick="changeQuantity('{{this.item}}','{{../cartItems._id}}',-1)">
@@ -67,20 +70,21 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-4 m5-1 ms-5">
+      <div class="col-12 col-md-5 ">
 
         <th class="h5 ">ORDER SUMMARY</th>
         {{#each cartItems.products}}
         <hr>
         <tr scope="row ">
-          <div class="d-flex align-items-center">
+          <div class="d-flex ">
             <img src="/images/product_images/{{this.item}}_1.jpg" class="img-fluid rounded-3" style="width: 75px;"
               alt="Book">
-            <div class="flex-column ms-4">
-              <p class="mb-0">{{this.name}}</p>
-              <p class="mb-0">size:
+              
+            <div class="flex-column ms-auto me-5">
+              <h6 class="mb-0 "><strong>{{this.name}}</strong></h6>
+              <h6 class="mb-0">size: <strong>{{this.selectedSize}}</strong></h6>
 
-                <select name="size" id="size" onchange="updateSize('{{../cartItems._id}}','{{this.item}}',this.value)"
+                {{!-- <select name="size" id="size" onchange="updateSize('{{../cartItems._id}}','{{this.item}}',this.value)"
                   required>
 
                   <option value="{{choosenSize selectedSize}}">{{choosenSize selectedSize}}</option>
@@ -90,15 +94,15 @@
                   <option value="{{this}}">{{this}}</option>
                   {{/each}}
 
-                </select>
-              </p>
-              <p class="mb-0">quantity: {{this.quantity}}</p>
+                </select> --}}
+              
+              <h6 class="mb-0">quantity:{{this.quantity}}</h6>
 
             </div>
           </div>
         </tr>
         {{/each}}
-        <div class="form-floating mb-3 p-5">
+        <div class="form-floating mb-3 p-5 text-black">
           <input type="text" class="form-control" id="couponInput"
             onchange="checkCouponCode(this.value,'{{total.total}}')">
           <label for="">Apply Coupon</label>
