@@ -1,0 +1,79 @@
+<section>
+  <div class=" container-fluid">
+    <div class="row ">
+      <div class="col-md-12 col-12">
+        <div>
+          <div class="all-prod" style=" overflow-x:auto">
+            <h3 class="tittle text-white">ALL PRODUCTS</h3>
+            <table class="table" id="myTable">
+              <thead>
+                <tr class="text-warning">
+                  <th scope="col">#</th>
+                  <th scope="col">Product Name</th>
+
+                  <th scope="col">Image</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Sub-category</th>
+                  <th scope="col">size </th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each orderDetails.orderData.order}}
+                <tr class="text-white">
+                  <th scope="text-warning">{{@index}}</th>
+                  <td>{{this.name}}</td>
+
+                  <td> <img src="/images/product_images/{{this.item}}_1.jpg" alt="" style="width:3em ;"></td>
+                  <td>{{this.category}}</td>
+                  <td>{{this.subcategory}}</td>
+                  <td> {{this.selectedSize}}</td>
+                  <td> {{this.quantity}}</td>
+                  <td>&#8377; {{this.price}}</td>
+                  <td class="" style="">
+                    <i class="fa-regular fa-circle-check text-success"></i>
+                    {{this.status}}
+                  </td>
+                  <td>
+
+                    <button class="btn text-white" style="{{confirmBtn this.status}}" id="confirmBtn"
+                      onclick="checkStock('{{../orderDetails._id}}','{{this.item}}', '{{this.selectedSize}}', '{{this.quantity}}' )">
+                      <i class="fa-regular fa-circle-check text-success "></i>
+                      Confirm
+                    </button>
+
+                    <button class="btn text-white" style="{{dispatchBtn this.status 'shipped'}}" id="dispacthBtn"
+                      value="shipped"
+                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}', this.value )">
+                      <i class="fa-solid fa-truck-arrow-right text-success"></i>
+                      Dispatch
+                    </button>
+
+                    <button class="btn text-white" style="{{deliveredBtn this.status 'shipped'}}" id="deliveryBtn"
+                      value="delivered"
+                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}', this.value )">
+                      <i class="fa-solid fa-truck-arrow-right text-success"></i>
+                      delivered
+                    </button>
+                    {{!-- <button class="bg-black" onclick="deleteProduct('{{this._id}}') "><i
+                        class="fa-solid fa-trash-can fs-5 text-danger"></i></button> --}}
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<script src="/javascripts/place-order.js"> </script>

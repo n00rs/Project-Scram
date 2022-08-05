@@ -103,7 +103,7 @@ router.post('/updateUserData', (req, res) => {
 
 //   ADDING PRODUCTS 
 
-router.get('/add-products',verifyAdmin, (req, res) => {
+router.get('/add-products', verifyAdmin, (req, res) => {
     res.render('admin/add-products', { admin: true, })
 })
 
@@ -111,49 +111,49 @@ router.post('/add-products', (req, res) => {
     try {
 
         adminHelpers.addProduct(req.body).then((result) => {
-            if(req.files){
-            let img1 = req.files.image1;
-            let img2 = req.files.image2;
-            let img3 = req.files.image3;
-            let img4 = req.files.image4;
-            
-        console.log(img1, img2, img3, img4);
-    
-            if (img1) img1.mv('./public/images/product_images/' + result + '_1.jpg');
-            if (img2) img2.mv('./public/images/product_images/' + result + '_2.jpg');
-            if (img3) img3.mv('./public/images/product_images/' + result + '_3.jpg');
-            if (img4) img4.mv('./public/images/product_images/' + result + '_4.jpg');
+            if (req.files) {
+                let img1 = req.files.image1;
+                let img2 = req.files.image2;
+                let img3 = req.files.image3;
+                let img4 = req.files.image4;
+
+                console.log(img1, img2, img3, img4);
+
+                if (img1) img1.mv('./public/images/product_images/' + result + '_1.jpg');
+                if (img2) img2.mv('./public/images/product_images/' + result + '_2.jpg');
+                if (img3) img3.mv('./public/images/product_images/' + result + '_3.jpg');
+                if (img4) img4.mv('./public/images/product_images/' + result + '_4.jpg');
             }
             res.redirect('/admin/view-products')
-        })   
+        })
     } catch (error) {
-        console.log(error,'image error');
+        console.log(error, 'image error');
     }
 })
-   
 
-router.get('/view-products',verifyAdmin, async (req, res) => {
+
+router.get('/view-products', verifyAdmin, async (req, res) => {
 
     let products = await adminHelpers.fetchAllProducts();
 
     res.render('admin/view-products', { admin: true, products })
 })
 
-router.get('/edit-product/:id',verifyAdmin, async (req, res) => {
+router.get('/edit-product/:id', verifyAdmin, async (req, res) => {
     console.log(req.params.id);
 
     let product = await adminHelpers.fetchProduct(req.params.id)
 
-    console.log(product,'going to edit product');
+    console.log(product, 'going to edit product');
 
     res.render('admin/edit-product', { admin: true, product })
 })
 
 router.post('/edit-product', (req, res) => {
     try {
-    // console.log(req.body);
-    adminHelpers.editProduct(req.body).then((result) => {
-        
+        // console.log(req.body);
+        adminHelpers.editProduct(req.body).then((result) => {
+
             if (req.files) {
 
                 let id = req.body.productId;
@@ -167,12 +167,12 @@ router.post('/edit-product', (req, res) => {
                 if (img3) img3.mv('./public/images/product_images/' + id + '_3.jpg');
                 if (img4) img4.mv('./public/images/product_images/' + id + '_4.jpg');
             }
-        res.redirect('/admin/view-products')
-    })
-} catch (error) {
-    console.log(error,"post edit error");
-    res.status({error: error})
-}
+            res.redirect('/admin/view-products')
+        })
+    } catch (error) {
+        console.log(error, "post edit error");
+        res.status({ error: error })
+    }
 })
 
 router.get('/deleteProduct', (req, res) => {
@@ -219,48 +219,66 @@ router.post('/add-banners', (req, res) => {
     }
 })
 
-router.get('/manage-coupons', async (req,res)=>{
+router.get('/manage-coupons', async (req, res) => {
 
     let coupons = await adminHelpers.fetchCoupons()
-    res.render("admin/manage-coupons",{admin:true, coupons})
+    res.render("admin/manage-coupons", { admin: true, coupons })
 })
 
-router.post('/manage-coupons',(req,res)=>{
+router.post('/manage-coupons', (req, res) => {
 
     console.log(req.body);
-    adminHelpers.addCoupon(req.body).then((result)=>{
+    adminHelpers.addCoupon(req.body).then((result) => {
         console.log(result);
         res.json(result);
     })
-    .catch((error)=>{
-        console.log(error,"ctcherr in ");
-        res.json(error);
-    })
+        .catch((error) => {
+            console.log(error, "ctcherr in ");
+            res.json(error);
+        })
 })
-router.get('/all-orders', async (req,res)=>{
+
+//ORDERS   
+
+router.get('/all-orders', async (req, res) => {
     try {
-        let orders = await adminHelpers.fetchAllOrders() ;
-        res.render('admin/all-orders',{admin:true, orders}) ;
+        let orders = await adminHelpers.fetchAllOrders();
+        res.render('admin/all-orders', { admin: true, orders });
     } catch (error) {
-        
+
     }
 })
 
-router.put('/update-order-status',(req,res)=>{
-try {
-    adminHelpers.updateOrderStatus(req.body).then((result)=>{
-        res.json(result)
-    })
-    .catch((error)=>{
-        
-        res.json(error)
-    })
-} catch (error) {
-    console.log(error,'status update');
-   
-}
+router.get('/all-orders/:orderId', (req, res) => {
+    try {
 
+        let orderId = req.params.orderId
+        adminHelpers.fetchOrderDetails(orderId).then((orderDetails) => {
+            // const orderDetails = result.orderData
+            res.render('admin/order-details', { admin: true, orderDetails })
+        })
 
+    } catch (error) {
+        console.log(error, " err in catch ordetails");
+    }
+})
+
+router.patch('/all-orders', (req, res) => {
+    try {
+        console.log(req.body);
+
+        adminHelpers.checkStock(req.body).then(result => res.json(result)).catch(error => res.json(error))
+    } catch (error) {
+        console.log(error, "error in patch");
+    }
+})
+router.put('/all-orders', (req, res) => {
+    try {
+        console.log(req.body);
+        adminHelpers.updateOrderStatus(req.body).then(result => res.json(result)).catch(error => res.json(error))
+    } catch (error) {
+        console.log(error, 'status update');
+    }
 })
 
 module.exports = router;

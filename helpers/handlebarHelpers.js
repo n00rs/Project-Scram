@@ -36,34 +36,43 @@ module.exports = {                                   //
          order: userCart.products,
          amount: grandTotal
       }
-      
+
       return JSON.stringify(orderData)
    },
 
-   expandAddress : (address)=>{
-    let  deliveryAddress = address.name +" "+ address.building_name +" \n" +address.street+" "+address.city + " \n" + address.country+" "
-   +address.pincode + " \n"  +address.phone + " "+address.email+ " " ;
-   return deliveryAddress
-   console.log(deliveryAddress);
+   expandAddress: (address) => {
+      let deliveryAddress = address.name + " " + address.building_name + " \n" + address.street + " " + address.city + " \n" + address.country + " "
+         + address.pincode + " \n" + address.phone + " " + address.email + " ";
+      return deliveryAddress
+      console.log(deliveryAddress);
    },
-sizeToggle: (category)=>{
-   console.log(category);
-   if(category == 'accessories'|| category == 'visors'|| category == 'communications' || category == 'pads' || category == 'others') return "display:none ;"
+   sizeToggle: (category) => {
+      console.log(category);
+      if (category == 'accessories' || category == 'visors' || category == 'communications' || category == 'pads' || category == 'others') return "display:none ;"
 
 
-},
+   },
 
-editPage: (val)=>{
-   console.log(val);
-},
-check: (value1 , value2)=>{
-return  (value1 ===value2 ) ? "checked" : "notchecked"
-},
+   editPage: (val) => {
+      console.log(val);
+   },
+   check: (value1, value2) => {
+      return (value1 === value2) ? "checked" : "notchecked"
+   },
 
-checkSort: (value1 , value2)=>{
-   
-   return  (value1 ===value2 ) ? "selected" : "notselected"
-},
+   checkSort: (value1, value2) => {
 
-// checkStock: (stock) => console.log(stock.stock)
+      return (value1 === value2) ? "selected" : "notselected"
+   },
+
+   //ORDER-DETAILS.HBS FUNCTIONS
+
+   displayOrdrBtn: (value1, value2) => { console.log(value1, value2); return (value1 === value2) ? "" : "display:none ;" },
+
+   confirmBtn: (orderStatus) => { return (orderStatus == undefined) ? " " : "display:none ;" },               //
+
+   dispatchBtn: (orderStatus) => { return orderStatus == "confirmed" ? " " : "display:none ;" },
+
+   deliveredBtn: (orderStatus) => { return orderStatus == "shipped" ? " " : "display:none ;" },
+
 }

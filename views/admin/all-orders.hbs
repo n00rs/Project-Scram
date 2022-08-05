@@ -40,7 +40,7 @@
                                 <tr class="text-white">
                                     <th scope="text-warning">{{count @index}}</th>
 
-                                    <td><a href="/admin/see">{{this._id}}</a></td>
+                                    <td><a href="/admin/all-orders/{{this._id}}">{{this._id}}</a></td>
 
                                     <td>{{this.address.email}}</td>
 
@@ -103,8 +103,6 @@
                                         </button>
                                     </td>
                                     {{/if}}
-                                    
-
                                 </tr>
                                 {{/each}}
                             </tbody>

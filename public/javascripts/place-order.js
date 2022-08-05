@@ -70,4 +70,48 @@ function placeOrder() {
     })
 }
 
+function checkStock(orderId,prodId,size,quantity) {
+    console.log(orderId,prodId,size,quantity);
+    let body = {orderId: orderId, prodId: prodId, selectedSize: size, quantity:quantity}
+    $.ajax({
+        url: "/admin/all-orders",
+        data: body,
+        method:'patch',
+        success:(result)=>{
+          
+            result.error ? swal({ title: result.error,icon: "error" }) : 
+            result.stockOut ? swal({title: result.stockOut, icon: "error"}) :
+            result.orderConfirmed ? swal({title: result.orderConfirmed, icon:"success"}): 
+            swal({title: "client side error"})
+        }
+    })
+}
+
+function updateOrderStatus(orderId,prodId,status) {
+    console.log(orderId, prodId, status);
+    let body = {orderId:orderId, prodId:prodId,orderStatus: status}
+    $.ajax({
+        url: '/admin/all-orders',
+        data: body,
+        method: 'put',
+        success: (result) => {
+console.log(result);
+            if(result.success ) {
+            swal({title: result.success, icon: "success"}) 
+            setTimeout(()=> location.reload(),2000) 
+            }
+            else if(result.fail ) {
+                ({title: result.fail, icon: "error"})
+                 setTimeout(()=> swal.close(),2000) 
+            }
+
+            if(result.error) swal({ title: result.error,icon: "error" })
+             
+        }
+
+    })
+}
+
+
+
 
