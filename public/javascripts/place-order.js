@@ -58,6 +58,7 @@ function placeOrder() {
         },
         method: 'post',
         success: (result) => {
+            if(result.url) {console.log(result.url);location.href= result.url ;}
             if (result.orderPlaced) {
                location.href='/order-confirmation'
             }else{

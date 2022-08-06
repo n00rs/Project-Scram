@@ -1,9 +1,9 @@
+require('dotenv').config()
 const bcrypt = require('bcrypt');
-
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig');
-// const { orderData } = require('./handlebarHelpers');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 module.exports = {
     userSignup: (data) => {
@@ -331,29 +331,29 @@ module.exports = {
     },
 
     updateSize: (data) => {
-    
-            console.log(data);
-            const cartId = ObjectId(data.cartId);
-            const selectedSize = data.selectedSize;
-            const prodId = ObjectId(data.prodId);
 
-            return new Promise((resolve, reject) => {
-                db.get().collection(collections.CARTCOLLECTION).updateOne({
-                    _id: cartId,
-                    "products.item": prodId
-                },
+        console.log(data);
+        const cartId = ObjectId(data.cartId);
+        const selectedSize = data.selectedSize;
+        const prodId = ObjectId(data.prodId);
 
-                    {
-                        $set: { 'products.$.selectedSize': selectedSize }
-                    }).then((result) => {
-                        console.log(result, ' aftr updar');
-                        resolve({ sizeSelected: true })
-                    })
-                    .catch((error) => {
-                        console.error(error, 'update faile');
-                        reject({ sizeSelected: false })
-                    })
-            })
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.CARTCOLLECTION).updateOne({
+                _id: cartId,
+                "products.item": prodId
+            },
+
+                {
+                    $set: { 'products.$.selectedSize': selectedSize }
+                }).then((result) => {
+                    console.log(result, ' aftr updar');
+                    resolve({ sizeSelected: true })
+                })
+                .catch((error) => {
+                    console.error(error, 'update faile');
+                    reject({ sizeSelected: false })
+                })
+        })
 
     },
 
@@ -643,6 +643,10 @@ module.exports = {
         })
     },
 
+
+    //ORDERS SECTIONS
+
+
     newOrder: (data, user) => {
         const address = JSON.parse(data.address);
         const orderData = JSON.parse(data.orderDetails);
@@ -677,6 +681,40 @@ module.exports = {
                 // console.log(result,'order');
                 resolve(result)
             })
+        })
+    },
+
+    stripeCheckOut: (data, user) => {
+
+        const address = JSON.parse(data.address);
+        const orderData = JSON.parse(data.orderDetails);
+        const userId = ObjectId(user);
+
+        console.log("stricheck out", orderData, address)
+
+        return new Promise(async (resolve, reject) => {
+            const session = await stripe.checkout.sessions.create({
+                success_url: `${process.env.HOSTED_URL}/order-confirmation`,
+                cancel_url: `${process.env.HOSTED_URL}/payment-failed`,
+                mode: `payment`,
+                payment_method_types: [`card`],
+                client_reference_id: user,
+                line_items: [{
+                    price_data: {
+                        currency: 'inr',
+                        unit_amount: orderData.amount * 100,
+                        product_data: {
+                            name: "grand total",
+                        },
+                    },
+
+                    quantity: 1,
+                },
+
+                ],
+            })
+            console.log(session);
+            session.url ? resolve({url:session.url}) : reject({err:"stripe out of station"}) 
         })
     }
 

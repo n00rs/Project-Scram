@@ -521,23 +521,17 @@ router.post('/place-order', (req, res) => {
 
         const userId = req.session.user._id;
         const paymentMethod = req.body.paymentMethod;
-        console.log(paymentMethod);                                                           //using switch just for a change
+        console.log(paymentMethod);                                                                                              //using switch just for a change
         switch (paymentMethod) {
             case 'cod':
-                userHelpers.newOrder(req.body, userId).then((result) => {
-                    res.json(result)
-                })
-                    .catch((error) => {
-                        console.error(error);
-                        res.json(error)
-                    })
-
+                userHelpers.newOrder(req.body, userId).then((result) => res.json(result)).catch((error) =>  res.json(error) )
                 break;
 
-            case 'stripe':
-                console.log("stripe");
+            case 'stripe':{
+               
+                userHelpers.stripeCheckOut(req.body,userId).then(result => res.json(result)).catch(err=>console.log(`err in user:${err}`)) 
                 break;
-
+            }
             case 'razorpay':
                 console.log('razorpay');
                 break;
@@ -547,7 +541,7 @@ router.post('/place-order', (req, res) => {
         }
 
     } catch (error) {
-
+console.log(error,'err');
     }
 })
 
