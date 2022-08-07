@@ -693,12 +693,39 @@ module.exports = {
         console.log("stricheck out", orderData, address)
 
         return new Promise(async (resolve, reject) => {
+
+            const customer = await stripe.customers.create({
+                     address:{
+                        city: address.city,
+                        line1: address.building_name,
+                        line2: address.street,
+                        postal_code: address.pincode,
+                     },
+                     email: address.email,
+                     name: address.name,
+                     phone: address.phone,
+                     shipping:{
+                        address:{
+                            city: address.city,
+                            line1: address.building_name,
+                            line2: address.street,
+                            postal_code: address.pincode,
+                         
+                         },
+                         name: address.name,
+                         phone: address.phone,
+                     },
+                     metadata: {
+                        userId: user,
+                     }
+            })
             const session = await stripe.checkout.sessions.create({
                 success_url: `${process.env.HOSTED_URL}/order-confirmation`,
-                cancel_url: `${process.env.HOSTED_URL}/payment-failed`,
+                cancel_url: `${process.env.HOSTED_URL}/cart`,
                 mode: `payment`,
                 payment_method_types: [`card`],
                 client_reference_id: user,
+                customer: customer.id,
                 line_items: [{
                     price_data: {
                         currency: 'inr',
@@ -712,8 +739,15 @@ module.exports = {
                 },
 
                 ],
+                payment_intent_data:{
+                    receipt_email:address.email,
+                    metadata:{
+                        orderId: "orderId"
+                    },
+                },
+             
             })
-            console.log(session);
+            // console.log(session);
             session.url ? resolve({url:session.url}) : reject({err:"stripe out of station"}) 
         })
     }

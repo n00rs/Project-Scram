@@ -1,10 +1,10 @@
-const { json } = require('body-parser');
-
+require('dotenv').config
 const express = require('express');
 const router = express.Router();
+const bodyParser = require('body-parser')
 const twilio = require('../config/twilio');
 const userHelpers = require('../helpers/userHelpers');
-require('dotenv').config
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const verifyUser = (req, res, next) => {
     if (req.session.loggedIn) next()
     else res.redirect('/login')
@@ -528,7 +528,8 @@ router.post('/place-order', (req, res) => {
                 break;
 
             case 'stripe':{
-               
+               req.session.orderData = req.body
+
                 userHelpers.stripeCheckOut(req.body,userId).then(result => res.json(result)).catch(err=>console.log(`err in user:${err}`)) 
                 break;
             }
@@ -545,13 +546,91 @@ console.log(error,'err');
     }
 })
 
+router.post('/hooks', bodyParser.raw({type: 'application/json'}), async (req,res)=>{
+    const endpointKey = process.env.ENDPOINT_SECRET_KEY
+    const payload = req.body;
+    const payloadString = JSON.stringify(payload);
+    const header = stripe.webhooks.generateTestHeaderString({                                            //<= got from google
+        payload: payloadString,
+        secret: process.env.ENDPOINT_SECRET_KEY,                                                              //sign in key from stripe CLI
+      });
+
+    let event ;
+    try {
+        event = stripe.webhooks.constructEvent(payloadString, header, process.env.ENDPOINT_SECRET_KEY) ;
+        console.log(`webhooks events verifired:` ,event.type);
+
+    } catch (error) {
+        console.log(`webhook error: ${error}`);
+       return res.status(400).send(`Webhook Error: ${(err).message}`);
+    }
+    console.log(event.type);
+    switch (event.type) {
+        
+        case 'checkout.session.completed': {
+          const session = event.data.object;
+      
+          console.log(session);
+    
+          // Check if the order is paid (for example, from a card payment)
+          //
+          // A delayed notification payment will have an `unpaid` status, as
+          // you're still waiting for funds to be transferred from the customer's
+          // account.
+          if (session.payment_status === 'paid') {
+            console.log('paymet success');
+        //   let orderData =  req.session.orderData 
+          console.log(req.session.user);
+        //   orderData.paymentMethod.transcationId = session.payment_intent
+          var user = session. client_reference_id                 //orderId
+          console.log(user);
+        //  await userHelpers.newOrder(orderData, user).then(result=> console.log('result i user',result)).catch(err=> console.log(err))
+          }
+    
+          break;
+        }
+
+        case 'charge.succeeded': {
+            const session = event.data.object;
+      
+            console.log(session,"chargesecc");
+            if (session.paid) {
+                let receipt = event.data.object.receipt_url ;
+                let user = session.metadata.orderId ;
+                let transcationId = session.payment_intent ;
+                console.log(`resipt => ${receipt} user => ${user} transcationId=> ${transcationId} `);  //send the recipt to the user 
+            }
+            
+        }
+    
+        case 'checkout.session.async_payment_succeeded': {
+          const session = event.data.object;
+    
+          // Fulfill the purchase...
+          console.log(session,'awaiting payment');
+    
+          break;
+        }
+    
+        case 'checkout.session.async_payment_failed': {
+          const session = event.data.object;
+    
+          // Send an email to the customer asking them to retry their order
+          console.log(session,'payment failed')
+    
+          break;
+        }
+      }
+res.json({success: true}) ;
+    })
+
 router.get('/order-confirmation', (req, res) => {
     res.render('user/order-confirmation', { user: true })
 })
 router.get('/orders', verifyUser, async (req, res) => {
     const userId = req.session.user._id;
     const orders = await userHelpers.fetchOders(userId);
-    console.log(orders, 'insid orders')
+    // console.log(orders, 'insid orders')
     res.render('user/orders', { user: true, orders })
 })
 router.get("/view-order-details/:id", (req, res) => {
