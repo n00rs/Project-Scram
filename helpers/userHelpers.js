@@ -162,55 +162,64 @@ module.exports = {
     // CART SECTION
 
 
-    addToCart: (data, userId) => {
+    addToCart: (data, userID) => {
+        console.log(data, 'inside add to cart');
+        const prodId = ObjectId(data.prodId);
+        const userId = ObjectId(userID);
+        const selectedSize = data.selectedSize;
+        const successMsg = { success: "Item added to the cart" };
+        const errorMsg = { fail: "failed to update cart login or please try again later or " };
 
-        const selectedSize = data.selectedSize
-
-        let productObject = {
-
-            item: ObjectId(data.id),
-            name: data.name,
-            subcategory: data.subcategory,
-            category: data.category,
-            price: parseInt(data.price),
-            selectedSize: selectedSize,
-            quantity: 1,
-        }
-
-        const successMsg = { success: "Item added to the cart" }
-        console.log(productObject, "waytocart");
 
         return new Promise(async (resolve, reject) => {
-            const cart = await db.get().collection(collections.CARTCOLLECTION).findOne({ user: ObjectId(userId) })
 
-            console.log(cart, 'cart check');
-            if (!cart) {
-                let cartItem = {
-                    user: ObjectId(userId),
-                    products: [productObject],
-                    total: parseInt(0),
-                }
-                db.get().collection(collections.CARTCOLLECTION).insertOne(cartItem).then((result) => { resolve(successMsg); console.log(result); })
-            }
+            let product = await db.get().collection(collections.PRODUCTCOLLECTION).findOne({ _id: prodId })
+
+            if (!product) reject(errorMsg)
             else {
-                // console.log(result.products.item);
-                const productExist = cart.products.findIndex(products => products.item == data.id)
-                const checksize = cart.products.some(p => p.selectedSize === selectedSize)
+                let productObject = {
+                    item: prodId,
+                    name: product.modelDetails.name,
+                    subcategory: product.subcategory,
+                    category: product.category,
+                    size: product.modelDetails.size,
+                    price: parseInt(product.modelDetails.price),
+                    selectedSize: selectedSize,
+                    quantity: 1,
+                }
+                const cart = await db.get().collection(collections.CARTCOLLECTION).findOne({ user: userId })
 
-                console.log(productExist);
-                if (productExist != -1 && checksize) {
-                    db.get().collection(collections.CARTCOLLECTION).updateOne({ user: ObjectId(userId), 'products.item': ObjectId(data.id) },
-                        {
-                            $inc: { "products.$.quantity": 1 }
+                if (!cart) {
+                    let cartItem = {
+                        user: userId,
+                        products: [productObject],
+                    }
+                    db.get().collection(collections.CARTCOLLECTION).insertOne(cartItem).then((result) => { resolve(successMsg); console.log(result, "new cart"); }).catch(err => reject(errorMsg))
+                }
+                else {
+                    // console.log(cart);
+                    // const productExist = cart.products.some(products => { (products.item == data.prodId)})
+                    // const checksize = cart.products.some(products => (products.selectedSize === selectedSize))
 
-                        }).then(() => resolve(successMsg))
-                } else {
+                    // // const checksize = cart.products.every(product => {console.log(product);(product.selectedSize === selectedSize && product.item === data.prodId)?true:false})
 
-                    db.get().collection(collections.CARTCOLLECTION).updateOne({ user: ObjectId(userId) },
-                        {
-                            $push:
-                                { products: productObject }
-                        }).then((result) => { console.log(result); resolve(successMsg); })
+                    const productExist = cart.products.filter(id => id.item == data.prodId).some(size => size.selectedSize == selectedSize)
+
+                    console.log(productExist, "[rpde");
+                    if (productExist) {
+                        db.get().collection(collections.CARTCOLLECTION).updateOne({ user: userId, 'products.item': prodId, 'products.selectedSize': selectedSize },
+                            {
+                                $inc: { "products.$.quantity": 1 }
+
+                            }).then((result) => { console.log(result, "quantity"); resolve(successMsg); }).catch(err => reject(errorMsg))
+                    } else {
+
+                        db.get().collection(collections.CARTCOLLECTION).updateOne({ user: userId },
+                            {
+                                $push:
+                                    { products: productObject }
+                            }).then((result) => { console.log(result, " "); resolve(successMsg); }).catch(err => reject(errorMsg))
+                    }
                 }
             }
         })
@@ -243,28 +252,29 @@ module.exports = {
 
         })
     },
+
     changeCartQuantity: (data) => {
         try {
 
-            let prodId = ObjectId(data.id);
+            let prodId = ObjectId(data.prodId);
             let cartId = ObjectId(data.cartId);
             let count = parseInt(data.count);
             let quantity = parseInt(data.quantity);
-
+            let size = data.selectedSize
+            console.log(size);
             return new Promise((resolve, reject) => {
                 if (quantity === 1 && count === -1) {
                     db.get().collection(collections.CARTCOLLECTION).updateOne({ _id: cartId },
                         {
-                            $pull: { products: { item: prodId } }
+                            $pull: { products: { selectedSize: size, item: prodId } }
                         }).then(() => {
                             resolve({ productRemoved: true })
-                        })
+                        }).catch(err => reject({ productRemoved: false }))
                 } else {
-                    db.get().collection(collections.CARTCOLLECTION).updateOne({ _id: cartId, "products.item": prodId },
+                    db.get().collection(collections.CARTCOLLECTION).updateOne({ _id: cartId, "products.item": prodId, "products.selectedSize": size },
                         { $inc: { "products.$.quantity": count } }
-                    ).then(() => {
-                        resolve({ productAdded: true })
-                    })
+                    ).then(() => resolve({ productAdded: true }))
+                        .catch(err => reject({ productAdded: false }))
                 }
             })
 
@@ -273,32 +283,25 @@ module.exports = {
             console.log(error);
         }
     },
-    removeCartItem: (data) => {
-        try {
 
+    removeCartItem: (data) => {
             const cartId = ObjectId(data.cartId);
             const prodId = ObjectId(data.prodId);
-
+            const size = data.selectedSize;
             return new Promise((resolve, reject) => {
 
-                db.get().collection(collections.CARTCOLLECTION).updateOne({ _id: cartId },
+                db.get().collection(collections.CARTCOLLECTION).updateOne({ _id: cartId, },
                     {
                         $pull:
                         {
-                            products: { item: prodId }
+                            products: { selectedSize: size, item: prodId }
                         }
                     }
-                ).then(() => {
-                    resolve({ itemRemoved: true })
-                })
-
+                ).then(() =>  resolve({ itemRemoved: true }))
+                .catch(err=> reject({itemRemoved: false }))
             })
-
-        } catch (error) {
-            console.log(error);
-        }
-
     },
+
     totalAmount: (cartId) => {
 
         return new Promise((resolve, reject) => {
@@ -332,10 +335,10 @@ module.exports = {
 
     updateSize: (data) => {
 
-        console.log(data);
-        const cartId = ObjectId(data.cartId);
-        const selectedSize = data.selectedSize;
-        const prodId = ObjectId(data.prodId);
+        console.log(data) ;
+        const cartId = ObjectId(data.cartId) ;
+        const selectedSize = data.selectedSize ;
+        const prodId = ObjectId(data.prodId) ;
 
         return new Promise((resolve, reject) => {
             db.get().collection(collections.CARTCOLLECTION).updateOne({
@@ -367,18 +370,23 @@ module.exports = {
                 if (result == null) reject({ validCoupon: false })
 
                 else {
-                    let discountValue = parseFloat(cartTotal * result.discount.percentage);
+                    let discountPrice = result.discount.price;
+                    let discountPercent = result.discount.percentage;
+                    let discountValue = parseFloat(cartTotal * discountPercent);
                     console.log(discountValue);
-                    if (discountValue > result.discount.price) {
-
+                    if (discountValue > discountPrice) {
+                        let newTotal = parseInt(cartTotal - discountPrice)
                         resolve({
                             validCoupon: true,
-                            discount: result.discount.price
+                            discount: discountPrice,
+                            total: newTotal,
                         })
                     } else {
+                        let newTotal = parseInt(cartTotal - discountValue)
                         resolve({
                             validCoupon: true,
-                            discount: discountValue
+                            discount: discountValue,
+                            total: newTotal,
                         })
                     }
                 }
@@ -695,29 +703,29 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
 
             const customer = await stripe.customers.create({
-                     address:{
+                address: {
+                    city: address.city,
+                    line1: address.building_name,
+                    line2: address.street,
+                    postal_code: address.pincode,
+                },
+                email: address.email,
+                name: address.name,
+                phone: address.phone,
+                shipping: {
+                    address: {
                         city: address.city,
                         line1: address.building_name,
                         line2: address.street,
                         postal_code: address.pincode,
-                     },
-                     email: address.email,
-                     name: address.name,
-                     phone: address.phone,
-                     shipping:{
-                        address:{
-                            city: address.city,
-                            line1: address.building_name,
-                            line2: address.street,
-                            postal_code: address.pincode,
-                         
-                         },
-                         name: address.name,
-                         phone: address.phone,
-                     },
-                     metadata: {
-                        userId: user,
-                     }
+
+                    },
+                    name: address.name,
+                    phone: address.phone,
+                },
+                metadata: {
+                    userId: user,
+                }
             })
             const session = await stripe.checkout.sessions.create({
                 success_url: `${process.env.HOSTED_URL}/order-confirmation`,
@@ -739,17 +747,22 @@ module.exports = {
                 },
 
                 ],
-                payment_intent_data:{
-                    receipt_email:address.email,
-                    metadata:{
+                payment_intent_data: {
+                    receipt_email: address.email,
+                    metadata: {
                         orderId: "orderId"
                     },
                 },
-             
+
             })
             // console.log(session);
-            session.url ? resolve({url:session.url}) : reject({err:"stripe out of station"}) 
+            session.url ? resolve({ url: session.url }) : reject({ err: "stripe out of station" })
         })
     }
+
+}
+
+
+function productExist(arr) {
 
 }

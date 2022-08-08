@@ -51,8 +51,7 @@
               <m class="" style="font-weight: 500;">&#8377; {{this.modelDetails.price}}</m>
             </td>
             <td class="align-middle">
-              <button class="btn active" id="{{this._id}}" onclick="addToCart('{{this._id}}','{{this.modelDetails.name}}',
-                        '{{this.subcategory}}','{{category}}','{{this.modelDetails.price}}',
+              <button class="btn active" id="{{this._id}}" onclick="addToCart('{{this._id}}',
                         $('#{{this._id}}').val(),'{{../wishlist._id}}')"> <i class="fa-solid fa-cart-plus"> </i> ADD TO
                 CART </button>
             </td>

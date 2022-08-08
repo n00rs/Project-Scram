@@ -167,12 +167,10 @@ function sortSize(value) {
 
 // CART FUNCTIONS
 
-function addToCart(prodId, prodName, subcategory, category, prodPrice, selectedSize, wishlistId) {
-    console.log(prodId, prodName, subcategory, category, prodPrice, selectedSize, wishlistId);
+function addToCart(prodId, selectedSize, wishlistId) {
+    console.log(prodId, selectedSize, wishlistId);
     let body = {
-        id: prodId, name: prodName,
-        subcategory: subcategory, category: category,
-        price: prodPrice, selectedSize: selectedSize
+        prodId: prodId, selectedSize: selectedSize
     }
     $.ajax({
         url: "/add-to-cart",
@@ -189,8 +187,12 @@ function addToCart(prodId, prodName, subcategory, category, prodPrice, selectedS
 
                 setTimeout(() => {                                                                                                   // just for fun  how many functions are there
                     swal.close()
-                    if(wishlistId) removeWishlistItem(wishlistId, prodId) ; setTimeout(() => swal.close(), 5000)
+                    if (wishlistId) removeWishlistItem(wishlistId, prodId); setTimeout(() => swal.close(), 3000)                       //after success asking whthr to remove the item from wish list
                 }, 2000)
+
+            } else if (result.fail) {
+                swal({ title: result.fail })
+                setTimeout(() => swal.close(), 2000)
             } else {
                 swal({
                     title: result.error,
@@ -218,40 +220,41 @@ function addToCart(prodId, prodName, subcategory, category, prodPrice, selectedS
     })
 }
 
-function changeQuantity(prodId, cartId, count) {
+function changeQuantity(prodId, cartId, selectedSize, count) {
     // console.log(prodId,"prod",cartId,'cart',count);
-    let quantity = document.getElementById(prodId).innerHTML
-    console.log(quantity);
+    let quantity = document.getElementById(prodId+selectedSize).innerHTML
+    let body = {
+        prodId: prodId,
+        cartId: cartId,
+        count: count,
+        quantity: quantity,
+        selectedSize: selectedSize
+    }
     $.ajax({
         url: "/changeQuantity",
-        data: {
-            id: prodId,
-            cartId: cartId,
-            count: count,
-            quantity: quantity
-        },
+        data: body,
         method: 'post',
+
         success: (response) => {
+
             if (response.productRemoved) {
                 swal({ title: "Item Removed from the cart" })
                 setTimeout(() => {
                     location.reload()
                 }, 1000)
 
-            } else {
-                document.getElementById(prodId).innerHTML = parseInt(quantity) + count;
+            } else if(response.productAdded){
                 let total = response.total.total
-                // console.log(result);
-
+                document.getElementById(prodId+selectedSize).innerHTML = parseInt(quantity) + count;
                 document.getElementById('total').innerHTML = total;
                 $('#grandTotal').html(total)
 
-            }
+            } else swal("opps something went wrong try again later")
         }
     })
 }
 
-function removeItem(cartId, prodId, prodName) {
+function removeItem(cartId, prodId, prodName,selectedSize) {
 
     swal({
         title: "Remove " + prodName + " from your cart  ? ",
@@ -260,9 +263,9 @@ function removeItem(cartId, prodId, prodName) {
     }).then((ok) => {
         if (ok) {
             $.ajax({
-                url: "/remove-cart-item/" + cartId + "/" + prodId,
+                url: "/remove-cart-item/" + cartId + "/" + prodId +"/"+selectedSize,
 
-                method: 'get',
+                method: 'delete',
                 success: (result) => {
                     if (result.itemRemoved) {
 
@@ -270,7 +273,7 @@ function removeItem(cartId, prodId, prodName) {
                         setTimeout(() => {
                             location.reload()
                         }, 1000)
-                    }
+                    }else swal("opps something went wrong try again later")
                 }
             })
         }
@@ -279,18 +282,19 @@ function removeItem(cartId, prodId, prodName) {
     })
 }
 
-function checkCouponCode(couponCode, total) {
-    console.log(total);
+function checkCouponCode(couponCode) {
+    // console.log(total);
     $.ajax({
         url: "/cart/confirm-coupon",
         data: {
             code: couponCode,
-            cartTotal: total
+            // cartTotal: total
         },
         method: 'post',
         success: (result) => {
-            console.log(result);
+
             if (result.validCoupon) {
+
                 $('#couponValid').show()
                 $('#couponValid').html('<i class="text-success fa-regular fa-circle-check"></i>  Valid Code')
                 setTimeout(() => {
@@ -301,9 +305,9 @@ function checkCouponCode(couponCode, total) {
 
                 $("#discount").html(result.discount);
 
-                let total = $("#grandTotal").html();
-                newTotal = parseInt(total) - result.discount;
-                $('#grandTotal').html(newTotal);
+                $("#grandTotal").html(result.total);
+
+
 
             }
             else {
@@ -313,11 +317,14 @@ function checkCouponCode(couponCode, total) {
                 setTimeout(() => {
                     $('#couponValid').hide()
                 }, 3000)
+
             }
         }
 
     })
 }
+
+
 
 function updateSize(cartId, prodId, size) {
     // console.log(cartId); 
@@ -332,7 +339,7 @@ function updateSize(cartId, prodId, size) {
         method: 'put',
         success: (result) => {
             if (result.sizeSelected)
-                $('#size').load(location.href + " #size")
+                $('#sizeDiv').load(location.href + " #sizeDiv");
             else
                 swal({ title: "server busy try again" })
             setTimeout(() => {
@@ -554,10 +561,6 @@ function removeWishlistItem(wishlistId, prodId) {
     })
 }
 
-function loadPlaceOrder() {
-    let total = $('#grandTotal').html()
-    location.href = '/place-order?total=' + total;
-}
 
 
 

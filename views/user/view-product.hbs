@@ -1,7 +1,9 @@
 <script src="/javascripts/ajax.js"></script>
-<style>body{
-    background: -webkit-linear-gradient(left, #000, rgb(228, 228, 19));
-}</style>
+<style>
+    body {
+        background: -webkit-linear-gradient(left, #000, rgb(228, 228, 19));
+    }
+</style>
 <section>
 
     <ol class="breadcrumb">
@@ -43,13 +45,13 @@
                         <div class="col-md-4 sze">
                             <h5>Size</h5>
 
-              <select class="form-select form-select-sm" id="selectedSize">
+                            <select class="form-select form-select-sm" id="selectedSize">
 
-                {{#each product.modelDetails.size}}
-                <option id="" value="{{this.size}}">{{this.size}}</option>
-                {{/each}}
+                                {{#each product.modelDetails.size}}
+                                <option id="" value="{{this.size}}">{{this.size}}</option>
+                                {{/each}}
 
-              </select>
+                            </select>
                         </div>
                     </div>
                     <div id="product" class="product-inf">
@@ -61,9 +63,9 @@
                                         class="fa-solid fa-heart-circle-plus"></i></button>
                             </div>
                             <div class="col-md-6">
-                                <button class="custom-btn" onclick="addToCart('{{product._id}}','{{product.modelDetails.name}}',
-                        '{{product.subcategory}}','{{product.category}}','{{product.modelDetails.price}}',
-                        $('#selectedSize').val())">ADD TO CART<i class="fas fa-angle-right"></i></button>
+                                <button class="custom-btn"
+                                    onclick="addToCart('{{product._id}}',$('#selectedSize').val())">ADD TO CART<i
+                                        class="fas fa-angle-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -84,7 +86,7 @@
             </div>
         </div>
     </div>
-    
+
 </section>
 
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="

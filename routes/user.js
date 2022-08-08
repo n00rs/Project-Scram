@@ -13,10 +13,10 @@ const verifyUser = (req, res, next) => {
 
 
 router.get('/', async (req, res) => {
-    console.log(req.sessionID,'1sess');
-    console.log(req.session.id,"session id");
-    let user1 = req.session.user ;
-    let wishId = (user1) ? user1._id : req.sessionID ;
+    console.log(req.sessionID, '1sess');
+    console.log(req.session.id, "session id");
+    let user1 = req.session.user;
+    let wishId = (user1) ? user1._id : req.sessionID;
     let cartCount = null;
     let wishlistCount = null;
     wishlistCount = await userHelpers.fetchWishlistCount(wishId)
@@ -42,7 +42,7 @@ router.get('/login', (req, res) => {
 
 router.post('/login', (req, res) => {
     let sessionId = req.sessionID
-    userHelpers.userLogin(req.body,sessionId).then((result) => {
+    userHelpers.userLogin(req.body, sessionId).then((result) => {
         if (result.status) {
             req.session.loggedIn = true;
             req.session.user = result.user;
@@ -85,30 +85,30 @@ router.post('/signup', (req, res) => {
 router.get('/category', async (req, res) => {
     try {
         let user1 = req.session.user;
-        let wishId = (user1) ? user1._id: req.sessionID
-        let category = req.query.category ; 
-        let filterSize = req.query.size ;
-        let sortBy = req.query.sort ;
+        let wishId = (user1) ? user1._id : req.sessionID
+        let category = req.query.category;
+        let filterSize = req.query.size;
+        let sortBy = req.query.sort;
         let cartCount = null;
         let wishlistCount = null;
 
         wishlistCount = await userHelpers.fetchWishlistCount(wishId);
 
-        if (user1)  cartCount = await userHelpers.fetchCartCount(user1._id);
+        if (user1) cartCount = await userHelpers.fetchCartCount(user1._id);
 
-    console.log(req.query, "category");
-    if (!req.query)  throw new Error('opps something went wrong')
+        console.log(req.query, "category");
+        if (!req.query) throw new Error('opps something went wrong')
 
-       
-        console.log(sortBy,filterSize,category, ) ;
 
-        let products = await userHelpers.fetchCategory(category) ;
+        console.log(sortBy, filterSize, category,);
 
-        if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize)) ;
+        let products = await userHelpers.fetchCategory(category);
 
-        if(sortBy != '') products = sort(sortBy,products) ;
+        if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize));
 
-        res.render('user/category', { user: true, user1,  category, products, filterSize , sortBy, cartCount, wishlistCount })
+        if (sortBy != '') products = sort(sortBy, products);
+
+        res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, cartCount, wishlistCount })
 
 
     } catch (error) {
@@ -164,7 +164,7 @@ router.get('/filter-size', async (req, res) => {
         // let filterSize = req.query.size ;
         // let sortBy = req.query.sort ;
         // console.log(sortBy) ;
-let category = "touring"
+        let category = "touring"
         let products = await userHelpers.fetchCategory(category);
 
         // if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize))
@@ -188,25 +188,25 @@ let category = "touring"
 // CART  ROUTES
 
 
-router.post('/add-to-cart', (req, res) => {
+router.post('/add-to-cart', verifyUser, (req, res) => {
     try {
         // console.log(req.body,"way to cart") ;
-        let user = req.session.user ;
-        if(!user) throw new Error ("no user")
-        
-        
-        userHelpers.addToCart(req.body, user._id).then(result => res.json(result))
+        let user = req.session.user;
+        if (!user) throw new Error("no user")
+
+        userHelpers.addToCart(req.body, user._id).then(result => res.json(result)).catch(err => { res.json(err); console.log(err, 'err in order'); })
     } catch (error) {
-        console.log(error,'ths one');
+        console.log(error, 'ths one');
         let errorMsg = "Please Login and try again "
-        res.json({ error: errorMsg})
+        res.json({ error: errorMsg })
     }
 
 })
 
 router.get('/cart', verifyUser, async (req, res) => {
 
-
+try {
+ 
     const userId = req.session.user._id;
 
     let cartItems = await userHelpers.fetchCart(userId);
@@ -214,49 +214,58 @@ router.get('/cart', verifyUser, async (req, res) => {
     if (cartItems == null) var total = 0
 
     else total = await userHelpers.totalAmount(cartItems._id)
-
     // console.log(cartItems);
-    console.log(total);
-    res.render('user/cart', { user: true, cartItems, total })
+    req.session.total = total                                                            //saving total amount for further use
+    res.render('user/cart', { user: true, cartItems, total })   
+} catch (error) {
+    console.log(error,'err in the /cart');
+}
 })
 
 router.post('/changeQuantity', (req, res) => {
-    // console.log(req.body,'body');
-    // console.log(req.query);
-    userHelpers.changeCartQuantity(req.body).then(async (result) => {
+    try {
+        console.log(req.body, 'bodychnge cart');
+        // console.log(req.query);
+        userHelpers.changeCartQuantity(req.body).then(async (result) => {
 
-        result.total = await userHelpers.totalAmount(req.body.cartId)
-        console.log(result.total);
-        res.json(result)
-    })
+            result.total = await userHelpers.totalAmount(req.body.cartId)
+            req.session.total = result.total                                                         //saving total amount for further use
+            res.json(result)
+        }).catch(err => res.json(err))
+    } catch (error) {
+        console.log(error, 'error in chngqty');
+    }
+
 })
 
-router.get("/remove-cart-item/:cartId/:prodId", (req, res) => {
-    console.log(req.params);
+router.delete("/remove-cart-item/:cartId/:prodId/:selectedSize", (req, res) => {
+    try {
+        console.log(req.params, "user params");
 
-    userHelpers.removeCartItem(req.params).then((result) => {
-        res.json(result)
-    })
-
+        userHelpers.removeCartItem(req.params).then(result => res.json(result))
+            .catch(err => res.json(err))
+    } catch (error) {
+        console.log(error, "in delet cart");
+    }
 })
 
 router.post('/cart/confirm-coupon', (req, res) => {
+    try {
+        let couponCode = req.body.code;
+        let cartTotal = req.session.total.total;
 
-    let couponCode = req.body.code;
-    let cartTotal = req.body.cartTotal;
+        userHelpers.checkCouponCode(couponCode, cartTotal).then(result => {
+            req.session.total = result
+            res.json(result)
+        }).catch(error => res.json(error))
 
-    userHelpers.checkCouponCode(couponCode, cartTotal).then((result) => {
-        console.log(result, 'res.json');
-        res.json(result)
-    })
-        .catch((error) => {
-            console.log(error);
-            res.json(error)
-        })
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 router.put('/cart/update-size', (req, res) => {
-    console.log(`${req.body.cartId} body ${req.query.cartId} query ${req.params.cartId}`);
+    // console.log(`${req.body.cartId} body ${req.query.cartId} query ${req.params.cartId}`);
     try {
 
         userHelpers.updateSize(req.body).then((result) => {
@@ -269,7 +278,7 @@ router.put('/cart/update-size', (req, res) => {
             })
 
     } catch (error) {
-        console.log(error, 'err in try');
+        console.log(error, 'err in /updatesize');
     }
 
 })
@@ -278,12 +287,12 @@ router.put('/cart/update-size', (req, res) => {
 
 router.get('/wishlist', async (req, res) => {
     try {
-        
-        const wishId = (req.session.user) ? req.session.user._id : req.sessionID ;
+
+        const wishId = (req.session.user) ? req.session.user._id : req.sessionID;
         let wishlistCount = await userHelpers.fetchWishlistCount(wishId);
         let wishlist = await userHelpers.fetchWishlist(wishId)
 
-console.log(wishlist,"wishlist");
+        console.log(wishlist, "wishlist");
 
         res.render('user/wishlist', { user: true, wishlist, wishlistCount })
 
@@ -295,9 +304,9 @@ console.log(wishlist,"wishlist");
 router.post('/add-to-wishlist', (req, res) => {
     console.log(req.body);
     try {
-        const user = (req.session.user) ? true: false ;                   
-    
-        const id = (user) ? req.session.user._id : req.sessionID ;                                       
+        const user = (req.session.user) ? true : false;
+
+        const id = (user) ? req.session.user._id : req.sessionID;
 
         const prodId = req.body.productId;
 
@@ -306,11 +315,11 @@ router.post('/add-to-wishlist', (req, res) => {
             res.json(result)
         })
             .catch((error) => {
-                console.log(error,"catch in user wish");
+                console.log(error, "catch in user wish");
                 res.json(error)
             })
     } catch (error) {
-        console.log(error,'no user');
+        console.log(error, 'no user');
         // res.json({error: "please login and try again"})
     }
 })
@@ -335,6 +344,9 @@ router.delete('/wishlist/remove-item/:wid/:pid', (req, res) => {                
     }
 
 })
+
+
+// USER PROFILE ROUTES
 
 router.get('/profile', verifyUser, async (req, res) => {
     const userId = req.session.user._id
@@ -495,18 +507,24 @@ router.get("/contactus", (req, res) => {
 })
 
 
-// ORDER PLACING 
+// ORDER PLACING  ORDER PLACEING
 
-router.get('/place-order', async (req, res) => {
+router.post('/place-order', async (req, res) => {
     try {
+        const couponCode = req.body.couponInput;
+        var grandTotal = req.session.total.total;
         const userId = req.session.user._id
-        const grandTotal = req.query.total;
-        const user1 = await userHelpers.fetchUserData(userId)
-        const userCart = await userHelpers.fetchCart(userId)
 
-        console.log(`${userId}user ${grandTotal} cart amount  ${user1} user  ${userCart} cart`);
+        const user1 = await userHelpers.fetchUserData(userId);
+        const userCart = await userHelpers.fetchCart(userId);
+        if (couponCode) {
+            userHelpers.checkCouponCode(couponCode, grandTotal).then(res => grandTotal = res.total).catch(err => grandTotal = req.session.total.total)
+        }
+
+        console.log(`${userId}user`);
 
         res.render('user/place-order', { user: true, grandTotal, user1, userCart })
+
     } catch (error) {
         console.log(error, "try err fetching place order");
     }
@@ -524,13 +542,13 @@ router.post('/place-order', (req, res) => {
         console.log(paymentMethod);                                                                                              //using switch just for a change
         switch (paymentMethod) {
             case 'cod':
-                userHelpers.newOrder(req.body, userId).then((result) => res.json(result)).catch((error) =>  res.json(error) )
+                userHelpers.newOrder(req.body, userId).then((result) => res.json(result)).catch((error) => res.json(error))
                 break;
 
-            case 'stripe':{
-               req.session.orderData = req.body
+            case 'stripe': {
+                req.session.orderData = req.body
 
-                userHelpers.stripeCheckOut(req.body,userId).then(result => res.json(result)).catch(err=>console.log(`err in user:${err}`)) 
+                userHelpers.stripeCheckOut(req.body, userId).then(result => res.json(result)).catch(err => console.log(`err in user:${err}`))
                 break;
             }
             case 'razorpay':
@@ -542,87 +560,87 @@ router.post('/place-order', (req, res) => {
         }
 
     } catch (error) {
-console.log(error,'err');
+        console.log(error, 'err');
     }
 })
 
-router.post('/hooks', bodyParser.raw({type: 'application/json'}), async (req,res)=>{
+router.post('/hooks', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
     const endpointKey = process.env.ENDPOINT_SECRET_KEY
     const payload = req.body;
     const payloadString = JSON.stringify(payload);
     const header = stripe.webhooks.generateTestHeaderString({                                            //<= got from google
         payload: payloadString,
         secret: process.env.ENDPOINT_SECRET_KEY,                                                              //sign in key from stripe CLI
-      });
+    });
 
-    let event ;
+    let event;
     try {
-        event = stripe.webhooks.constructEvent(payloadString, header, process.env.ENDPOINT_SECRET_KEY) ;
-        console.log(`webhooks events verifired:` ,event.type);
+        event = stripe.webhooks.constructEvent(payloadString, header, process.env.ENDPOINT_SECRET_KEY);
+        console.log(`webhooks events verifired:`, event.type);
 
     } catch (error) {
         console.log(`webhook error: ${error}`);
-       return res.status(400).send(`Webhook Error: ${(err).message}`);
+        return res.status(400).send(`Webhook Error: ${(err).message}`);
     }
     console.log(event.type);
     switch (event.type) {
-        
+
         case 'checkout.session.completed': {
-          const session = event.data.object;
-      
-          console.log(session);
-    
-          // Check if the order is paid (for example, from a card payment)
-          //
-          // A delayed notification payment will have an `unpaid` status, as
-          // you're still waiting for funds to be transferred from the customer's
-          // account.
-          if (session.payment_status === 'paid') {
-            console.log('paymet success');
-        //   let orderData =  req.session.orderData 
-          console.log(req.session.user);
-        //   orderData.paymentMethod.transcationId = session.payment_intent
-          var user = session. client_reference_id                 //orderId
-          console.log(user);
-        //  await userHelpers.newOrder(orderData, user).then(result=> console.log('result i user',result)).catch(err=> console.log(err))
-          }
-    
-          break;
+            const session = event.data.object;
+
+            console.log(session);
+
+            // Check if the order is paid (for example, from a card payment)
+            //
+            // A delayed notification payment will have an `unpaid` status, as
+            // you're still waiting for funds to be transferred from the customer's
+            // account.
+            if (session.payment_status === 'paid') {
+                console.log('paymet success');
+                //   let orderData =  req.session.orderData 
+                console.log(req.session.user);
+                //   orderData.paymentMethod.transcationId = session.payment_intent
+                var user = session.client_reference_id                 //orderId
+                console.log(user);
+                //  await userHelpers.newOrder(orderData, user).then(result=> console.log('result i user',result)).catch(err=> console.log(err))
+            }
+
+            break;
         }
 
         case 'charge.succeeded': {
             const session = event.data.object;
-      
-            console.log(session,"chargesecc");
+
+            console.log(session, "chargesecc");
             if (session.paid) {
-                let receipt = event.data.object.receipt_url ;
-                let user = session.metadata.orderId ;
-                let transcationId = session.payment_intent ;
+                let receipt = event.data.object.receipt_url;
+                let user = session.metadata.orderId;
+                let transcationId = session.payment_intent;
                 console.log(`resipt => ${receipt} user => ${user} transcationId=> ${transcationId} `);  //send the recipt to the user 
             }
-            
+
         }
-    
+
         case 'checkout.session.async_payment_succeeded': {
-          const session = event.data.object;
-    
-          // Fulfill the purchase...
-          console.log(session,'awaiting payment');
-    
-          break;
+            const session = event.data.object;
+
+            // Fulfill the purchase...
+            console.log(session, 'awaiting payment');
+
+            break;
         }
-    
+
         case 'checkout.session.async_payment_failed': {
-          const session = event.data.object;
-    
-          // Send an email to the customer asking them to retry their order
-          console.log(session,'payment failed')
-    
-          break;
+            const session = event.data.object;
+
+            // Send an email to the customer asking them to retry their order
+            console.log(session, 'payment failed')
+
+            break;
         }
-      }
-res.json({success: true}) ;
-    })
+    }
+    res.json({ success: true });
+})
 
 router.get('/order-confirmation', (req, res) => {
     res.render('user/order-confirmation', { user: true })
@@ -641,8 +659,8 @@ module.exports = router;
 
 
 function sort(sortBy, array) {
-   return (sortBy === "price_asc") ? array.sort((a, b) => a.modelDetails.price - b.modelDetails.price)
-      : (sortBy === "price_desc") ? array.sort((a, b) => b.modelDetails.price - a.modelDetails.price)
-         : (sortBy === "new") ? array.reverse()
-            : array
+    return (sortBy === "price_asc") ? array.sort((a, b) => a.modelDetails.price - b.modelDetails.price)
+        : (sortBy === "price_desc") ? array.sort((a, b) => b.modelDetails.price - a.modelDetails.price)
+            : (sortBy === "new") ? array.reverse()
+                : array
 }
