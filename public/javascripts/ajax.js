@@ -232,8 +232,8 @@ function changeQuantity(prodId, cartId, selectedSize, count) {
     }
     $.ajax({
         url: "/changeQuantity",
-        data: body,
-        method: 'post',
+        data: body ,
+        method: 'post' ,
 
         success: (response) => {
 
@@ -298,10 +298,11 @@ function checkCouponCode(couponCode) {
                 $('#couponValid').show()
                 $('#couponValid').html('<i class="text-success fa-regular fa-circle-check"></i>  Valid Code')
                 setTimeout(() => {
-                    $("#couponInput").attr("disabled", "disabled")
+                    // $("#couponInput").attr("disabled", "disabled")
+                    $("#couponInput").prop("readonly", true);
                     // document.getElementById('couponValid').disabled = true ;
                     console.log('hi');
-                }, 3000)
+                }, 1000)
 
                 $("#discount").html(result.discount);
 

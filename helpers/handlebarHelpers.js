@@ -44,7 +44,7 @@ module.exports = {                                   //
       let deliveryAddress = address.name + " " + address.building_name + " \n" + address.street + " " + address.city + " \n" + address.country + " "
          + address.pincode + " \n" + address.phone + " " + address.email + " ";
       return deliveryAddress
-      console.log(deliveryAddress);
+      // console.log(deliveryAddress);
    },
    sizeToggle: (category) => {
       console.log(category);

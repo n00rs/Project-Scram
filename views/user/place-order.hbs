@@ -85,7 +85,8 @@
                                     {{!-- function orderAddress written in handlebahelps.js --}}
 
                                     <input class="form-check-input" type="radio" name="address" id="address"
-                                        value="{{orderAddress this ../user1}}" checked> <br>                            {{!--function return in handlebar.js--}}
+                                        value="{{orderAddress this ../user1}}" checked> <br> {{!--function return in
+                                    handlebar.js--}}
                                     <div id="qwe">
                                         <h5 class=" me-1 mb-1 text-black"><strong>{{this.building_name}},
                                                 {{this.street}}</strong></h5>
@@ -105,6 +106,7 @@
                                 </div>
                                 {{/each}}
                             </div>
+
                         </div>
                         <hr class="my-4" />
 
@@ -129,20 +131,36 @@
                                 <span>{{this.name}}</span>
                             </li>
                             {{/each}}
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                Shipping
-                                <span>Free</span>
-                            </li>
+
                             <li
                                 class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                 <div>
                                     <strong>Total amount</strong>
+                                </div>
+                                <span><strong> &#8377; {{grandTotal}}</strong></span>
+                            </li>
+
+                            {{#if discountData}}
+                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Discount Code
+                                <span>{{discountData.couponCode}}</span>
+                                <input type="hidden" name="couponCode" id="couponCode" value="{{discountData.couponCode}}">
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Discount
+                                <span>{{discountData.discount}}</span>
+                            </li>
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                <div>
+                                    <strong>Amount Payable</strong>
                                     <strong>
                                         <p class="mb-0">(including TAX)</p>
                                     </strong>
                                 </div>
-                                <span><strong> &#8377; {{grandTotal}}</strong></span>
+                                <span><strong> &#8377; {{discountData.total}}</strong></span>
                             </li>
+                            {{/if}}
                         </ul>
                         <div class="list-group mb-3">
                             <a class="list-group-item list-group-item-action flex-column align-items-start ">

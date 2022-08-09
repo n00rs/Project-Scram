@@ -1,5 +1,6 @@
 require('dotenv').config()
 const bcrypt = require('bcrypt');
+const { resolve, reject } = require('promise');
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig');
@@ -285,21 +286,21 @@ module.exports = {
     },
 
     removeCartItem: (data) => {
-            const cartId = ObjectId(data.cartId);
-            const prodId = ObjectId(data.prodId);
-            const size = data.selectedSize;
-            return new Promise((resolve, reject) => {
+        const cartId = ObjectId(data.cartId);
+        const prodId = ObjectId(data.prodId);
+        const size = data.selectedSize;
+        return new Promise((resolve, reject) => {
 
-                db.get().collection(collections.CARTCOLLECTION).updateOne({ _id: cartId, },
+            db.get().collection(collections.CARTCOLLECTION).updateOne({ _id: cartId, },
+                {
+                    $pull:
                     {
-                        $pull:
-                        {
-                            products: { selectedSize: size, item: prodId }
-                        }
+                        products: { selectedSize: size, item: prodId }
                     }
-                ).then(() =>  resolve({ itemRemoved: true }))
-                .catch(err=> reject({itemRemoved: false }))
-            })
+                }
+            ).then(() => resolve({ itemRemoved: true }))
+                .catch(err => reject({ itemRemoved: false }))
+        })
     },
 
     totalAmount: (cartId) => {
@@ -335,10 +336,10 @@ module.exports = {
 
     updateSize: (data) => {
 
-        console.log(data) ;
-        const cartId = ObjectId(data.cartId) ;
-        const selectedSize = data.selectedSize ;
-        const prodId = ObjectId(data.prodId) ;
+        console.log(data);
+        const cartId = ObjectId(data.cartId);
+        const selectedSize = data.selectedSize;
+        const prodId = ObjectId(data.prodId);
 
         return new Promise((resolve, reject) => {
             db.get().collection(collections.CARTCOLLECTION).updateOne({
@@ -655,26 +656,33 @@ module.exports = {
     //ORDERS SECTIONS
 
 
-    newOrder: (data, user) => {
+    newOrder: (data, userID, userCart, cartTotal, discountData) => {
+        // console.log(data,userID,'user',userCart,"cart",cartTotal,"disc",discountData,"inside User ");
+
         const address = JSON.parse(data.address);
-        const orderData = JSON.parse(data.orderDetails);
-        const userId = ObjectId(user);
+        let orderData = {
+            items: userCart.products.filter(product => delete product.size),
+            cartTotal: cartTotal,
+            discountData: discountData,
+        }
+        let status = (data.paymentMethod) === 'cod' ? 'order-placed' : 'pending'
+        // console.log(orderData.items,'orderdata')
+        const userId = ObjectId(userID);
         const orderObj = {
-            user: userId,
+            userId: userId,
             address: address,
             orderData: orderData,
             paymentMethod: data.paymentMethod,
-            status: 'order-placed',
+            status: status,
             date: new Date().toLocaleString(),
         }
+        // console.log(orderObj,'orderobj');
         return new Promise((resolve, reject) => {
             db.get().collection(collections.ORDERCOLLECTION).insertOne(orderObj).then((result) => {
-                console.log(result, 'new order');
-                db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
+                // console.log(result, 'new order');
+                // db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
 
-                resolve({ orderPlaced: true })
-
-
+                status === 'order-placed' ? resolve({ orderPlaced: true }) : resolve({ orderId: result.insertedId })
             })
                 .catch((error) => {
                     console.log(error, 'new order');
@@ -685,20 +693,19 @@ module.exports = {
 
     fetchOders: (userId) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collections.ORDERCOLLECTION).find({ user: ObjectId(userId) }).toArray().then((result) => {
+            db.get().collection(collections.ORDERCOLLECTION).find({ userId: ObjectId(userId) }).toArray().then((result) => {
                 // console.log(result,'order');
                 resolve(result)
             })
         })
     },
 
-    stripeCheckOut: (data, user) => {
+        stripeCheckOut: (data, total, orderId) => {
 
         const address = JSON.parse(data.address);
-        const orderData = JSON.parse(data.orderDetails);
-        const userId = ObjectId(user);
-
-        console.log("stricheck out", orderData, address)
+        const amount = parseInt(total * 100);
+        const orderid = orderId.toString()
+        // console.log("stricheck out",)
 
         return new Promise(async (resolve, reject) => {
 
@@ -724,7 +731,7 @@ module.exports = {
                     phone: address.phone,
                 },
                 metadata: {
-                    userId: user,
+                    orderId: orderid,
                 }
             })
             const session = await stripe.checkout.sessions.create({
@@ -732,17 +739,16 @@ module.exports = {
                 cancel_url: `${process.env.HOSTED_URL}/cart`,
                 mode: `payment`,
                 payment_method_types: [`card`],
-                client_reference_id: user,
+                client_reference_id: orderid,
                 customer: customer.id,
                 line_items: [{
                     price_data: {
                         currency: 'inr',
-                        unit_amount: orderData.amount * 100,
+                        unit_amount: amount,
                         product_data: {
                             name: "grand total",
                         },
                     },
-
                     quantity: 1,
                 },
 
@@ -750,7 +756,7 @@ module.exports = {
                 payment_intent_data: {
                     receipt_email: address.email,
                     metadata: {
-                        orderId: "orderId"
+                        orderId: orderid
                     },
                 },
 
@@ -758,8 +764,34 @@ module.exports = {
             // console.log(session);
             session.url ? resolve({ url: session.url }) : reject({ err: "stripe out of station" })
         })
-    }
+    },
+    updatePaymentStatus: (orderId, reciept, chargeId) => {
+        console.log(' insidestat');
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
+                {
+                    $set: {
+                        "status": "order-placed",
+                        "paymentReciept": reciept,
+                        "paymentId": chargeId
+                    }
+                }).then(result => resolve(result))
+                .catch(err => reject(err))
+        })
+    },
 
+    stripeFail: (orderId, chargeId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
+                {
+                    $set: {
+                        "status": "payment - failed",
+                        "paymentId": chargeId
+                    }
+                }).then(res => resolve(res))
+                .catch(err => reject(err))
+        })
+    }
 }
 
 

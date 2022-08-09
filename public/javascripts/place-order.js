@@ -44,29 +44,27 @@ $(document).ready(function () {
 
 function placeOrder() {
 
-    let address = $('#address:checked').val();
-    let orderData = $('#orderData').val()
-    let payment = $("#paymentOption:checked").val();
+    body = {
+        address : $('#address:checked').val(),
+        couponCode:$('#couponCode').val(),
+        paymentMethod : $("#paymentOption:checked").val(),
+    } 
 
-    console.log(orderData);
     $.ajax({
-        url: '/place-order',
-        data: {
-            address: address,
-            orderDetails: orderData,
-            paymentMethod: payment
-        },
+        url: '/checkout',
+        data: body,
         method: 'post',
         success: (result) => {
             if(result.url) {console.log(result.url);location.href= result.url ;}
             if (result.orderPlaced) {
                location.href='/order-confirmation'
-            }else{
-                swal({
-                    title:"opps something went wrong",
-                    icon: 'error'
-                })
             }
+            // else{
+            //     swal({
+            //         title:"opps something went wrong",
+            //         icon: 'error'
+            //     })
+            // }
         }
     })
 }
