@@ -326,7 +326,6 @@ function checkCouponCode(couponCode) {
 }
 
 
-
 function updateSize(cartId, prodId, size) {
     // console.log(cartId); 
     $.ajax({
@@ -470,11 +469,11 @@ function confirmEmail(userInput) {
             if (result.status) {
 
                 document.getElementById('checkResult').innerHTML = "<i class='text-success fa-solid fa-check'></i> User confirmed "
-                document.getElementById('change-password').disabled = false;
+                document.getElementById('change-password').disabled = false ;
             } else {
 
                 document.getElementById('checkResult').innerHTML = " <i class= 'text-danger fa-solid fa-xmark' ></i> User not found"
-                document.getElementById('change-password').disabled = true;
+                document.getElementById('change-password').disabled = true ;
             }
         }
     })

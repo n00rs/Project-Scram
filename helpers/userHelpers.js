@@ -700,11 +700,11 @@ module.exports = {
         })
     },
 
-        stripeCheckOut: (data, total, orderId) => {
+    stripeCheckOut: (data, total, orderId) => {
 
-        const address = JSON.parse(data.address);
-        const amount = parseInt(total * 100);
-        const orderid = orderId.toString()
+        const address = JSON.parse(data.address) ;
+        const amount = parseInt(total * 100) ;
+        const orderid = orderId.toString() ;
         // console.log("stricheck out",)
 
         return new Promise(async (resolve, reject) => {

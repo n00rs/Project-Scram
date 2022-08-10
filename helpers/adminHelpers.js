@@ -277,57 +277,68 @@ module.exports = {
     },
 
     updateOrderStatus: (data) => {
-        const orderId = objectId(data.orderId) ;
-        const prodId = data.prodId ;
-        const orderStatus = data.orderStatus ;
-        const updateSuccess = {success: `item marked as ${orderStatus} `}
-        const updateFail = {fail: `failed to marked ${orderStatus}`}
+        const orderId = objectId(data.orderId);
+        const prodId = data.prodId;
+        const orderStatus = data.orderStatus;
+        const updateSuccess = { success: `item marked as ${orderStatus} ` }
+        const updateFail = { fail: `failed to marked ${orderStatus}` }
 
         console.log(orderId, prodId, orderStatus, 'inside update');
 
 
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.ORDERCOLLECTION).updateOne({ _id: orderId, "orderData.order.item" : prodId }, {
+            db.get().collection(collection.ORDERCOLLECTION).updateOne({ _id: orderId, "orderData.items.item": objectId(prodId) }, {
                 $set: {
-                    "orderData.order.$.status": orderStatus,
+                    "orderData.items.$.status": orderStatus,
                 }
             })
-                .then(result => result.modifiedCount ==1 ? resolve(updateSuccess): reject(updateFail) )
-                .catch(error =>  reject({error: "monog went on leave on contact +919633138136"})) 
-            })
-        },
-                                                                              // scene query (-_-)
-                    // if (orderUpdate == 'shipped') {
-                    //     db.get().collection(collection.ORDERCOLLECTION).aggregate([
-                    //         { $match: { _id: orderId } },
-                    //         { $unwind: "$orderData.order" },
-                    //         {
-                    //             $project:
-                    //             {
-                    //                 item: { $toObjectId: "$orderData.order.item" },
-                    //                 quantity: "$orderData.order.quantity"
-                    //             }
-                    //         },
-                    //         {
-                    //             $lookup: {
-                    //                 from: collection.PRODUCTCOLLECTION,
-                    //                 localField: "item",
-                    //                 foreignField: "_id",
-                    //                 as: "orders"
-                    //             }
-                    //         },
-                    //         { $unwind: "$orders" },
+                .then(result => result.modifiedCount == 1 ? resolve(updateSuccess) : reject(updateFail))
+                .catch(error => reject({ error: "monog went on leave on contact +919633138136" }))
+        })
+    },
+                                                                                                                                    // scene query (-_-)
+    // if (orderUpdate == 'shipped') {
+    //     db.get().collection(collection.ORDERCOLLECTION).aggregate([
+    //         { $match: { _id: orderId } },
+    //         { $unwind: "$orderData.order" },
+    //         {
+    //             $project:
+    //             {
+    //                 item: { $toObjectId: "$orderData.order.item" },
+    //                 quantity: "$orderData.order.quantity"
+    //             }
+    //         },
+    //         {
+    //             $lookup: {
+    //                 from: collection.PRODUCTCOLLECTION,
+    //                 localField: "item",
+    //                 foreignField: "_id",
+    //                 as: "orders"
+    //             }
+    //         },
+    //         { $unwind: "$orders" },
 
-                    //         { $project: { product: "$orders._id", quantity: 1, stock: "$orders.modelDetails.stock" } },
+    //         { $project:
+    //          {
+    //          product: "$orders._id",
+    //          quantity: 1,
+    //           stock: "$orders.modelDetails.stock"
+    // } },
 
-                    //         { $project: { product: 1, stockLeft: { $subtract: ["$stock", "$quantity"] } } }
+    //         { $project: 
+    //        {
+    //              product: 1, stockLeft: {
+    //              $subtract:
+    //              ["$stock", "$quantity"]
+    //     }
+    // } }
 
-                    //     ]).toArray()
-                    //         .then((result) => {
-                    //             console.log(result, 'afteraggergation');
-                    //         })
-                    // }
-                
+    //     ]).toArray()
+    //         .then((result) => {
+    //             console.log(result, 'afteraggergation');
+    //         })
+    // }
+
     fetchOrderDetails: (orderId) => {
 
         return new Promise((resolve, reject) => {
@@ -340,14 +351,16 @@ module.exports = {
         const prodId = data.prodId
         const selectedSize = data.selectedSize;
         const quantity = parseInt(data.quantity);
-        const confirmMsg ={orderConfirmed: "order confirmed"};
-        const stockOutMsg = {stockOut:"Item out of stock or less quantity"};
+        const confirmMsg = { orderConfirmed: "order confirmed" };
+        const stockOutMsg = { stockOut: "Item out of stock or less quantity" };
         console.log(orderId);
         return new Promise((resolve, reject) => {
 
             db.get().collection(collection.PRODUCTCOLLECTION).findOne({ _id: objectId(prodId) }).then((product) => {
-                // console.log(product);
+                console.log(product, "inside chdeck stock");
                 let checkStock = product.modelDetails.size.find(arr => arr.size === selectedSize && +arr.stock >= quantity ? true : resolve(stockOutMsg));
+
+
                 // let checkStock = (stock >= quantity) ? true : reject({ error: "out of stock" })
 
                 console.log(checkStock, "insoie db");
@@ -358,17 +371,18 @@ module.exports = {
                         $inc: { "modelDetails.size.$.stock": -quantity }
 
                     }).then((result) => {
-                        if(result.modifiedCount == 1){
-                        db.get().collection(collection.ORDERCOLLECTION).updateOne({_id: orderId, "orderData.order.item": prodId},
-                        {
-                            $set:{"orderData.order.$.status": "confirmed" }
+                        console.log(result);
+                        if (result.modifiedCount == 1) {
+                            db.get().collection(collection.ORDERCOLLECTION).updateOne({ _id: orderId, "orderData.items.item": objectId(prodId) },
+                                {
+                                    $set: { "orderData.items.$.status": "confirmed" }
 
-                        }).then(result=> resolve(confirmMsg))
-                        .catch(e=> reject({error:'mongo loose mind2'}))
-                    }
-                    }).catch(e=> reject({error:'mongo loose mind2'}))
+                                }).then(result => { console.log(result); resolve(confirmMsg); })
+                                .catch(e => reject({ error: 'mongo loose mind2' }))
+                        }
+                    }).catch(e => reject({ error: 'mongo loose mind2' }))
                 }
-            }).catch(e=> reject({error:'mongo loose mind1'}))
+            }).catch(e => reject({ error: 'mongo loose mind1' }))
         })
     }
 

@@ -1,10 +1,13 @@
-require('dotenv').config
+require('dotenv').config()
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser')
 const twilio = require('../config/twilio');
 const userHelpers = require('../helpers/userHelpers');
+const paytmConfig = require('../config/paytmPayment')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+
+
 const verifyUser = (req, res, next) => {
     if (req.session.loggedIn) next()
     else res.redirect('/login')
@@ -13,6 +16,7 @@ const verifyUser = (req, res, next) => {
 
 
 router.get('/', async (req, res) => {
+    // console.log(req.s);
     console.log(req.sessionID, '1sess');
     console.log(req.session.id, "session id");
     let user1 = req.session.user;
@@ -104,17 +108,16 @@ router.get('/category', async (req, res) => {
 
         let products = await userHelpers.fetchCategory(category);
 
-        if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize));
+        if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize)) ;
 
         if (sortBy != '') products = sort(sortBy, products);
 
-        res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, cartCount, wishlistCount })
+        res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, cartCount, wishlistCount }) ;
 
 
     } catch (error) {
         console.log(error, 'error in loading category');
     }
-
 })
 
 // router.get('/accessories', async (req,res)=>{
@@ -462,7 +465,6 @@ router.get("/profile/remove-address", (req, res) => {
 
 router.get("/change-password", (req, res) => {
     {
-
         res.render('user/change-password', { user: true, "error": req.session.changePasswordErr })
         req.session.changePasswordErr = false;
 
@@ -555,29 +557,32 @@ console.log(req.body);
         .then((result) =>{ 
             console.log(result);
             switch (paymentMethod) {
-            case 'cod':
+            case 'COD':
                 res.json(result)
                 break;
 
-            case 'stripe': {
+            case 'STRIPE': {
+
                 let total = (discountData) ? discountData.total : cartTotal
                 let orderId = result.orderId
                 console.log('inside stripe,',result);
                 userHelpers.stripeCheckOut(req.body, total, orderId).then(result => res.json(result)).catch(err => console.log(`err in user:${err}`))
+               
                 break;
             }
-            case 'razorpay':
-                console.log('razorpay');
-                break;
-            default:
-                console.log('switch failed');
+            case 'PAYTM':
+               {
+                let total = (discountData) ? discountData.total : cartTotal
+                let orderId = result.orderId ;
+                console.log(`inside paytm`,result) ;
+
+                 paytmConfig.paytmPayments(req.body, total, orderId).then(result => res.json(result)).catch(err=> console.log('errr in paytm',err ))
+               console.log(`after paytm`);
                 break;
         }
-            
-            
-            
+        }     
             })
-        .catch((error) => res.json(error))
+        .catch((error) => {console.log(error);res.json(error)})
 
         console.log(paymentMethod);                                                                                              //using switch just for a change
         
@@ -588,16 +593,13 @@ console.log(req.body);
 })
 
 
-
-
-
 router.post('/hooks', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
     const endpointKey = process.env.ENDPOINT_SECRET_KEY
     const payload = req.body;
     const payloadString = JSON.stringify(payload);
     const header = stripe.webhooks.generateTestHeaderString({                                            //<= got from google
         payload: payloadString,
-        secret: endpointKey,                                                              //sign in key from stripe CLI
+        secret: endpointKey,                                                                           //sign in key from stripe CLI
     });
 
     let event;
@@ -666,18 +668,25 @@ router.post('/hooks', bodyParser.raw({ type: 'application/json' }), async (req, 
     res.json({ success: true });
 })
 
+router.post('/paytm_status',paytmConfig.callback)
+
+
 router.get('/order-confirmation', (req, res) => {
     res.render('user/order-confirmation', { user: true })
 })
+
 router.get('/orders', verifyUser, async (req, res) => {
     const userId = req.session.user._id;
     const orders = await userHelpers.fetchOders(userId);
     // console.log(orders, 'insid orders')
     res.render('user/orders', { user: true, orders })
 })
+
 router.get("/view-order-details/:id", (req, res) => {
-    let orderItems = 'asd'
+    let orderItems = 'asd' ;
+    
 })
+
 module.exports = router;
 
 

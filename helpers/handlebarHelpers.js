@@ -65,14 +65,19 @@ module.exports = {                                   //
       return (value1 === value2) ? "selected" : "notselected"
    },
 
-   //ORDER-DETAILS.HBS FUNCTIONS
+   //ORDER-DETAILS.HBS FUNCTIONS ADMIN SIDE
 
    displayOrdrBtn: (value1, value2) => { console.log(value1, value2); return (value1 === value2) ? "" : "display:none ;" },
 
-   confirmBtn: (orderStatus) => { return (orderStatus == undefined) ? " " : "display:none ;" },               //
+   confirmBtn: (orderStatus) => { return (orderStatus == undefined) ? " " : "display:none ;" },                                      //
 
    dispatchBtn: (orderStatus) => { return orderStatus == "confirmed" ? " " : "display:none ;" },
 
    deliveredBtn: (orderStatus) => { return orderStatus == "shipped" ? " " : "display:none ;" },
+
+   filterOrder : (id, orders) => { 
+      console.log(id, orders, "filterOrder"); 
+      
+   }
 
 }
