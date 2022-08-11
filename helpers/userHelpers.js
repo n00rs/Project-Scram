@@ -1,6 +1,5 @@
 require('dotenv').config()
 const bcrypt = require('bcrypt');
-const { resolve, reject } = require('promise');
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig');
@@ -665,7 +664,7 @@ module.exports = {
             cartTotal: cartTotal,
             discountData: discountData,
         }
-        let status = (data.paymentMethod) === 'cod' ? 'order-placed' : 'pending'
+        let status = (data.paymentMethod) === 'COD' ? 'order-placed' : 'pending'
         // console.log(orderData.items,'orderdata')
         const userId = ObjectId(userID);
         const orderObj = {
@@ -696,7 +695,7 @@ module.exports = {
             db.get().collection(collections.ORDERCOLLECTION).find({ userId: ObjectId(userId) }).toArray().then((result) => {
                 // console.log(result,'order');
                 resolve(result)
-            })
+            }).catch(err=> reject(err))
         })
     },
 
@@ -735,8 +734,8 @@ module.exports = {
                 }
             })
             const session = await stripe.checkout.sessions.create({
-                success_url: `${process.env.HOSTED_URL}/order-confirmation`,
-                cancel_url: `${process.env.HOSTED_URL}/cart`,
+                success_url: `${process.env.HOSTED_URL}/order-confirmation/success`,
+                cancel_url: `${process.env.HOSTED_URL}/order-confirmation/failed`,
                 mode: `payment`,
                 payment_method_types: [`card`],
                 client_reference_id: orderid,
@@ -750,9 +749,7 @@ module.exports = {
                         },
                     },
                     quantity: 1,
-                },
-
-                ],
+                }],
                 payment_intent_data: {
                     receipt_email: address.email,
                     metadata: {
@@ -765,33 +762,36 @@ module.exports = {
             session.url ? resolve({ url: session.url }) : reject({ err: "stripe out of station" })
         })
     },
-    updatePaymentStatus: (orderId, reciept, chargeId) => {
+
+    updatePaymentStatus: (orderId, txnId, status, reciept=null ) => {
         console.log(' insidestat');
+        let mongoErr = "sorry server error down we'll update your order status soon"
         return new Promise((resolve, reject) => {
+
             db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
                 {
                     $set: {
-                        "status": "order-placed",
+                        "status": status,
                         "paymentReciept": reciept,
-                        "paymentId": chargeId
+                        "TransactionId": txnId
                     }
                 }).then(result => resolve(result))
-                .catch(err => reject(err))
+                .catch(err => reject(mongoErr))
         })
     },
 
-    stripeFail: (orderId, chargeId) => {
-        return new Promise((resolve, reject) => {
-            db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
-                {
-                    $set: {
-                        "status": "payment - failed",
-                        "paymentId": chargeId
-                    }
-                }).then(res => resolve(res))
-                .catch(err => reject(err))
-        })
-    }
+    // stripeFail: (orderId, chargeId) => {
+    //     return new Promise((resolve, reject) => {
+    //         db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
+    //             {
+    //                 $set: {
+    //                     "status": "payment - failed",
+    //                     "paymentId": chargeId
+    //                 }
+    //             }).then(res => resolve(res))
+    //             .catch(err => reject(err))
+    //     })
+    // }
 }
 
 

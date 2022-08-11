@@ -5,10 +5,16 @@
         <div class="card card-stepper" style="border-radius: 16px;">
           <div class="card-header p-4">
             <div class="d-flex justify-content-between align-items-center">
+
               <div>
-                <p class="text-muted mb-2">  <span class="fw-bold text-body">Order placed  successfully</span></p>
+                {{#if paymentError}}
+
+                <p class="text-muted mb-2"> <span class="fw-bold text-body"> Failed To Place Order</span></p>
+                {{else}}
+                <p class="text-muted mb-2"> <span class="fw-bold text-body"> Order placed successfully</span></p>
+                {{/if}}
               </div>
-              
+
             </div>
           </div>
           <div class="card-body p-4">
@@ -16,8 +22,12 @@
               <div class="flex-fill">
               </div>
               <div>
-                <img class="align-self-center img-fluid"
-                  src="/images/order-confirmation.jpg" width="">
+                {{#if paymentError}}
+                <img class="align-self-center img-fluid" src="/images/paytm error.svg" width="">
+                <h6>{{paymentConfirm}}</h6>
+                {{else}}
+                <img class="align-self-center img-fluid" src="/images/order-confirmation.jpg" width="">
+                {{/if}}
               </div>
             </div>
           </div>
@@ -25,10 +35,11 @@
             <div class="d-flex justify-content-between">
               <h5><a href="/" class="btn btn-large"> <i class="fa-solid fa-house"> </i> Home</a></h5>
               <div class="border-start h-100"></div>
-              
-              <h5 ><a href="/orders" class="btn text-black btn-large"> See Orders <i class="fa-solid fa-arrow-right"></i> </a></h5>
-              
-              
+
+              <h5><a href="/orders" class="btn text-black btn-large"> See Orders <i class="fa-solid fa-arrow-right"></i>
+                </a></h5>
+
+
             </div>
           </div>
         </div>
@@ -37,15 +48,16 @@
   </div>
 </section>
 <style>
-    body {
-        background: -webkit-linear-gradient(left, #000, rgb(228, 228, 19));
-    }
+  body {
+    background: -webkit-linear-gradient(left, #000, rgb(228, 228, 19));
+    
+  }
 
-    .emp-profile {
-        padding: 3%;
-        margin-top: 3%;
-        margin-bottom: 3%;
-        border-radius: 0.5rem;
-        background: #fff;
-    }
+  .emp-profile {
+    padding: 3%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    border-radius: 0.5rem;
+    background: #fff;
+  }
 </style>

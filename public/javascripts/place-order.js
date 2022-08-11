@@ -57,7 +57,7 @@ function placeOrder() {
         success: (result) => {
             if (result.url) { console.log(result.url); location.href = result.url; }
 
-            if (result.orderPlaced) location.href = '/order-confirmation'
+            if (result.orderPlaced) location.href = '/order-confirmation/success'
             if (result.paytm) {
                 console.log(result.paytm);
                 var information = {

@@ -75,10 +75,9 @@ router.get('/signup', (req, res) => {
 
 
 router.post('/signup', (req, res) => {
-    console.log(req.body);
-    userHelpers.userSignup(req.body).then((result) => {
-        res.redirect('/login')
-    })
+    // console.log(req.body);
+
+    userHelpers.userSignup(req.body).then(result => res.redirect('/login'))
         .catch((err) => {
             req.session.Error = err;
             res.redirect('/signup')
@@ -159,33 +158,33 @@ router.get('/view-product/:id', async (req, res) => {
 //     })
 // })
 
-router.get('/filter-size', async (req, res) => {
-    try {
-        // console.log(req.query, 'sort size');
+// router.get('/filter-size', async (req, res) => {
+//     try {
+//         // console.log(req.query, 'sort size');
 
-        // let category = req.query.category ;
-        // let filterSize = req.query.size ;
-        // let sortBy = req.query.sort ;
-        // console.log(sortBy) ;
-        let category = "touring"
-        let products = await userHelpers.fetchCategory(category);
+//         // let category = req.query.category ;
+//         // let filterSize = req.query.size ;
+//         // let sortBy = req.query.sort ;
+//         // console.log(sortBy) ;
+//         let category = "touring"
+//         let products = await userHelpers.fetchCategory(category);
 
-        // if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize))
+//         // if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize))
 
-        // if(sortBy != '') products = sort(sortBy,products)
+//         // if(sortBy != '') products = sort(sortBy,products)
 
-        // console.log(products,'after sorting');
+//         // console.log(products,'after sorting');
 
-        // console.log('products', category, 'category ', filterSize, 'value', 'last');
+//         // console.log('products', category, 'category ', filterSize, 'value', 'last');
 
-        res.render('user/category', { user: true, products, })
+//         res.render('user/category', { user: true, products, })
 
-    } catch (error) {
-        console.log(error, "errrsort in");
+//     } catch (error) {
+//         console.log(error, "errrsort in");
 
-    }
+//     }
 
-})
+// })
 
 
 // CART  ROUTES
@@ -511,8 +510,8 @@ router.get("/contactus", (req, res) => {
 router.post('/place-order', verifyUser, async (req, res) => {
     try {
         console.log(req.body, 'valuoc');
-        const couponCode = req.body.couponInput;                               // discount code from req.body
-        var grandTotal = req.session.total.total;                              // total from session
+        const couponCode = req.body.couponInput;                                          // discount code from req.body
+        var grandTotal = req.session.total.total;                                        // total from session
         let discountData = null ;                                            
         const userId = req.session.user._id;                                    
 
@@ -593,7 +592,7 @@ console.log(req.body);
 })
 
 
-router.post('/hooks', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/stripe-status', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
     const endpointKey = process.env.ENDPOINT_SECRET_KEY
     const payload = req.body;
     const payloadString = JSON.stringify(payload);
@@ -645,10 +644,12 @@ router.post('/hooks', bodyParser.raw({ type: 'application/json' }), async (req, 
                 let receipt = event.data.object.receipt_url;
                 let orderId = session.metadata.orderId;
                 let chargeId = session.id;
-                // let checkoutId = s;
+                let status = "order- placed"
                 console.log(`resipt => ${receipt} user =>  transcationId=> ${chargeId} `);  //send the recipt to the user 
 
-                  userHelpers.updatePaymentStatus(orderId,receipt,chargeId).then(result=> console.log('result i user',result)).catch(err=> console.log(err))
+                  userHelpers.updatePaymentStatus(orderId, chargeId, status, receipt)
+                  .then(result=> console.log('result i user',result))
+                  .catch(err=> console.log(err)) 
             }
 
         }
@@ -657,9 +658,10 @@ router.post('/hooks', bodyParser.raw({ type: 'application/json' }), async (req, 
             const session = event.data.object;
             console.log(session, 'payment failed')
             if(!session.paid){
-                let orderId = session.metadata.orderId;
-                let chargeId = session.id;
-                userHelpers.stripeFail(orderId,chargeId).then(res=> console.log(res)).catch(err=> console.log(err))
+                let orderId = session.metadata.orderId ;
+                let chargeId = session.id ;
+                let status = "payment-Failed"
+                userHelpers.updatePaymentStatus(orderId, chargeId,  status).then(res=> console.log(res)).catch(err=> console.log(err))
             }
 
             break;
@@ -668,11 +670,14 @@ router.post('/hooks', bodyParser.raw({ type: 'application/json' }), async (req, 
     res.json({ success: true });
 })
 
-router.post('/paytm_status',paytmConfig.callback)
+router.post('/paytm-status',paytmConfig.callback)
 
 
-router.get('/order-confirmation', (req, res) => {
-    res.render('user/order-confirmation', { user: true })
+router.get('/order-confirmation/:paymentConfirm', (req, res) => {
+let paymentConfirm = req.params.paymentConfirm ;
+    let paymentError = paymentConfirm !== 'success' ? true : false 
+    res.render('user/order-confirmation', {user: true , paymentConfirm, paymentError })
+    
 })
 
 router.get('/orders', verifyUser, async (req, res) => {
