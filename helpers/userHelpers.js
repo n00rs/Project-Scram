@@ -6,6 +6,12 @@ const db = require('../config/mongoConfig');
 
 module.exports = {
     userSignup: (data) => {
+console.log(data)
+coupon = {
+    couponName: (data.email+"FIrst10%").toUpperCase(),
+    category: "ONE TIME",
+    discount : { "price" : 1000, "percentage" : 0.1 },
+}
 
         let error = "Email Id or Mobile Number already exists "
         return new Promise(async (resolve, reject) => {
@@ -26,7 +32,9 @@ module.exports = {
                 data.password = await bcrypt.hash(data.password, 10);
                 data.block = false;
                 db.get().collection(collections.USERCOLLECTION).insertOne(data).then((result) => {
-                    resolve(result);
+                    console.log(result)
+                    coupon.userId = result.insertedId ;
+                    db.get().collection(collections.COUPONCOLLECTION).insertOne(coupon).then(res => resolve(res)).catch(err=> reject(err))
                 }
                 )
             }
@@ -736,6 +744,10 @@ module.exports = {
         })
     },
 
+
+    deleteCoupon:(userId) => {
+        db.get().collection(collections.COUPONCOLLECTION).deleteOne({userId: ObjectId(userId)}).then(res=> console.log(res)).catch(err=> console.log(err))
+    }
     // stripeFail: (orderId, chargeId) => {
     //     return new Promise((resolve, reject) => {
     //         db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },

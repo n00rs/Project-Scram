@@ -20,6 +20,7 @@ const verifyUser = (req, res, next) => {
 
 router.get('/', async (req, res) => {
     // console.log(req.s);
+
     console.log(req.sessionID, '1sess');
     console.log(req.session.id, "session id");
     let user1 = req.session.user;
@@ -536,8 +537,6 @@ router.post('/place-order', verifyUser, async (req, res) => {
     }
 })
 
-
-
 router.post('/checkout', async (req, res) => {
     try {
         console.log(req.body);
@@ -551,12 +550,13 @@ router.post('/checkout', async (req, res) => {
         if (couponCode) {
             await userHelpers.checkCouponCode(couponCode, cartTotal).then(res => {
                 discountData = res;
-                discountData.couponCode = couponCode
+                discountData.couponCode = couponCode 
+                
             }).catch(err => discountData = null)
         }
 
         userHelpers.newOrder(req.body, userId, userCart, cartTotal, discountData)
-            .then((result) => {
+            .then((result) => { userHelpers.deleteCoupon(userId)
                 console.log(result);
                 switch (paymentMethod) {
                     case 'COD':
@@ -582,7 +582,7 @@ router.post('/checkout', async (req, res) => {
                             console.log(`after paytm`);
                             break;
                         }
-                }
+                } 
             })
             .catch((error) => { console.log(error); res.json(error) })
 
@@ -609,11 +609,12 @@ router.get('/order-confirmation/:paymentConfirm', verifyUser, (req, res) => {
 
 router.get('/orders', verifyUser, async (req, res) => {
     try {
+        console.log(req.session.userId) 
         const userId = req.session.user._id;
-        const orders = await userHelpers.fetchOders(req.query, userId);
+        const orders = await userHelpers.fetchOders(req.query, userId) ;
         // console.log(orders, 'insid orders')
         console.log(orders);
-        res.render('user/each-orderDetails', { user: true, orders })
+        res.render('user/each-orderDetails', { user: true, orders }) ;
     } catch (error) {
         console.log(error, "error in getting orders");
         res.status(500).json({message: error.message})
@@ -632,7 +633,7 @@ router.put('/orders/cancel', (req, res) => {
 
 
 
-module.exports = router;
+module.exports = router ;
 
 
 
