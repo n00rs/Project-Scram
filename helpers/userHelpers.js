@@ -1,9 +1,8 @@
-require('dotenv').config()
+
 const bcrypt = require('bcrypt');
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 module.exports = {
     userSignup: (data) => {
@@ -679,7 +678,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             db.get().collection(collections.ORDERCOLLECTION).insertOne(orderObj).then((result) => {
                 // console.log(result, 'new order');
-                // db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
+                db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
 
                 status === 'order-placed' ? resolve({ orderPlaced: true }) : resolve({ orderId: result.insertedId })
             })
@@ -690,80 +689,37 @@ module.exports = {
         })
     },
 
-    fetchOders: (userId) => {
+    fetchOders: (data, userid) => {
+        if (data.page < 0) throw new Error('invalid page number')
+        const userId = ObjectId(userid);
+        const page = parseInt(data.page) || 1;
+        const limit = 2;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const result = {} ;
+        result.previous = startIndex > 0 ? {page: page-1} :null
         return new Promise((resolve, reject) => {
-            db.get().collection(collections.ORDERCOLLECTION).find({ userId: ObjectId(userId) }).toArray().then((result) => {
-                // console.log(result,'order');
+
+            db.get().collection(collections.ORDERCOLLECTION).find({ userId: userId }).count().then(count => {
+                result.next = endIndex < count ? { page: page + 1 } : null
+               
+            
+
+            db.get().collection(collections.ORDERCOLLECTION).find({ userId: userId })
+            .sort({ _id: -1 })
+            .limit(limit)
+            .skip(startIndex)
+            .toArray()
+            .then((orders) => {
+                // console.log(orders , 'order');
+                result.orders = orders
                 resolve(result)
-            }).catch(err=> reject(err))
+            }).catch(err => reject(err))
+        }).catch(err => reject(err))
         })
     },
 
-    stripeCheckOut: (data, total, orderId) => {
-
-        const address = JSON.parse(data.address) ;
-        const amount = parseInt(total * 100) ;
-        const orderid = orderId.toString() ;
-        // console.log("stricheck out",)
-
-        return new Promise(async (resolve, reject) => {
-
-            const customer = await stripe.customers.create({
-                address: {
-                    city: address.city,
-                    line1: address.building_name,
-                    line2: address.street,
-                    postal_code: address.pincode,
-                },
-                email: address.email,
-                name: address.name,
-                phone: address.phone,
-                shipping: {
-                    address: {
-                        city: address.city,
-                        line1: address.building_name,
-                        line2: address.street,
-                        postal_code: address.pincode,
-
-                    },
-                    name: address.name,
-                    phone: address.phone,
-                },
-                metadata: {
-                    orderId: orderid,
-                }
-            })
-            const session = await stripe.checkout.sessions.create({
-                success_url: `${process.env.HOSTED_URL}/order-confirmation/success`,
-                cancel_url: `${process.env.HOSTED_URL}/order-confirmation/failed`,
-                mode: `payment`,
-                payment_method_types: [`card`],
-                client_reference_id: orderid,
-                customer: customer.id,
-                line_items: [{
-                    price_data: {
-                        currency: 'inr',
-                        unit_amount: amount,
-                        product_data: {
-                            name: "grand total",
-                        },
-                    },
-                    quantity: 1,
-                }],
-                payment_intent_data: {
-                    receipt_email: address.email,
-                    metadata: {
-                        orderId: orderid
-                    },
-                },
-
-            })
-            // console.log(session);
-            session.url ? resolve({ url: session.url }) : reject({ err: "stripe out of station" })
-        })
-    },
-
-    updatePaymentStatus: (orderId, txnId, status, reciept=null ) => {
+    updatePaymentStatus: (orderId, txnId, status, reciept = null) => {
         console.log(' insidestat');
         let mongoErr = "sorry server error down we'll update your order status soon"
         return new Promise((resolve, reject) => {
@@ -791,6 +747,31 @@ module.exports = {
     //             }).then(res => resolve(res))
     //             .catch(err => reject(err))
     //     })
+    // }
+    // updateOrderStatus: (orderData) => {
+    //     console.log(orderData)
+    //     const orderId = ObjectId(orderData.orderId);
+    //     const prodId = ObjectId(orderData.prodId);
+    //     const selectedSize = orderData.selectedSize;
+    //     // const currentStatus = orderData.currentStatus ? orderData.currentStatus : null;
+    //     const newStatus = orderData.newStatus ;
+    //     return new Promise((resolve, reject) => {
+    //         db.get().collection(collections.ORDERCOLLECTION).updateOne(
+    //             {
+    //                 _id: orderId,
+    //                 "orderData.items.item": prodId,
+    //                 "orderData.items.selectedSize": selectedSize,
+    //             },
+    //             {
+    //                 $set: {
+    //                     "orderData.items.$.status": newStatus
+    //         }
+    //             }
+    //         ).then(res=> {res.modifiedCount = 1 ? resolve() : reject() } ).catch(err => reject(err))
+
+
+    //     })
+
     // }
 }
 

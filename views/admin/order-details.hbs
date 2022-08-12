@@ -54,7 +54,7 @@
 
                     <button class="btn text-white" style="{{deliveredBtn this.status 'shipped'}}" id="deliveryBtn"
                       value="delivered"
-                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}', this.value )">
+                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}', this.value ,'{{this.selectedSize}}')">
                       <i class="fa-solid fa-truck-arrow-right text-success"></i>
                       delivered
                     </button>

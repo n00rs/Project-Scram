@@ -561,7 +561,38 @@ function removeWishlistItem(wishlistId, prodId) {
     })
 }
 
+function cancelOrderUser(orderId, prodId, currentStatus, prodName, size,){
 
+let status = (currentStatus) === 'confirmed' ? 'confirmed & cancelled' : "notConfirmed & cancelled"
+
+    // console.log('inside cancel');
+    // console.log(`orderId :${orderId}  prodId :${prodId} status: ${status} prodName: ${prodName}, size: ${newStatus}`) ;
+    body = { orderId: orderId, prodId: prodId, orderStatus: status, selectedSize: size}
+    swal({
+        title: `DO you wanna cancel ${prodName} ? `,
+        icon: "warning",
+        closeOnClickOutside : false ,
+    }).then((ok)=>{
+        if(ok){
+            $.ajax({
+                url:"/orders/cancel",
+                data: body,
+                method: 'put',
+                success: (result)=>{
+                    if (result.success) {
+                        swal({ title: result.success, icon: "success" })
+                        setTimeout(() => location.reload(), 2000)
+                    }
+                    else if (result.fail) {
+                        ({ title: result.fail, icon: "error" })
+                        setTimeout(() => swal.close(), 2000)
+                    }
+                    if (result.error) swal({ title: result.error, icon: "error" })
+                }
+            })
+        }
+    })
+}
 
 
 

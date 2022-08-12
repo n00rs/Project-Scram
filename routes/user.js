@@ -1,11 +1,14 @@
 require('dotenv').config()
 const express = require('express');
 const router = express.Router();
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const twilio = require('../config/twilio');
 const userHelpers = require('../helpers/userHelpers');
-const paytmConfig = require('../config/paytmPayment')
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+const paytmConfig = require('../config/paytmConfig');
+const stripeConfig = require('../config/stripeConfig');
+
+const adminHelpers = require('../helpers/adminHelpers');
+
 
 
 const verifyUser = (req, res, next) => {
@@ -107,11 +110,11 @@ router.get('/category', async (req, res) => {
 
         let products = await userHelpers.fetchCategory(category);
 
-        if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize)) ;
+        if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize));
 
         if (sortBy != '') products = sort(sortBy, products);
 
-        res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, cartCount, wishlistCount }) ;
+        res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, cartCount, wishlistCount });
 
 
     } catch (error) {
@@ -512,16 +515,16 @@ router.post('/place-order', verifyUser, async (req, res) => {
         console.log(req.body, 'valuoc');
         const couponCode = req.body.couponInput;                                          // discount code from req.body
         var grandTotal = req.session.total.total;                                        // total from session
-        let discountData = null ;                                            
-        const userId = req.session.user._id;                                    
+        let discountData = null;
+        const userId = req.session.user._id;
 
         const user1 = await userHelpers.fetchUserData(userId);
         const userCart = await userHelpers.fetchCart(userId);
         if (couponCode) {
-          await  userHelpers.checkCouponCode(couponCode, grandTotal).then(res => {
+            await userHelpers.checkCouponCode(couponCode, grandTotal).then(res => {
                 discountData = res;
                 discountData.couponCode = couponCode
-            }) .catch(err => discountData = null)
+            }).catch(err => discountData = null)
         }
 
         console.log(`${userId}user`);
@@ -535,56 +538,56 @@ router.post('/place-order', verifyUser, async (req, res) => {
 
 
 
-router.post('/checkout',async (req, res) => {
+router.post('/checkout', async (req, res) => {
     try {
-console.log(req.body);
+        console.log(req.body);
         const userId = req.session.user._id;
         const paymentMethod = req.body.paymentMethod;
-        const couponCode = req.body.couponCode ;
-        const  userCart = await userHelpers.fetchCart(userId);
-        var cartTotal = req.session.total.total ;
-        let discountData = null ;
+        const couponCode = req.body.couponCode;
+        const userCart = await userHelpers.fetchCart(userId);
+        var cartTotal = req.session.total.total;
+        let discountData = null;
 
         if (couponCode) {
-            await  userHelpers.checkCouponCode(couponCode, cartTotal).then(res => {
-                  discountData = res;
-                  discountData.couponCode = couponCode
-              }) .catch(err => discountData = null)
-            }
-
-        userHelpers.newOrder(req.body, userId,userCart,cartTotal,discountData)
-        .then((result) =>{ 
-            console.log(result);
-            switch (paymentMethod) {
-            case 'COD':
-                res.json(result)
-                break;
-
-            case 'STRIPE': {
-
-                let total = (discountData) ? discountData.total : cartTotal
-                let orderId = result.orderId
-                console.log('inside stripe,',result);
-                userHelpers.stripeCheckOut(req.body, total, orderId).then(result => res.json(result)).catch(err => console.log(`err in user:${err}`))
-               
-                break;
-            }
-            case 'PAYTM':
-               {
-                let total = (discountData) ? discountData.total : cartTotal
-                let orderId = result.orderId ;
-                console.log(`inside paytm`,result) ;
-
-                 paytmConfig.paytmPayments(req.body, total, orderId).then(result => res.json(result)).catch(err=> console.log('errr in paytm',err ))
-               console.log(`after paytm`);
-                break;
+            await userHelpers.checkCouponCode(couponCode, cartTotal).then(res => {
+                discountData = res;
+                discountData.couponCode = couponCode
+            }).catch(err => discountData = null)
         }
-        }     
+
+        userHelpers.newOrder(req.body, userId, userCart, cartTotal, discountData)
+            .then((result) => {
+                console.log(result);
+                switch (paymentMethod) {
+                    case 'COD':
+                        res.json(result)
+                        break;
+
+                    case 'STRIPE': {
+
+                        let total = (discountData) ? discountData.total : cartTotal
+                        let orderId = result.orderId
+                        console.log('inside stripe,', result);
+                        stripeConfig.stripeCheckOut(req.body, total, orderId).then(result => res.json(result)).catch(err => console.log(`err in user:${err}`))
+
+                        break;
+                    }
+                    case 'PAYTM':
+                        {
+                            let total = (discountData) ? discountData.total : cartTotal
+                            let orderId = result.orderId;
+                            console.log(`inside paytm`, result);
+
+                            paytmConfig.paytmPayments(req.body, total, orderId).then(result => res.json(result)).catch(err => console.log('errr in paytm', err))
+                            console.log(`after paytm`);
+                            break;
+                        }
+                }
             })
-        .catch((error) => {console.log(error);res.json(error)})
+            .catch((error) => { console.log(error); res.json(error) })
 
         console.log(paymentMethod);                                                                                              //using switch just for a change
-        
+
 
     } catch (error) {
         console.log(error, 'err');
@@ -592,105 +595,42 @@ console.log(req.body);
 })
 
 
-router.post('/stripe-status', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
-    const endpointKey = process.env.ENDPOINT_SECRET_KEY
-    const payload = req.body;
-    const payloadString = JSON.stringify(payload);
-    const header = stripe.webhooks.generateTestHeaderString({                                            //<= got from google
-        payload: payloadString,
-        secret: endpointKey,                                                                           //sign in key from stripe CLI
-    });
+router.post('/stripe-status', bodyParser.raw({ type: 'application/json' }), stripeConfig.stripeWebhook)
 
-    let event;
-    try {
-        event = stripe.webhooks.constructEvent(payloadString, header,endpointKey);
-        console.log(`webhooks events verifired:`, event.type);
-
-    } catch (error) {
-        console.log(`webhook error: ${error}`);
-        return res.status(400).send(`Webhook Error: ${(err).message}`);
-    }
-    switch (event.type) {
-        // case 'checkout.session.completed': {
-        //     const session = event.data.object;
-
-        //     console.log(session);
-
-        //     // Check if the order is paid (for example, from a card payment)
-        //     //
-        //     // A delayed notification payment will have an `unpaid` status, as
-        //     // you're still waiting for funds to be transferred from the customer's
-        //     // account.
-        //     if (session.payment_status === 'paid') {
-        //         console.log('paymet success');
-        //         //   let orderData =  req.session.orderData 
-        //         // console.log(req.session.user);
-        //         //   orderData.paymentMethod.transcationId = session.payment_intent
-        //        let  checkoutId = session.id                //orderId
-        //         // console.log(orderId);
-        //         // req.session.checkoutId= checkoutId
-                
-        //         //  await userHelpers.newOrder(orderData, user).then(result=> console.log('result i user',result)).catch(err=> console.log(err))
-        //     }
-
-        //     break;
-        // }
-
-        case 'charge.succeeded': {
-            const session = event.data.object;
-
-            console.log(session, "chargesecc");
-            if (session.paid) {
-                let receipt = event.data.object.receipt_url;
-                let orderId = session.metadata.orderId;
-                let chargeId = session.id;
-                let status = "order- placed"
-                console.log(`resipt => ${receipt} user =>  transcationId=> ${chargeId} `);  //send the recipt to the user 
-
-                  userHelpers.updatePaymentStatus(orderId, chargeId, status, receipt)
-                  .then(result=> console.log('result i user',result))
-                  .catch(err=> console.log(err)) 
-            }
-
-        }
-
-        case 'checkout.session.async_payment_failed': {
-            const session = event.data.object;
-            console.log(session, 'payment failed')
-            if(!session.paid){
-                let orderId = session.metadata.orderId ;
-                let chargeId = session.id ;
-                let status = "payment-Failed"
-                userHelpers.updatePaymentStatus(orderId, chargeId,  status).then(res=> console.log(res)).catch(err=> console.log(err))
-            }
-
-            break;
-        }
-    }
-    res.json({ success: true });
-})
-
-router.post('/paytm-status',paytmConfig.callback)
+router.post('/paytm-status', paytmConfig.callback)
 
 
-router.get('/order-confirmation/:paymentConfirm', (req, res) => {
-let paymentConfirm = req.params.paymentConfirm ;
-    let paymentError = paymentConfirm !== 'success' ? true : false 
-    res.render('user/order-confirmation', {user: true , paymentConfirm, paymentError })
-    
+router.get('/order-confirmation/:paymentConfirm', verifyUser, (req, res) => {
+    let paymentConfirm = req.params.paymentConfirm;
+    let paymentError = paymentConfirm !== 'success' ? true : false
+    res.render('user/order-confirmation', { user: true, paymentConfirm, paymentError })
+
 })
 
 router.get('/orders', verifyUser, async (req, res) => {
-    const userId = req.session.user._id;
-    const orders = await userHelpers.fetchOders(userId);
-    // console.log(orders, 'insid orders')
-    res.render('user/orders', { user: true, orders })
+    try {
+        const userId = req.session.user._id;
+        const orders = await userHelpers.fetchOders(req.query, userId);
+        // console.log(orders, 'insid orders')
+        console.log(orders);
+        res.render('user/each-orderDetails', { user: true, orders })
+    } catch (error) {
+        console.log(error, "error in getting orders");
+        res.status(500).json({message: error.message})
+    }
 })
 
-router.get("/view-order-details/:id", (req, res) => {
-    let orderItems = 'asd' ;
-    
+router.put('/orders/cancel', (req, res) => {
+    try {
+        updateStatus = 'cancel'
+        adminHelpers.updateOrderStatus(req.body).then(result => res.json(result)).catch(err => res.json(err))
+    } catch (error) {
+        console.log(error, 'error in put orderupdate');
+        res.json({ err: "something's wrong try aganin later" })
+    }
 })
+
+
 
 module.exports = router;
 

@@ -115,9 +115,9 @@ function placeOrder() {
         })
     }
 
-    function updateOrderStatus(orderId, prodId, status) {
+    function updateOrderStatus(orderId, prodId, status, size) {
         console.log(orderId, prodId, status);
-        let body = { orderId: orderId, prodId: prodId, orderStatus: status }
+        let body = { orderId: orderId, prodId: prodId, orderStatus: status, selectedSize: size }
         $.ajax({
             url: '/admin/all-orders',
             data: body,
@@ -132,7 +132,7 @@ function placeOrder() {
                     ({ title: result.fail, icon: "error" })
                     setTimeout(() => swal.close(), 2000)
                 }
-                if (result.error) swal({ title: result.error, icon: "error" })
+                if (result.err) swal({ title: result.err, icon: "error" })
 
             }
 

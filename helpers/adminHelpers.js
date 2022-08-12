@@ -278,8 +278,9 @@ module.exports = {
 
     updateOrderStatus: (data) => {
         const orderId = objectId(data.orderId);
-        const prodId = data.prodId;
+        const prodId = objectId(data.prodId);
         const orderStatus = data.orderStatus;
+        const selectedSize = data.selectedSize;
         const updateSuccess = { success: `item marked as ${orderStatus} ` }
         const updateFail = { fail: `failed to marked ${orderStatus}` }
 
@@ -287,16 +288,22 @@ module.exports = {
 
 
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.ORDERCOLLECTION).updateOne({ _id: orderId, "orderData.items.item": objectId(prodId) }, {
-                $set: {
-                    "orderData.items.$.status": orderStatus,
-                }
-            })
+            db.get().collection(collection.ORDERCOLLECTION).updateOne(
+                {
+                    _id: orderId,
+                    "orderData.items.item": prodId,
+                    "orderData.items.selectedSize": selectedSize,
+                },
+                {
+                    $set: {
+                        "orderData.items.$.status": orderStatus,
+                    }
+                })
                 .then(result => result.modifiedCount == 1 ? resolve(updateSuccess) : reject(updateFail))
                 .catch(error => reject({ error: "monog went on leave on contact +919633138136" }))
         })
     },
-                                                                                                                                    // scene query (-_-)
+    // scene query (-_-)
     // if (orderUpdate == 'shipped') {
     //     db.get().collection(collection.ORDERCOLLECTION).aggregate([
     //         { $match: { _id: orderId } },
@@ -371,7 +378,7 @@ module.exports = {
                         $inc: { "modelDetails.size.$.stock": -quantity }
 
                     }).then((result) => {
-                        console.log(result);
+                        // console.log(result);
                         if (result.modifiedCount == 1) {
                             db.get().collection(collection.ORDERCOLLECTION).updateOne({ _id: orderId, "orderData.items.item": objectId(prodId) },
                                 {

@@ -67,7 +67,7 @@ module.exports = {                                   //
 
    //ORDER-DETAILS.HBS FUNCTIONS ADMIN SIDE
 
-   displayOrdrBtn: (value1, value2) => { console.log(value1, value2); return (value1 === value2) ? "" : "display:none ;" },
+   displayOrdrBtn: (value1, value2) => { return (value1 === value2) ? "" : "display:none ;" },
 
    confirmBtn: (orderStatus) => { return (orderStatus == undefined) ? " " : "display:none ;" },                                      //
 
@@ -75,9 +75,29 @@ module.exports = {                                   //
 
    deliveredBtn: (orderStatus) => { return orderStatus == "shipped" ? " " : "display:none ;" },
 
-   filterOrder : (id, orders) => { 
-      console.log(id, orders, "filterOrder"); 
-      
+   //ALL-ORDERS USER SIDE FUNCTION
+
+   checkOrderStatus: (orderStatus) => {
+      console.log(orderStatus, "orderStatus");
+      return orderStatus === 'confirmed' ? '33%' :
+             orderStatus === 'shipped' ? '66%' :
+             orderStatus === 'delivered' ? '100%' : '0%'
+             
+   },
+
+   cancelStatus: (orderStatus) => {
+      return (orderStatus == null || orderStatus === 'confirmed') ? "" : "display:none ;"
+      // orderStatus === 'delivered' ? 
+   },
+   orderDate: (date) => { date = date.split(','); return date[0] },
+
+   checkDiscountValue: (discount) => {
+      return (discount) ? discount : 0
+   },
+
+   checkDiscountCode: (couponCode) => {
+      return (couponCode) ? couponCode.toUpperCase() : "NOCODE"
    }
+
 
 }
