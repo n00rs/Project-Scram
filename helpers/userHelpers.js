@@ -6,12 +6,12 @@ const db = require('../config/mongoConfig');
 
 module.exports = {
     userSignup: (data) => {
-console.log(data)
-coupon = {
-    couponName: (data.email+"FIrst10%").toUpperCase(),
-    category: "ONE TIME",
-    discount : { "price" : 1000, "percentage" : 0.1 },
-}
+        console.log(data)
+        coupon = {
+            couponName: (data.email + "FIrst10%").toUpperCase(),
+            category: "ONE TIME",
+            discount: { "price": 1000, "percentage": 0.1 },
+        }
 
         let error = "Email Id or Mobile Number already exists "
         return new Promise(async (resolve, reject) => {
@@ -33,8 +33,8 @@ coupon = {
                 data.block = false;
                 db.get().collection(collections.USERCOLLECTION).insertOne(data).then((result) => {
                     console.log(result)
-                    coupon.userId = result.insertedId ;
-                    db.get().collection(collections.COUPONCOLLECTION).insertOne(coupon).then(res => resolve(res)).catch(err=> reject(err))
+                    coupon.userId = result.insertedId;
+                    db.get().collection(collections.COUPONCOLLECTION).insertOne(coupon).then(res => resolve(res)).catch(err => reject(err))
                 }
                 )
             }
@@ -116,6 +116,18 @@ coupon = {
             })
         })
     },
+
+    search: (searchInput, callback, error) => {
+        let searchKey = searchInput.searchKey;
+        
+        db.get().collection(collections.PRODUCTCOLLECTION).find({
+            "modelDetails.name": { $regex: searchKey ,$options: 'i'}
+        }).limit(5).toArray()
+        .then(res=> callback(res))
+        .catch(err=> error({err: "server out of service"}))
+        
+    },
+
 
     fetchProduct: (data) => {
         return new Promise((resolve, reject) => {
@@ -704,26 +716,26 @@ coupon = {
         const limit = 2;
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        const result = {} ;
-        result.previous = startIndex > 0 ? {page: page-1} :null
+        const result = {};
+        result.previous = startIndex > 0 ? { page: page - 1 } : null
         return new Promise((resolve, reject) => {
 
             db.get().collection(collections.ORDERCOLLECTION).find({ userId: userId }).count().then(count => {
                 result.next = endIndex < count ? { page: page + 1 } : null
-               
-            
 
-            db.get().collection(collections.ORDERCOLLECTION).find({ userId: userId })
-            .sort({ _id: -1 })
-            .limit(limit)
-            .skip(startIndex)
-            .toArray()
-            .then((orders) => {
-                // console.log(orders , 'order');
-                result.orders = orders
-                resolve(result)
+
+
+                db.get().collection(collections.ORDERCOLLECTION).find({ userId: userId })
+                    .sort({ _id: -1 })
+                    .limit(limit)
+                    .skip(startIndex)
+                    .toArray()
+                    .then((orders) => {
+                        // console.log(orders , 'order');
+                        result.orders = orders
+                        resolve(result)
+                    }).catch(err => reject(err))
             }).catch(err => reject(err))
-        }).catch(err => reject(err))
         })
     },
 
@@ -745,9 +757,10 @@ coupon = {
     },
 
 
-    deleteCoupon:(userId) => {
-        db.get().collection(collections.COUPONCOLLECTION).deleteOne({userId: ObjectId(userId)}).then(res=> console.log(res)).catch(err=> console.log(err))
-    }
+    deleteCoupon: (userId) => {
+        db.get().collection(collections.COUPONCOLLECTION).deleteOne({ userId: ObjectId(userId) }).then(res => console.log(res)).catch(err => console.log(err))
+    },
+
     // stripeFail: (orderId, chargeId) => {
     //     return new Promise((resolve, reject) => {
     //         db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },

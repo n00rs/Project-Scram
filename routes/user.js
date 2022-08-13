@@ -8,6 +8,7 @@ const paytmConfig = require('../config/paytmConfig');
 const stripeConfig = require('../config/stripeConfig');
 
 const adminHelpers = require('../helpers/adminHelpers');
+const { callback } = require('../config/paytmConfig');
 
 
 
@@ -122,6 +123,12 @@ router.get('/category', async (req, res) => {
         console.log(error, 'error in loading category');
     }
 })
+
+router.post('/search', (req, res) => {
+        userHelpers.search(req.body,(result => res.json(result)),(err=> res.status(500).json(err)))                            //using call back instead promise
+  // .then(res=>console.log(res)).catch(err=> console.log(err))
+})
+
 
 // router.get('/accessories', async (req,res)=>{
 
@@ -551,7 +558,6 @@ router.post('/checkout', async (req, res) => {
             await userHelpers.checkCouponCode(couponCode, cartTotal).then(res => {
                 discountData = res;
                 discountData.couponCode = couponCode 
-                
             }).catch(err => discountData = null)
         }
 

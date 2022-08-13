@@ -2,6 +2,7 @@
 
 // USER BLOCKING 
 
+
 function blockFunc(userId, email, action) {
     if (action == 'block') {
         swal({
@@ -222,7 +223,7 @@ function addToCart(prodId, selectedSize, wishlistId) {
 
 function changeQuantity(prodId, cartId, selectedSize, count) {
     // console.log(prodId,"prod",cartId,'cart',count);
-    let quantity = document.getElementById(prodId+selectedSize).innerHTML
+    let quantity = document.getElementById(prodId + selectedSize).innerHTML
     let body = {
         prodId: prodId,
         cartId: cartId,
@@ -232,8 +233,8 @@ function changeQuantity(prodId, cartId, selectedSize, count) {
     }
     $.ajax({
         url: "/changeQuantity",
-        data: body ,
-        method: 'post' ,
+        data: body,
+        method: 'post',
 
         success: (response) => {
 
@@ -243,9 +244,9 @@ function changeQuantity(prodId, cartId, selectedSize, count) {
                     location.reload()
                 }, 1000)
 
-            } else if(response.productAdded){
+            } else if (response.productAdded) {
                 let total = response.total.total
-                document.getElementById(prodId+selectedSize).innerHTML = parseInt(quantity) + count;
+                document.getElementById(prodId + selectedSize).innerHTML = parseInt(quantity) + count;
                 document.getElementById('total').innerHTML = total;
                 $('#grandTotal').html(total)
 
@@ -254,7 +255,7 @@ function changeQuantity(prodId, cartId, selectedSize, count) {
     })
 }
 
-function removeItem(cartId, prodId, prodName,selectedSize) {
+function removeItem(cartId, prodId, prodName, selectedSize) {
 
     swal({
         title: "Remove " + prodName + " from your cart  ? ",
@@ -263,7 +264,7 @@ function removeItem(cartId, prodId, prodName,selectedSize) {
     }).then((ok) => {
         if (ok) {
             $.ajax({
-                url: "/remove-cart-item/" + cartId + "/" + prodId +"/"+selectedSize,
+                url: "/remove-cart-item/" + cartId + "/" + prodId + "/" + selectedSize,
 
                 method: 'delete',
                 success: (result) => {
@@ -273,7 +274,7 @@ function removeItem(cartId, prodId, prodName,selectedSize) {
                         setTimeout(() => {
                             location.reload()
                         }, 1000)
-                    }else swal("opps something went wrong try again later")
+                    } else swal("opps something went wrong try again later")
                 }
             })
         }
@@ -469,11 +470,11 @@ function confirmEmail(userInput) {
             if (result.status) {
 
                 document.getElementById('checkResult').innerHTML = "<i class='text-success fa-solid fa-check'></i> User confirmed "
-                document.getElementById('change-password').disabled = false ;
+                document.getElementById('change-password').disabled = false;
             } else {
 
                 document.getElementById('checkResult').innerHTML = " <i class= 'text-danger fa-solid fa-xmark' ></i> User not found"
-                document.getElementById('change-password').disabled = true ;
+                document.getElementById('change-password').disabled = true;
             }
         }
     })
@@ -561,24 +562,24 @@ function removeWishlistItem(wishlistId, prodId) {
     })
 }
 
-function cancelOrderUser(orderId, prodId, currentStatus, prodName, size,){
+function cancelOrderUser(orderId, prodId, currentStatus, prodName, size,) {
 
-let status = (currentStatus) === 'confirmed' ? 'confirmed & cancelled' : "notConfirmed & cancelled"
+    let status = (currentStatus) === 'confirmed' ? 'confirmed & cancelled' : "notConfirmed & cancelled"
 
     // console.log('inside cancel');
     // console.log(`orderId :${orderId}  prodId :${prodId} status: ${status} prodName: ${prodName}, size: ${newStatus}`) ;
-    body = { orderId: orderId, prodId: prodId, orderStatus: status, selectedSize: size}
+    body = { orderId: orderId, prodId: prodId, orderStatus: status, selectedSize: size }
     swal({
         title: `DO you wanna cancel ${prodName} ? `,
         icon: "warning",
-        closeOnClickOutside : false ,
-    }).then((ok)=>{
-        if(ok){
+        closeOnClickOutside: false,
+    }).then((ok) => {
+        if (ok) {
             $.ajax({
-                url:"/orders/cancel",
+                url: "/orders/cancel",
                 data: body,
                 method: 'put',
-                success: (result)=>{
+                success: (result) => {
                     if (result.success) {
                         swal({ title: result.success, icon: "success" })
                         setTimeout(() => location.reload(), 2000)
@@ -594,6 +595,44 @@ let status = (currentStatus) === 'confirmed' ? 'confirmed & cancelled' : "notCon
     })
 }
 
+
+function search(searchKey) {
+    console.log(searchKey,"null"); 
+     
+    let searchDiv = document.getElementById('searchResults');
+    let searchErr = document.getElementById('searchErr');
+    let searchinput = searchKey.match(/^([A-Za-z0-9]+ )+[A-Za-z0-9]+$|^[A-Za-z0-9]+$/);
+try {
+    if(searchKey == '') throw new Error ()
+    if (searchinput[0] === searchKey) {
+        fetch('/search', {
+            method: 'POST',
+            headers: { 'content-Type': 'application/json' },
+            body: JSON.stringify({ searchKey: searchKey }),
+        }).then(res => res.json())
+            .then((res) => {
+                searchDiv.innerHTML = '';
+                if (res.err || res.length < 1) {
+                    searchDiv.innerHTML +=` <li>Item not found </li>`
+                } else {
+                    console.log(res)
+                    res.forEach((item, index) => {
+                        if (index > 0) searchDiv.innerHTML += '<hr>';
+                        searchDiv.innerHTML += `<li><a href="/view-product/${item._id}" >${item.modelDetails.name} 
+                        <img src='/images/product_images/${item._id}_1.jpg'style=" height: 30px;" ></a> </li>`
+                    });
+                }
+            })
+            // .catch(err =>  {searchDiv.innerHTML +=` <li><a>Item not found </a></li>`})
+    }
+} catch (error) {
+    {searchDiv.innerHTML = '';
+        searchDiv.innerHTML +=` <li><a>Item not found </a></li>`}
+}
+  
+   
+
+}
 
 
 
