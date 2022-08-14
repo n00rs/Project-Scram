@@ -32,8 +32,11 @@ router.get('/', async (req, res) => {
     if (user1) {
         cartCount = await userHelpers.fetchCartCount(user1._id);
     }
+
+    let coupon = await userHelpers.fetchCoupon()
+    console.log(coupon, "landing")
     console.log(cartCount);
-    res.render("user/landing-page", { user: true, cartCount, user1, wishlistCount });
+    res.render("user/landing-page", { user: true, cartCount, user1, coupon, wishlistCount });
 })
 
 
@@ -115,7 +118,6 @@ router.get('/category', async (req, res) => {
         if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize));
 
         if (sortBy != '') products = sort(sortBy, products);
-
         res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, cartCount, wishlistCount });
 
 
@@ -125,10 +127,15 @@ router.get('/category', async (req, res) => {
 })
 
 router.post('/search', (req, res) => {
-        userHelpers.search(req.body,(result => res.json(result)),(err=> res.status(500).json(err)))                            //using call back instead promise
-  // .then(res=>console.log(res)).catch(err=> console.log(err))
+    userHelpers.search(req.body, (result => res.json(result)), (err => res.status(500).json(err)))                            //using call back instead promise
+    // .then(res=>console.log(res)).catch(err=> console.log(err))
 })
 
+
+router.get('/world-title',(req,res)=>{
+    console.log(`inside world title`) ; 
+    res.render('user/world-title',{user:true, })
+})
 
 // router.get('/accessories', async (req,res)=>{
 
@@ -377,26 +384,30 @@ router.get('/profile', verifyUser, async (req, res) => {
 
 
 router.post('/verifyPhone', (req, res) => {
+    try {
+        let phone = "+91" + req.body.phone
 
-    let phone = "+91" + req.body.phone
-    // console.log(phone);
-
-    twilio.sendOtp(phone).then((result) => {
-
-        res.render('user/otp', { user: true, phone, })
-
-    }).catch((err) => {
-        req.session.otpError = "Server not responding try again later"
-        res.redirect('/profile')
-    })
-
-
+        userHelpers.checkPhone(phone).then(res => {
+            twilio.sendOtp(phone)
+                .then(result => res.render('user/otp', { user: true, phone, }))
+                .catch((err) => {
+                    req.session.otpError = "Server not responding try again later"
+                    res.redirect('/profile')
+                })
+        })
+            .catch(err => {
+                req.session.otpError = err;
+                res.redirect('/profile')
+            })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 router.post('/otp', verifyUser, (req, res) => {
 
     const userId = req.session.user._id;
-    const otp = req.body.otp.join('');         //otp from form was in array converted it into string
+    const otp = req.body.otp.join('');                                                          //otp from form was in array converted it into string
     const phone = req.body.phone;
 
     twilio.verifyOtp(otp, phone).then((result) => {
@@ -535,7 +546,7 @@ router.post('/place-order', verifyUser, async (req, res) => {
             }).catch(err => discountData = null)
         }
 
-        console.log(`${userId}user`);
+        console.log(user1, `1user`);
 
         res.render('user/place-order', { user: true, grandTotal, user1, userCart, discountData })
 
@@ -557,12 +568,13 @@ router.post('/checkout', async (req, res) => {
         if (couponCode) {
             await userHelpers.checkCouponCode(couponCode, cartTotal).then(res => {
                 discountData = res;
-                discountData.couponCode = couponCode 
+                discountData.couponCode = couponCode
             }).catch(err => discountData = null)
         }
 
         userHelpers.newOrder(req.body, userId, userCart, cartTotal, discountData)
-            .then((result) => { userHelpers.deleteCoupon(userId)
+            .then((result) => {
+                userHelpers.deleteCoupon(userId)
                 console.log(result);
                 switch (paymentMethod) {
                     case 'COD':
@@ -588,7 +600,7 @@ router.post('/checkout', async (req, res) => {
                             console.log(`after paytm`);
                             break;
                         }
-                } 
+                }
             })
             .catch((error) => { console.log(error); res.json(error) })
 
@@ -599,7 +611,6 @@ router.post('/checkout', async (req, res) => {
         console.log(error, 'err');
     }
 })
-
 
 router.post('/stripe-status', bodyParser.raw({ type: 'application/json' }), stripeConfig.stripeWebhook)
 
@@ -615,15 +626,15 @@ router.get('/order-confirmation/:paymentConfirm', verifyUser, (req, res) => {
 
 router.get('/orders', verifyUser, async (req, res) => {
     try {
-        console.log(req.session.userId) 
+        console.log(req.session.userId)
         const userId = req.session.user._id;
-        const orders = await userHelpers.fetchOders(req.query, userId) ;
+        const orders = await userHelpers.fetchOders(req.query, userId);
         // console.log(orders, 'insid orders')
         console.log(orders);
-        res.render('user/each-orderDetails', { user: true, orders }) ;
+        res.render('user/each-orderDetails', { user: true, orders });
     } catch (error) {
         console.log(error, "error in getting orders");
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 })
 
@@ -639,7 +650,7 @@ router.put('/orders/cancel', (req, res) => {
 
 
 
-module.exports = router ;
+module.exports = router;
 
 
 

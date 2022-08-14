@@ -1,5 +1,6 @@
 
 const bcrypt = require('bcrypt');
+const { reject } = require('promise');
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig');
@@ -40,7 +41,6 @@ module.exports = {
             }
         })
     },
-
 
     userLogin: (data, sessionId) => {
         return new Promise(async (resolve, reject) => {
@@ -119,15 +119,21 @@ module.exports = {
 
     search: (searchInput, callback, error) => {
         let searchKey = searchInput.searchKey;
-        
+
         db.get().collection(collections.PRODUCTCOLLECTION).find({
-            "modelDetails.name": { $regex: searchKey ,$options: 'i'}
+            "modelDetails.name": { $regex: searchKey, $options: 'i' }
         }).limit(5).toArray()
-        .then(res=> callback(res))
-        .catch(err=> error({err: "server out of service"}))
-        
+            .then(res => callback(res))
+            .catch(err => error({ err: "server out of service" }))
+
     },
 
+    fetchCoupon: () => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.COUPONCOLLECTION).findOne({ category: "main-banner" }).then(res => resolve(res)).catch(err => reject(err))
+
+        })
+    },
 
     fetchProduct: (data) => {
         return new Promise((resolve, reject) => {
@@ -427,6 +433,19 @@ module.exports = {
         })
     },
 
+    checkPhone: (phone) => {
+        let err = "account already exists with this number "
+        return new Promise((resolve, reject) => {
+
+            db.get().collection(collections.USERCOLLECTION).find({ phone: phone, phoneVerified: true }).toArray()
+                .then((res) => {
+                    (res[0] == null) ? resolve() : reject(err)
+                })
+                .catch(err => reject(err.message))
+
+        })
+    },
+
     verifyPhone: (userId, newPhone) => {
         return new Promise((resolve, reject) => {
 
@@ -436,10 +455,9 @@ module.exports = {
                         phoneVerified: true,
                         phone: newPhone
                     }
-                }).then((result) => {
-                    console.log(result, "numberverify");
-                    resolve()
-                })
+                }).then((result) => resolve())
+                .catch(err => reject())
+
         })
     },
 
@@ -456,7 +474,8 @@ module.exports = {
         return new Promise((resolve, reject) => {
             db.get().collection(collections.USERCOLLECTION).updateOne({ _id: userId },
                 {
-                    $push: { address: address },
+                    $push: { address:{$each:[address], $slice:-5}},
+                    
                     $set: { addressAdded: true }
                 },
             ).then((result) => {
@@ -519,19 +538,13 @@ module.exports = {
                     [{ email: data.userInput },
                     { phone: `+91${data.userInput}` }
                     ]
-            }).toArray().then((result) => {
-                console.log(result);
-                if (result[0] != null) resolve()
-                else reject()
-            })
-                .catch((err) => {
-                    console.log(err);
-                })
+            }).toArray()
+                .then((result) => (result[0] != null) ? resolve() : reject())
+                .catch(err => reject())
         })
     },
+
     changePassword: (data) => {
-
-
         return new Promise(async (resolve, reject) => {
             const userInput = data.userInput;
             const newPassword = await bcrypt.hash(data.newPassword, 10);
@@ -562,7 +575,7 @@ module.exports = {
     // WISH LIST SECTION
 
 
-    addToWishlist: (id, prodId, user) => {                                                         //doing this in a different way other than add to cart method  ("just to use an lookup in getting products sections")
+    addToWishlist: (id, prodId, user) => {                                                                                                    //doing this in a different way other than add to cart method  ("just to use an lookup in getting products sections")
         // console.log(id,"session", user,"user",prodId,"inside addto wish");
         const oneDay = 1000 * 60 * 60 * 24;
 
@@ -575,7 +588,7 @@ module.exports = {
             wishlist = {
                 user_or_sessionId: id,
                 products: [ObjectId(prodId)],
-                endSessionAt: new Date(new Date().getTime() + oneDay)                                                        //creating a field with date which removes the doc when it expires
+                endSessionAt: new Date(new Date().getTime() + oneDay)                                                                             //creating a field with date which removes the doc when it expires
             }
         }
         console.log(wishlist);

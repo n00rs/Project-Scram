@@ -7,7 +7,7 @@ module.exports = {                                   //
    },
 
    dateFormat: (date) => {
-      return date.toLocaleDateString()
+      return (date) ? date.toLocaleDateString(): null ;
    },
 
    choosenSize: (selectedSize) => {
@@ -97,6 +97,43 @@ module.exports = {                                   //
 
    checkDiscountCode: (couponCode) => {
       return (couponCode) ? couponCode.toUpperCase() : "NOCODE"
+   },
+
+   countdown:(date)=>{
+let expire = date.toLocaleDateString()
+console.log(expire);
+      let countDownDate =  new Date(expire).getTime()
+     
+      console.log(countDownDate)
+      console.log('hey yeo')
+     
+      // Update the count down every 1 second
+      let x = setInterval(function () {
+     
+       // Get today's date and time
+       const now = new Date().getTime()
+      //  console.log(now, '...timeRN')
+     
+       // Find the distance between now and the count down date
+       const distance = countDownDate - now;
+      //  console.log(distance,"distance")
+       // Time calculations for days, hours, minutes and seconds
+       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+     
+       // Output the result in an element with id="demo"
+      //  document.getElementById("countdown").innerHTML =
+      // console.log(days + "D " + hours + "H" + minutes + "M" + seconds + "S ");
+        return  days + "D " + hours + "H" + minutes + "M" + seconds + "S " 
+     
+       // If the count down is over, write some text 
+      //  if (distance < 0) {
+      //   clearInterval(x);
+      //   document.getElementById("countdown").innerHTML = "NO OFFERS AVAILABLE FOR NOW";
+      //  }
+      }, 1000);
    }
 
 

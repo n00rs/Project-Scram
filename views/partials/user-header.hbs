@@ -14,119 +14,95 @@
                     <ul class="menu mt-2">
                         <li>
                             <section class="main">
-                                <div class="search">
-                                <input type="" name="" placeholder="Search..." onkeyup=search(this.value) />
-                                <ul class="results" id="searchResults">
-                                    {{!-- <li><a href="index.html">Search Result #1<br /><span>Description...</span></a></li> --}}
-                                </ul>
-                                </div>
-                            </section>
-            
-            </li>
-            <li class="active"><a href="/">Home</a></li>
-            <li><a href="javascript:void(0)" onclick="sortSize('helmet')">HELMETS</a></li>
-            <li><a href="javascript:void(0)" onclick="sortSize('accessories')">ACCESSORIES</a></li>
-            <li>
-                <!-- First Tier Drop Down -->
-                {{#if user1}}
-                <label for="drop-2" class="toggle">{{user1.firstName}}<span class="fa fa-angle-down"
-                        aria-hidden="true"></span> </label>
-                <a href="">{{user1.firstName}}<span class="fa fa-angle-down" aria-hidden="true"></span></a>
-                <input type="checkbox" id="drop-2" />
-                <ul>
-                    {{else}}
-                    <label for="drop-2" class="toggle">LOGIN<span class="fa fa-angle-down" aria-hidden="true"></span>
-                    </label>
-                    <a href="/login">LOGIN<span class="fa fa-angle-down" aria-hidden="true"></span></a>
-                    <input type="checkbox" id="drop-2" />
-                    <ul>
-                        {{/if}}
-                        {{#if user1}}
-                        <li><a href="/logout">LOGOUT</a></li>
-                        <li><a href="/profile">PROFILE</a></li>
-                        <li><a href="/orders">ORDERS</a></li>
-                        {{else}}
-                        <li><a href="/login">LOGIN</a></li>
-                        <li><a href="/signup">USER REGISTARTION</a></li>
-                        {{/if}}
 
+                            </section>
+
+                        </li>
+                        <li class="active"><a href="/">Home</a></li>
+                        <li><a href="javascript:void(0)" onclick="sortSize('helmet')">HELMETS</a></li>
+                        <li><a href="javascript:void(0)" onclick="sortSize('accessories')">ACCESSORIES</a></li>
+                        <li>
+                            <!-- First Tier Drop Down -->
+                            {{#if user1}}
+                            <label for="drop-2" class="toggle">{{user1.firstName}}<span class="fa fa-angle-down"
+                                    aria-hidden="true"></span> </label>
+                            <a href="">{{user1.firstName}}<span class="fa fa-angle-down" aria-hidden="true"></span></a>
+                            <input type="checkbox" id="drop-2" />
+                            <ul>
+                                {{else}}
+                                <label for="drop-2" class="toggle">LOGIN<span class="fa fa-angle-down"
+                                        aria-hidden="true"></span>
+                                </label>
+                                <a href="/login">LOGIN<span class="fa fa-angle-down" aria-hidden="true"></span></a>
+                                <input type="checkbox" id="drop-2" />
+                                <ul>
+                                    {{/if}}
+                                    {{#if user1}}
+                                    <li><a href="/logout">LOGOUT</a></li>
+                                    <li><a href="/profile">PROFILE</a></li>
+                                    <li><a href="/orders">ORDERS</a></li>
+                                    {{else}}
+                                    <li><a href="/login">LOGIN</a></li>
+                                    <li><a href="/signup">USER REGISTARTION</a></li>
+                                    {{/if}}
+                                </ul>
+                        </li>
+                        <li><a href="/contactus">Contact</a></li>
+                        <li><a href="/cart"><img src="/images/bag-09.svg"><span class="badge text-warning"
+                                    id="cartCount">{{cartCount}}</span></a></li>
+                        <li><a href="/wishlist"><i class="fa-regular fa-heart fs-5" style="margin-top: 5.5px"></i><span
+                                    class="badge text-warning" id="wishCount">{{wishlistCount}}</span></a></li>
+                        <li>
+                            <a class="" onclick="openSearchHero()"><i class="fa fa-search"></i></a>
+                            <div id="FullScreenOverlay" class="overlay">
+                                <span class="closebtn" onclick="closeSearchHero()" title="Close Overlay">×</span>
+                                <div class="overlay-content">
+                                    <form action="/action_page.php">
+                                        <input type="text"
+                                            placeholder="Name the thing you love, we find best price for you"
+                                            name="search" onkeyup='searchProd(this.value)'>
+                                        <div class="search">
+
+                                            <ul class="results" id="searchResults">
+                                                {{!-- <li><a href="index.html">Search Result
+                                                        #1<br /><span>Description...</span></a></li> --}}
+                                            </ul>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
-            </li>
-            <li><a href="/contactus">Contact</a></li>
-            <li><a href="/cart"><img src="/images/bag-09.svg"><span class="badge text-warning"
-                        id="cartCount">{{cartCount}}</span></a></li>
-            <li><a href="/wishlist"><i class="fa-regular fa-heart fs-5" style="margin-top: 5.5px"></i><span
-                        class="badge text-warning" id="wishCount">{{wishlistCount}}</span></a></li>
-            </ul>
-            </nav>
-            <!-- //nav -->
-    </div>
-    </header>
-    <!-- //header -->
-    <!--/banner-->
+                </nav>
+                <!-- //nav -->
+            </div>
+        </header>
+        <!-- //header -->
+        <!--/banner-->
     </div>
 </section>
 <style>
-    input {
-        font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 13px;
-        color: #ffffff;
-    }
 
     .search {
         position: relative;
         margin: 0 auto;
-        width: 200px;
-    }
-
-    .search input {
-        height: 26px;
         width: 100%;
-        padding: 0 12px 0 25px;
-        background: rgb(60, 58, 58) ;
-        border-width: ;
-        border-style: solid;
-        border-color: #000 #000 #000;
-        border-radius: 13px;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -ms-box-sizing: border-box;
-        -o-box-sizing: border-box;
-        box-sizing: border-box;
-        -webkit-box-shadow: inset 0 1px #e5e7ed, 0 1px 0 #fcfcfc ;
-        -moz-box-shadow: inset 0 1px #e5e7ed, 0 1px 0 #fcfcfc ;
-        -ms-box-shadow: inset 0 1px #e5e7ed, 0 1px 0 #fcfcfc ;
-        -o-box-shadow: inset 0 1px #e5e7ed, 0 1px 0 #fcfcfc ;
-        box-shadow: inset 0 1px #e5e7ed, 0 1px 0 #fcfcfc ;
-    }
-
-    .search input:focus {
-        outline: none;
-        border-color: #66b1ee;
-        -webkit-box-shadow: 0 0 2px rgba(85, 168, 236, 0.9);
-        -moz-box-shadow: 0 0 2px rgba(85, 168, 236, 0.9);
-        -ms-box-shadow: 0 0 2px rgba(85, 168, 236, 0.9);
-        -o-box-shadow: 0 0 2px rgba(85, 168, 236, 0.9);
-        box-shadow: 0 0 2px rgba(85, 168, 236, 0.9);
-    }
-
-    .search input:focus+.results {
-        display: block
     }
 
     .search .results {
         display: list-item;
-        list-style: none;
-        position: absolute;
-        background-color: #fdfdfd;
+        width: 50%;
+        margin-top: 3%;
     }
 
     .search .results li {
-        display: block
+        display: block ;
+        width: 100%;
+        
     }
-    
+
     .search .results a {
-        display: block;
+        display: list-item;
         position: relative;
         margin: 0 -1px;
         color: #000;
@@ -134,13 +110,15 @@
         text-shadow: 0 1px #fff;
         border: 1px solid transparent;
         border-radius: 3px;
+                width: 100%;
     }
 
-    
-.search .results li:first-child:hover:before,
-.search .results li:first-child:hover:after {
-  display: none
-}
+
+    .search .results li:first-child:hover:before,
+    .search .results li:first-child:hover:after {
+        display: none
+    }
+
     .search .results a:before {
         width: 18px;
         height: 18px;
@@ -148,7 +126,7 @@
         top: 50%;
         right: 10px;
         margin-top: -9px;
-        
+
     }
 
     .search .results a:hover {
@@ -158,27 +136,93 @@
         border-color: #2380dd #2179d5 #1a60aa;
         background-color: #338cdf;
     }
-
-    :-moz-placeholder {
-        color: #a7aabc;
-        font-weight: 200;
+    
+    .overlay {
+        height: 100%;
+        width: 100%;
+        display: none;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.9);
+    
     }
 
-    ::-webkit-input-placeholder {
-        color: #a7aabc;
-        font-weight: 200;
+    .overlay-content {
+        position: relative;
+        top: 16%;
+        width: 80%;
+        text-align: center;
+        margin-top: 30px;
+        margin: auto;
     }
 
-    .lt-ie9 .search input {
-        line-height: 26px
+    .overlay .closebtn {
+        position: absolute;
+        top: 20px;
+        right: 45px;
+        font-size: 60px;
+        cursor: pointer;
+        color: white;
+    }
+
+    .overlay .closebtn:hover {
+        color: #ccc;
+    }
+
+    .overlay input[type=text] {
+        padding: 15px;
+        font-size: 17px;
+        border: none;
+        float: left;
+        width: 50%;
+        background: white;
+        color: #000;
+    }
+
+    .overlay input[type=text]:hover {
+        background: #f1f1f1;
+    }
+
+    .overlay button {
+        float: left;
+        width: 20%;
+        padding: 15px;
+        background: #ddd;
+        font-size: 17px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .overlay button:hover {
+        background: #bbb;
+    }
+
+    .SearchHero {
+        background: #000;
+        opacity: .9;
+        color: #fff;
+
+    }
+
+    .SearchHero:hover {
+        background: #fff;
+        opacity: .5;
+    }
+
+    .se .SearchHero p {
+        font-size: 13px;
     }
 </style>
-<script>
-     $(document).on("click", function(event){
-        var $trigger = $(".results");
-        if($trigger !== event.target && !$trigger.has(event.target).length){
-            $(".results").slideUp("fast");
-        }            
-    });
-</script>
 <script src="javascripts/ajax.js"></script>
+<script>
+    function openSearchHero() {
+        document.getElementById("FullScreenOverlay").style.display = "block";
+    }
+
+    function closeSearchHero() {
+        document.getElementById("FullScreenOverlay").style.display = "none";
+    }
+</script>

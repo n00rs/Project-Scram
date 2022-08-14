@@ -596,11 +596,16 @@ function cancelOrderUser(orderId, prodId, currentStatus, prodName, size,) {
 }
 
 
-function search(searchKey) {
+function searchProd(searchKey) {
+    // $(window).click(function() {
+    //     //Hide the menus if visible
+    //     console.log('inside win')
+    //     $('#searchResults').t()
+    //   })
+   
     console.log(searchKey,"null"); 
      
     let searchDiv = document.getElementById('searchResults');
-    let searchErr = document.getElementById('searchErr');
     let searchinput = searchKey.match(/^([A-Za-z0-9]+ )+[A-Za-z0-9]+$|^[A-Za-z0-9]+$/);
 try {
     if(searchKey == '') throw new Error ()
@@ -609,6 +614,7 @@ try {
             method: 'POST',
             headers: { 'content-Type': 'application/json' },
             body: JSON.stringify({ searchKey: searchKey }),
+            
         }).then(res => res.json())
             .then((res) => {
                 searchDiv.innerHTML = '';
@@ -633,6 +639,54 @@ try {
    
 
 }
+
+
+function copyCouponCode(coupun) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(coupun).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+  }
+// function countdown(){
+//     console.log('inside script')
+//  // Set the date we're counting down to
+// let count = $("#countdown").val()
+// console.log(count);
+//  let countDownDate = (document.getElementById("countdown").outerHTML * (1000 * 60 * 60 * 24)) + new Date().getTime()
+
+//  console.log(countDownDate)
+//  console.log('hey yeo')
+
+//  // Update the count down every 1 second
+//  let x = setInterval(function () {
+
+//   // Get today's date and time
+//   var now = new Date().getTime()
+//   console.log(now, '...timeRN')
+
+//   // Find the distance between now and the count down date
+//   var distance = countDownDate - now;
+//   console.log(distance)
+//   // Time calculations for days, hours, minutes and seconds
+//   var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+//   var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+//   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+//   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+//   // Output the result in an element with id="demo"
+//   document.getElementById("countdown").innerHTML = days + "D " + hours + "H "
+//    + minutes + "M " + seconds + "S ";
+
+//   // If the count down is over, write some text 
+//   if (distance < 0) {
+//    clearInterval(x);
+//    document.getElementById("countdown").innerHTML = "NO OFFERS AVAILABLE FOR NOW";
+//   }
+//  }, 1000);
+// }
+
+
 
 
 
