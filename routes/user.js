@@ -88,7 +88,6 @@ router.post('/signup', (req, res) => {
 })
 
 
-
 router.get('/category', async (req, res) => {
     try {
         let user1 = req.session.user;

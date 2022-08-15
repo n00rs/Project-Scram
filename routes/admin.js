@@ -24,11 +24,6 @@ router.get('/login', (req, res) => {
 
 })
 
-router.get('/add-admin', (req, res) => {
-
-    res.render('admin/add-admin', { admin: true, idError: req.session.idError });
-    req.session.idError = false;
-})
 router.post('/add-admin', (req, res) => {
 
     adminHelpers.add_admin(req.body).then(() => {
