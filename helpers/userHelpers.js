@@ -144,6 +144,14 @@ module.exports = {
         })
     },
 
+
+    fetchWorldTitle: ()=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.PRODUCTCOLLECTION).findOne({"model" : " WORLD TITLE"})
+            .then(res=> resolve(res)).catch(err=> reject(err))
+        })
+    },
+
     sortProduct: (data) => {
         console.log(data);
         if (data.sortType === 'price low to high') {

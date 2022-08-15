@@ -196,15 +196,9 @@ module.exports = {
                         subcategory: data.subcategory,
                         model: data.model,
                         'modelDetails.name': data.modelname,
-
                         'modelDetails.size': size,
-
                         'modelDetails.price': parseInt(data.price),
-
-                        'modelDetails.stock': parseInt(data.stock),
-
                         'modelDetails.description': data.description,
-
                         'modelDetails.features': data.features
 
                     }

@@ -132,9 +132,15 @@ router.post('/search', (req, res) => {
 })
 
 
-router.get('/world-title',(req,res)=>{
-    console.log(`inside world title`) ; 
-    res.render('user/world-title',{user:true, })
+router.get('/world-title', async (req, res) => {
+    console.log(`inside world title`);
+    try {
+        const worldTitle = await userHelpers.fetchWorldTitle();
+       let worldTitleId = worldTitle ? worldTitle._id : null ;
+        res.render('user/world-title', { user: true, worldTitleId})
+    } catch (err) {
+console.log(err)
+    }
 })
 
 // router.get('/accessories', async (req,res)=>{
