@@ -147,7 +147,14 @@ module.exports = {
 
     fetchWorldTitle: ()=>{
         return new Promise((resolve, reject) => {
-            db.get().collection(collections.PRODUCTCOLLECTION).findOne({"model" : " WORLD TITLE"})
+            db.get().collection(collections.PRODUCTCOLLECTION).findOne({"model" : "WORLD TITLE"})
+            .then(res=> resolve(res)).catch(err=> reject(err))
+        })
+    },
+
+    fetchPistaGp:()=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.PRODUCTCOLLECTION).findOne({"model" : 'PISTA GP RR'})
             .then(res=> resolve(res)).catch(err=> reject(err))
         })
     },
@@ -279,8 +286,10 @@ module.exports = {
 
             ]).toArray().then((result) => {
                 console.log(result);
-                if (result[0] == null) resolve(0);
-                else resolve(result[0].quantity)
+                let count = result[0] == null ? 0 : result[0].quantity ;                              
+                resolve(count) ;
+                // if (result[0] == null) resolve(0);
+                // else resolve(result[0].quantity)
             })
 
         })

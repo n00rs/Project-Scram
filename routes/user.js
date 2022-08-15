@@ -8,35 +8,29 @@ const paytmConfig = require('../config/paytmConfig');
 const stripeConfig = require('../config/stripeConfig');
 
 const adminHelpers = require('../helpers/adminHelpers');
-const { callback } = require('../config/paytmConfig');
+// const { callback } = require('../config/paytmConfig');
 
 
 
-const verifyUser = (req, res, next) => {
-    if (req.session.loggedIn) next()
-    else res.redirect('/login')
-}
+const verifyUser = (req, res, next) => (req.session.loggedIn) ? next() : res.redirect('/login')
+
 
 
 
 router.get('/', async (req, res) => {
-    // console.log(req.s);
+try {
 
-    console.log(req.sessionID, '1sess');
-    console.log(req.session.id, "session id");
     let user1 = req.session.user;
-    let wishId = (user1) ? user1._id : req.sessionID;
-    let cartCount = null;
-    let wishlistCount = null;
-    wishlistCount = await userHelpers.fetchWishlistCount(wishId)
-    if (user1) {
-        cartCount = await userHelpers.fetchCartCount(user1._id);
-    }
+    let wishId = (user1) ? user1._id : req.sessionID; 
+    let cartId =  (user1) ? user1._id : null ;
+    let coupon = await userHelpers.fetchCoupon() ;
+    const count = await fetchCounts(wishId , cartId) ;
 
-    let coupon = await userHelpers.fetchCoupon()
-    console.log(coupon, "landing")
-    console.log(cartCount);
-    res.render("user/landing-page", { user: true, cartCount, user1, coupon, wishlistCount });
+    res.render("user/landing-page", { user: true, count, user1, coupon });    
+} catch (error) {
+    console.log(error)
+}
+
 })
 
 
@@ -93,32 +87,26 @@ router.post('/signup', (req, res) => {
 
 })
 
+
+
 router.get('/category', async (req, res) => {
     try {
         let user1 = req.session.user;
-        let wishId = (user1) ? user1._id : req.sessionID
+        let wishId = (user1) ? user1._id : req.sessionID ;
+        let cartId =  (user1) ? user1._id : null ;
         let category = req.query.category;
         let filterSize = req.query.size;
-        let sortBy = req.query.sort;
-        let cartCount = null;
-        let wishlistCount = null;
+        let sortBy = req.query.sort; 
+        const count = await fetchCounts(wishId , cartId) ;
 
-        wishlistCount = await userHelpers.fetchWishlistCount(wishId);
-
-        if (user1) cartCount = await userHelpers.fetchCartCount(user1._id);
-
-        console.log(req.query, "category");
-        if (!req.query) throw new Error('opps something went wrong')
-
-
-        console.log(sortBy, filterSize, category,);
+        if (!req.query) throw new Error('opps something went wrong') ;
 
         let products = await userHelpers.fetchCategory(category);
 
         if (filterSize != '') products = products.filter(x => x.modelDetails.size.some(y => y.size == filterSize));
 
         if (sortBy != '') products = sort(sortBy, products);
-        res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, cartCount, wishlistCount });
+        res.render('user/category', { user: true, user1, category, products, filterSize, sortBy, count});
 
 
     } catch (error) {
@@ -135,14 +123,36 @@ router.post('/search', (req, res) => {
 router.get('/world-title', async (req, res) => {
     console.log(`inside world title`);
     try {
+        let user1 = req.session.user ;
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
+        const count = await fetchCounts(wishId , cartId) ;
         const worldTitle = await userHelpers.fetchWorldTitle();
-       let worldTitleId = worldTitle ? worldTitle._id : null ;
-        res.render('user/world-title', { user: true, worldTitleId})
+        let worldTitleId = worldTitle ? worldTitle._id : null;
+        res.render('user/world-title', { user: true, user1, worldTitleId, count })
     } catch (err) {
-console.log(err)
+        console.log(err)
     }
 })
 
+
+router.get('/pista-gp-rr', async (req, res) => {
+    try {
+        let user1 = req.session.user ;
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
+
+        const count = await fetchCounts(wishId , cartId) ;
+
+        const pistaGp = await userHelpers.fetchPistaGp() ;
+
+        let pistaGpId = pistaGp ? pistaGp._id : null;
+    
+        res.render('user/pista-gp-rr', { user: true, user1, pistaGpId, count })
+    } catch (error) {
+        console.log(error)
+    }
+})
 // router.get('/accessories', async (req,res)=>{
 
 //     let accessories = await userHelpers.fetchAccessories()
@@ -165,10 +175,19 @@ console.log(err)
 //     }
 // })
 router.get('/view-product/:id', async (req, res) => {
-    let id = req.params.id
-    let product = await userHelpers.fetchProduct(id);
-    console.log(product);
-    res.render('user/view-product', { user: true, product })
+    try {
+        let user1 = req.session.user ; 
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
+        const count = await fetchCounts(wishId , cartId) ;
+        let id = req.params.id
+        let product = await userHelpers.fetchProduct(id);
+        console.log(product);
+        res.render('user/view-product', { user: true,user1, product , count})
+    } catch (error) {
+        
+    }
+  
 })
 
 // router.get('/sort', (req, res) => {
@@ -232,17 +251,20 @@ router.post('/add-to-cart', verifyUser, (req, res) => {
 router.get('/cart', verifyUser, async (req, res) => {
 
     try {
+        const user1 = req.session.user ;
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
 
-        const userId = req.session.user._id;
+        const count = await fetchCounts(wishId , cartId) ;
 
-        let cartItems = await userHelpers.fetchCart(userId);
+        let cartItems = await userHelpers.fetchCart(user1._id);
 
         if (cartItems == null) var total = 0
 
         else total = await userHelpers.totalAmount(cartItems._id)
         // console.log(cartItems);
         req.session.total = total                                                            //saving total amount for further use
-        res.render('user/cart', { user: true, cartItems, total })
+        res.render('user/cart', { user: true, user1, count, cartItems, total })
     } catch (error) {
         console.log(error, 'err in the /cart');
     }
@@ -310,14 +332,18 @@ router.put('/cart/update-size', (req, res) => {
 
 router.get('/wishlist', async (req, res) => {
     try {
+        const user1 = req.session.user ;
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
 
-        const wishId = (req.session.user) ? req.session.user._id : req.sessionID;
-        let wishlistCount = await userHelpers.fetchWishlistCount(wishId);
+        const count = await fetchCounts(wishId , cartId) ;
+        // const wishId = (req.session.user) ? req.session.user._id : req.sessionID;
+        // let wishlistCount = await userHelpers.fetchWishlistCount(wishId);
         let wishlist = await userHelpers.fetchWishlist(wishId)
 
         console.log(wishlist, "wishlist");
 
-        res.render('user/wishlist', { user: true, wishlist, wishlistCount })
+        res.render('user/wishlist', { user: true, wishlist,count, user1 })
 
     } catch (error) {
         console.log(error);
@@ -375,8 +401,12 @@ router.get('/profile', verifyUser, async (req, res) => {
     const userId = req.session.user._id
     // const user1= req.session.user;
     try {
+        const user1 = req.session.user ;
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
 
-        let user1 = await userHelpers.fetchUserData(userId);
+        const count = await fetchCounts(wishId , cartId) ;
+        // let user1 = await userHelpers.fetchUserData(userId);
         res.render('user/user-profile', {
             user: true, user1,
             twilioError: req.session.otpError
@@ -490,9 +520,14 @@ router.get("/profile/remove-address", (req, res) => {
     }
 })
 
-router.get("/change-password", (req, res) => {
+router.get("/change-password",async (req, res) => {
     {
-        res.render('user/change-password', { user: true, "error": req.session.changePasswordErr })
+        const user1 = req.session.user ;
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
+
+        const count = await fetchCounts(wishId , cartId) ;
+        res.render('user/change-password', { user: true, "error": req.session.changePasswordErr, user1,count })
         req.session.changePasswordErr = false;
 
     }
@@ -528,8 +563,13 @@ router.post("/change-password", (req, res) => {
     }
 })
 
-router.get("/contactus", (req, res) => {
-    res.render('user/contactus', { user: true, })
+router.get("/contactus", async (req, res) => {
+    const user1 = req.session.user ;
+    let wishId = (user1) ? user1._id : req.sessionID; 
+    let cartId =  (user1) ? user1._id : null ;
+
+    const count = await fetchCounts(wishId , cartId) ;
+    res.render('user/contactus', { user: true,user1,count })
 })
 
 
@@ -632,12 +672,17 @@ router.get('/order-confirmation/:paymentConfirm', verifyUser, (req, res) => {
 
 router.get('/orders', verifyUser, async (req, res) => {
     try {
+        const user1 = req.session.user ;
+        let wishId = (user1) ? user1._id : req.sessionID; 
+        let cartId =  (user1) ? user1._id : null ;
+
+        const count = await fetchCounts(wishId , cartId) ;
         console.log(req.session.userId)
         const userId = req.session.user._id;
         const orders = await userHelpers.fetchOders(req.query, userId);
         // console.log(orders, 'insid orders')
         console.log(orders);
-        res.render('user/each-orderDetails', { user: true, orders });
+        res.render('user/each-orderDetails', { user: true, orders,user1, count });
     } catch (error) {
         console.log(error, "error in getting orders");
         res.status(500).json({ message: error.message })
@@ -658,7 +703,15 @@ router.put('/orders/cancel', (req, res) => {
 
 module.exports = router;
 
-
+async function fetchCounts(wishId,cartId){
+    let count = {} ;
+     count.cartCount= null ;
+    count.wishlistCount = null ;
+    
+    count.wishlistCount = await userHelpers.fetchWishlistCount(wishId) ;
+    if (cartId) count.cartCount = await userHelpers.fetchCartCount(cartId) ;
+    return  count
+}
 
 function sort(sortBy, array) {
     return (sortBy === "price_asc") ? array.sort((a, b) => a.modelDetails.price - b.modelDetails.price)
