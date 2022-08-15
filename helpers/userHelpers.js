@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { reject } = require('promise');
+// const { reject } = 
 const ObjectId = require('mongodb').ObjectId;
 const collections = require('../config/collections')
 const db = require('../config/mongoConfig');

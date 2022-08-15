@@ -8,14 +8,14 @@
 
                 <form action="/login" id="login" method="post">
                     <div class="user-box">
-                        <input type="email" name="email" value="bin@123.com" required>
+                        <input type="email" name="email" value="" required>
                         <label>Email</label>
                     </div>
                     {{#if idError}}
                     <p class="text-warning">"{{idError}}"" </p>
                     {{/if}}
                     <div class="user-box">
-                        <input type="password" name="password" value="1234567" required>
+                        <input type="password" name="password" value="" required>
                         <label>Password</label>
                     </div>
                     <div>
@@ -28,13 +28,13 @@
                         <span></span>
                         LOGIN
                     </button><br>
-                      <button >
+                      <a href="/signup">
                         <span></span>
                         <span></span>
                         <span></span>
                         <span></span>
                         CREATE ACCOUNT
-                    </button>
+                    </a>
                 </form>
             </div>
         </div>
