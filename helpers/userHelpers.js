@@ -22,11 +22,9 @@ module.exports = {
                         { phone: data.phone }]
                 }
             }]).toArray()
-            console.log(user);
 
-            if (user[0] != null) {
-                reject(error);
-            }
+            if (user[0] != null)   reject(error);
+            
             else {
                 console.log(data);
                 data.password = await bcrypt.hash(data.password, 10);
@@ -34,7 +32,9 @@ module.exports = {
                 db.get().collection(collections.USERCOLLECTION).insertOne(data).then((result) => {
                     console.log(result)
                     coupon.userId = result.insertedId;
-                    db.get().collection(collections.COUPONCOLLECTION).insertOne(coupon).then(res => resolve(res)).catch(err => reject(err))
+                    db.get().collection(collections.COUPONCOLLECTION).insertOne(coupon)
+                    .then(res => resolve(res))
+                    .catch(err => reject(err))
                 }
                 )
             }
@@ -692,6 +692,7 @@ module.exports = {
         console.log(wishId);
         return new Promise((resolve, reject) => {
             db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user_or_sessionId: wishId }).then((result) => {
+                console.log(result)
                 let count = (result == null) ? 0 : result.products.length
                 // let count = result.products.length
                 resolve(count)
@@ -738,7 +739,7 @@ module.exports = {
         })
     },
 
-    fetchOders: (data, userid) => {
+    fetchOrders: (data, userid) => {
         if (data.page < 0) throw new Error('invalid page number')
         const userId = ObjectId(userid);
         const page = parseInt(data.page) || 1;

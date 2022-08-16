@@ -19,7 +19,8 @@
                         </div>
                         <div class="col">
                             <p>MOBILE*</p>
-                            <input type="tel" name="phone" class="form-control" placeholder="MOBILE NUMBER*">
+                            <input type="tel" name="phone" class="form-control" placeholder="MOBILE NUMBER*"
+                                value="+91">
                         </div>
                     </div>
                     <div class="row mb-3 ">
@@ -31,7 +32,7 @@
                         <div class="col">
                             <p>CONFIRM*</p>
                             <input type="password" class="form-control" placeholder="CONFIRM PASSWORD*"
-                                id="confirm-password" onkeyup="confirmPassword()">
+                                id="confirm_password" name="confirm_password">
                             <span id="message"></span>
                         </div>
                     </div>
@@ -61,12 +62,12 @@
                             <p class="mt-5">By submitting this form, you confirm to have read and understood the
                                 Dainese S.p.A. Privacy Policy. To allow us to stay in touch with you, tick the
                                 following boxes:</p>
-                            <input class="form-check-input text-white bg-warning" type="checkbox" value=""
-                                id="flexCheckDefault">
+                            <input class="form-check-input text-white bg-warning" type="checkbox" value="" id="consent"
+                                name="consent">
                             <label class="form-check-label text-white">I AGREE</p>
                         </div>
                         <div class="col-3 ms-5">
-                            <button type="submit" id="signup">
+                            <button type="submit" id="signup" onclick=`document.getElementById('confirm_password').name="";`>
                                 <span></span>
                                 <span></span>
                                 <span></span>
@@ -80,10 +81,9 @@
     </div>
 </section>
 
-{{!-- checking same password --}}
-
+{{!-- VALIDATION  --}}
 <script>
-    function confirmPassword() {
+/*    function confirmPassword() {
         let password = document.getElementById('password').value;
         let confirmPassword = document.getElementById('confirm-password').value;
 
@@ -97,6 +97,7 @@
             document.getElementById('signup').disabled = false;
         }
     }
+document.getElementById('confirm_password').name="";*/
     $("#userSignup").validate({
         errorClass: 'signupError',
 
@@ -105,12 +106,11 @@
                 lettersonly: true,
                 required: true,
                 minlength: 3,
-                maxlength: 8
+                maxlength: 15
             },
             lastName: {
                 required: true,
-                minlength: 3,
-                maxlength: 8
+                maxlength: 15
             },
             email: {
                 required: true,
@@ -119,49 +119,55 @@
             },
             phone: {
                 required: true,
-                phoneIN:true,
+                phoneIN: true,
             },
             password: {
                 required: true,
-                alphanumeric: true,
                 rangelength: [7, 14]
-
             },
+            confirm_password: {
+                required: true,
+                equalTo: '#password'
+            },
+            consent: {
+                required: true
+            }
         },
         messages: {
             firstName: {
-                required: "enter first name",
-                minlength: "enter atleast 3 characters",
-                maxlength: "not more than 8 characters"
+                required: "Enter first name",
+                minlength: "Enter atleast 3 characters",
+                maxlength: "Not more than 8 characters"
             },
             lastName: {
-                required: "enter second name",
-                minlength: "enter atleast 3 characters",
+                required: "Enter second name",
                 maxlenth: "not more than 8 characters"
             },
             email: {
                 required: "Enter your emailaddress",
-                email: "enter a valid email adress"
+                email: "Enter a valid email adress"
             },
             password: {
-                required: "enter a password",
-                rangelength: "enter characters between 7 to 14 ",
-                alphanumeric: "enter mix of numbers and alphabets"
+                required: "Enter a password",
+                rangelength: "Enter characters between 7 to 14 ",
             },
-            phone:{
-                required: "please enter your number",
-                minlength: "enter atleast 10 characters",
-                maxlenth: "not more than 10 characters",
-//                phoneIN: "number start with +91"
-
+            confirm_password:{
+                required: "Confirm your password",
+                equalTo: "Password doesn't match",
+            },
+            phone: {
+                required: "Please enter your number", 
+            },
+            consent: {
+                required: "Please agree to our terms and condition"
             }
         },
     })
 
-      jQuery.validator.addMethod('phoneIN', function(phone_number, element) {
-	
-	return this.optional(element) || phone_number.length >= 13 &&
-		phone_number.match(/^((\+91[0-9]{10}))$/);
-}, 'Please specify a valid mobile number starts with +91');
-    
+    jQuery.validator.addMethod('phoneIN', function (phone_number, element) {
+
+        return this.optional(element) || phone_number.length >= 13 &&
+            phone_number.match(/^((\+91[0-9]{10}))$/);
+    }, 'Please enter a valid mobile number starts with +91 and no space');
 </script>
+

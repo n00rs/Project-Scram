@@ -5,237 +5,460 @@
 <!------ Include the above in your HEAD tag ---------->
 
 <section>
-  <ol class="breadcrumb">
+    <ol class="breadcrumb">
         <li class="breadcrumb-item">
             <a href="/">Home</a>
         </li>
         <li class="breadcrumb-item active">Profile</li>
     </ol>
-<div class="container emp-profile">
+    <div class="container emp-profile" id="profileDiv">
 
-    <div class="row">
+        <div class="row">
 
-{{!-- UPLOAD PROFILE IMAGE --}}
+            {{!-- UPLOAD PROFILE IMAGE --}}
 
-        <div class="col-md-4">
-            <form action="/profile/image-upload" method="post" enctype="multipart/form-data">
-
-
-                <div class="profile-img text-center">
-                    <label for="userImage">
-
-                        <img src="/images/user_images/{{user1._id}}.jpg" id="imageUser" alt=""
-                            style="cursor: pointer; width: 165.5px; height: 120px;" class="img-fluid  rounded-circle">
-
-                        <input type="file" name="userImage" id="userImage" onchange="imgPreview(event)" hidden required
-                            accept="image/*"></label>
-
-                    <button class="btn btn-large" type="submit" value="Click To upload"><i
-                            class="fa-solid fa-camera-retro"></i> UPLOAD </button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <div class="profile-head">
-                <h5>
-                    {{user1.firstName}} {{user1.lastName}}
-                </h5>
-
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                            aria-controls="home" aria-selected="true">About</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+            <div class="col-md-4">
+                <form action="/profile/image-upload" method="post" enctype="multipart/form-data">
 
 
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="profile-work">
-                <p>LOREM IPSUM</p>
-                <a href="/cart">View Cart</a><br /><br />
-                <a href="/wishlist">View Wishlist</a><br /><br />
-                <a href="/orders">View Orders</a> <br><br />
-                <a href="/change-password">Change Password</a><br /><br />
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="tab-content profile-tab" id="myTabContent">
-                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>User Id</label>
-                        </div>
-                        <div class="col-md-6">
-                            <p>{{user1._id}}</p>
-                        </div>
+                    <div class="profile-img text-center">
+                        <label for="userImage">
+
+                            <img src="/images/user_images/{{user1._id}}.jpg" id="imageUser" alt=""
+                                style="cursor: pointer; width: 165.5px; height: 120px;"
+                                class="img-fluid  rounded-circle">
+
+                            <input type="file" name="userImage" id="userImage" onchange="imgPreview(event)" hidden
+                                required accept="image/*"></label>
+
+                        <button class="btn btn-large" type="submit" value="Click To upload"><i
+                                class="fa-solid fa-camera-retro"></i> UPLOAD </button>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Name</label>
-                            <button class=" btn" style="border-color: #fff ;" id="nameUpdate">
-                                <i class="fa-regular fa-pen-to-square"></i>
-                            </button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="profile-head">
+                    <h5>
+                        {{user1.firstName}} {{user1.lastName}}
+                    </h5>
+
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                                aria-controls="home" aria-selected="true">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="profile-work">
+                    <p>LOREM IPSUM</p>
+                    <a href="/cart">View Cart</a><br /><br />
+                    <a href="/wishlist">View Wishlist</a><br /><br />
+                    <a href="/orders">View Orders</a> <br><br />
+                    <a href="/change-password">Change Password</a><br /><br />
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="tab-content profile-tab" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>User Id</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>{{user1._id}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Name</label>
+                                <button class=" btn" style="border-color: #fff ;" id="nameUpdate">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                            </div>
+
+                            {{!-- UPDATE NAME WITH AJAX --}}
+
+                            <div id="name" class="col-md-6">
+
+                                <p>{{user1.firstName}} {{user1.lastName}}
+
+                                </p>
+
+                                <form id="updateName" style="display:none">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <input type="text" class="form-control" id="firstName" value="jhon"
+                                                name="firstName" placeholder="firstName">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <input type="text" class="form-control" id="lastName" value="doe"
+                                                name="lastName" placeholder="second name">
+                                        </div>
+
+                                        <input type="hidden" name="userId" value="{{user1._id}}" id="userId">
+
+                                        <button class="btn btn-large" type="submit" id="submit" value="submit">
+                                            <i class="fa-solid fa-angles-up"></i> Update </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Email</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>{{user1.email}}</p>
+                            </div>
                         </div>
 
-                        {{!-- UPDATE NAME WITH AJAX --}}
+                        {{!-- VERIFY PHONE NUMBER --}}
 
-                        <div id="name" class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Phone</label>
+                                <button class=" btn mb-2 ml-2" style="border-color: #fff ;" id="updatePhone">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                            </div>
 
-                            <p>{{user1.firstName}} {{user1.lastName}}
+                            {{#if user1.phoneVerified}}
+                            <div class="col-md-6">
+                                <p>{{user1.phone}} <i class="text-success fa-regular fa-circle-check"></i> </p>
+                            </div>
 
-                            </p>
+                            {{/if}}
 
-                            <form id="updateName" style="display:none" method="post">
-                                <div class="form-row">
 
-                                    <div class="form-group col-md-6">
-                                        <input type="text" maxlength="15" class="form-control" id="firstName"
-                                            value="jhon" name="firstName" placeholder="firstName">
+                            <div class="col-md-6">
+
+                                {{#if twilioError}}
+                                <h6 class="text-danger">{{twilioError}}</h6>
+                                {{/if}}
+
+                                <form action="/verifyPhone" id="verifyPhone" style="display:none ;" method="post">
+                                    <div class="row ">
+                                        <div class="col-sm">
+
+                                            <input type="text" name="phone" class="form-control" value={{user1.phone}}>
+
+                                            <button type="submit" class="profile-edit-btn">Update/verify</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        {{!-- ADD ADDRESS /DELETE ADDRESS --}}
+                        <div class="row" id="address">
+                            <div class="col-md-6">
+                                <label>Address</label>
+                                <br>
+                            </div>
+                            <div class="col-md-6">
+                                {{#each user1.address}}
+
+                                <p> {{this.building_name}},{{this.street}}
+
+                                    <button class=" ml-5 btn btn-large" id="remove-address" name="remove-address"
+                                        onclick="removeAddress('{{this._id}}' , '{{../user1._id}}' )">
+                                        <i class="text-danger fa-solid fa-xmark"></i>
+                                    </button>
+                                    <br>
+                                    {{this.city}},{{this.country}},<br>{{this.pincode}}
+                                </p>
+                                {{/each}}
+
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <button class="btn btn-large" type="" id="add-address"
+                                    onclick='$("#profile-address").toggle()' name="add-address">
+                                    <i class="fa-regular fa-address-card"></i> Add Address </button>
+                            </div>
+                            <div class="col-md-12 mt-3">
+                                <form id="profile-address" style="display:none">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+
+                                            <label for="inputAddress1">Flat/House </label>
+                                            <input type="text" class="form-control" id="building_no"
+                                                name="building_name" placeholder="Flat/House no." value="xcross">
+
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputStreet">Street</label>
+                                            <input type="text" class="form-control" id="street" name="street"
+                                                placeholder="Street" value="baker street">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputCity">City</label>
+                                            <input type="text" class="form-control" id="city" name="city"
+                                                placeholder="City" value="london">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputCountry">Country</label>
+                                            <input type="text" class="form-control" id="country" name="country"
+                                                placeholder="Country" value="UK">
+                                        </div>
 
                                     </div>
-                                    <div class="form-group col-md-6">
-                                        <input type="text" maxlength="15" class="form-control" id="lastName" value="doe"
-                                            name="lastName" placeholder="second name">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputZip">Pin</label>
+                                            <input type="text" class="form-control" maxlength="8" id="pincode"
+                                                name="pincode" placeholder="pin" value="123456">
+                                        </div>
                                     </div>
-
                                     <input type="hidden" name="userId" value="{{user1._id}}" id="userId">
 
                                     <button class="btn btn-large" type="submit" id="submit" value="submit">
-                                        <i class="fa-solid fa-angles-up"></i> Update </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Email</label>
-                        </div>
-                        <div class="col-md-6">
-                            <p>{{user1.email}}</p>
-                        </div>
-                    </div>
+                                        <i class="fa-regular fa-address-card"></i> Update Address </button>
+                                </form>
 
-                    {{!-- VERIFY PHONE NUMBER --}}
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Phone</label>
-                            <button class=" btn mb-2 ml-2" style="border-color: #fff ;" id="updatePhone">
-                                <i class="fa-regular fa-pen-to-square"></i>
-                            </button>
-                        </div>
-
-                        {{#if user1.phoneVerified}}
-                        <div class="col-md-6">
-                            <p>{{user1.phone}} <i class="text-success fa-regular fa-circle-check"></i> </p>
-                        </div>
-                        
-                        {{/if}}
-
-
-                        <div class="col-md-6">
-
-                            {{#if twilioError}}
-                            <h6 class="text-danger">{{twilioError}}</h6>
-                            {{/if}}
-                            
-                            <form action="/verifyPhone" id="verifyPhone" style="display:none ;" method="post">
-                                <div class="row ">
-                                    <div class="col-sm">
-
-                                        <input type="text" name="phone" title="ENTER 10 DIGIT NUMBER" maxlength="10"
-                                            class="form-control" pattern="[1-9]{1}[0-9]{9}" value={{user1.phone}}>
-
-                                        <button type="submit" class="profile-edit-btn">Update/verify</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    {{!-- ADD ADDRESS /DELETE ADDRESS --}}
-
-                    <div class="row" id="address">
-                        <div class="col-md-6">
-                            <label>Address</label>
-                        </div>
-                        <div class="col-md-6">
-                            {{#each user1.address}}
-
-                            <p> {{this.building_name}},{{this.street}}
-
-                                <button class=" ml-5 btn btn-large" id="remove-address" name="remove-address" 
-                                    onclick="removeAddress('{{this._id}}' , '{{../user1._id}}' )">
-                                    <i class="text-danger fa-solid fa-xmark"></i>
-                                </button>
-                                <br>
-                                {{this.city}},{{this.country}},<br>{{this.pincode}}
-                            </p>
-                            {{/each}}
-                            <br>
-                            <button class="btn btn-large" type="" id="add-address" name="add-address">
-                                <i class="fa-regular fa-address-card"></i> Add Address </button>
-                        </div>
-
-                        <div class="col-md-6 mt-3">
-                            <form id="address-form" style="display:none" method="post">
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputAddress1">Flat/House </label>
-
-                                        <input type="text" maxlength="15" class="form-control" id="building_no"
-                                            name="building_no" placeholder="Flat/House no." value="xcross">
-
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputStreet">Street</label>
-                                        <input type="text" maxlength="15" class="form-control" id="street" name="street"
-                                            placeholder="Street" value="baker street">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputCity">City</label>
-                                        <input type="text" maxlength="15" class="form-control" id="city" name="city"
-                                            placeholder="City" value="london">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputCountry">Country</label>
-                                        <input type="text" class="form-control" id="country" name="country"
-                                            placeholder="Country" value="UK">
-                                    </div>
-
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputZip">Pin</label>
-                                        <input type="text" class="form-control" maxlength="8" id="pincode"
-                                            name="pincode" placeholder="pin" value="123456">
-                                    </div>
-                                </div>
-                                <input type="hidden" name="userId" value="{{user1._id}}" id="userId">
-
-                                <button class="btn btn-large" type="submit" id="submit" value="submit">
-                                    <i class="fa-regular fa-address-card"></i> Update Address </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </section>
 
+{{!--
+<script src="/javascripts/ajax.js"></script> --}}
+
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+<script src="/javascripts/user-profile.js"></script>
 <script src="/javascripts/ajax.js"></script>
-{{!-- { { !--CHANGE PROFILE IMAGE PREVIEW-- } } --}}
-<script>
+
+
+{{!-- <script>
     function imgPreview(event) {
         document.getElementById('imageUser').src = URL.createObjectURL(event.target.files[0])
     }
 
-</script>
+    $("#nameUpdate").click(() => {
+        $("#updateName").toggle();
+    })
+
+    $("#updateName").validate({
+        errorClass: 'signupError',
+
+        rules: {
+            firstName: {
+                lettersonly: true,
+                required: true,
+                minlength: 3,
+                maxlength: 15
+            },
+            lastName: {
+                required: true,
+                maxlength: 15
+            },
+        },
+        messages: {
+            firstName: {
+                required: "Enter first name",
+                minlength: "Enter atleast 3 characters",
+                maxlength: "Not more than 8 characters"
+            },
+            lastName: {
+                required: "Enter second name",
+                maxlenth: "not more than 8 characters"
+            },
+        },
+
+        submitHandler: function (form) {
+            $.ajax({
+                url: "/profile/update-name",
+                data: $(form).serialize(),
+                method: 'PUT',
+                success: (result) => {
+                    if (result.status)
+                        $("#name").load(location.href + " #name");
+                    else
+                        swal({ title: "oops somthing went wrong" })
+                }
+            })
+        }
+    })
+
+    $('#updatePhone').click(function () {
+        $("#verifyPhone").toggle();
+    })
+
+    $('#verifyPhone').validate({
+        errorClass: 'signupError',
+
+        rules: {
+            phone: {
+                required: true,
+                phoneIN: true,
+            }
+        },
+        messages: {
+            phone: {
+                required: "Please enter your number",
+            }
+        }
+    })
+
+    jQuery.validator.addMethod('phoneIN', function (phone_number, element) {
+
+        return this.optional(element) || phone_number.length >= 13 &&
+            phone_number.match(/^((\+91[0-9]{10}))$/);
+    }, 'Please enter a valid mobile number starts with +91 and no space');
+
+    //$("#add-address").click(() => $("#profile-address").toggle())
+    $("#profile-address").validate({
+        errorClass: 'signupError',
+        rules: {
+            building_name: {
+                required: true,
+                minlength: 3,
+                maxlength: 25,
+            },
+            street: {
+                required: true,
+                minlength: 3,
+                maxlength: 25
+            },
+            city: {
+                required: true,
+                alphanumeric: true,
+            },
+            country: {
+                required: true,
+                lettersonly: true,
+                maxlength: 25,
+            },
+            pincode: {
+                required: true,
+                digits: true,
+                maxlength: 10,
+                minlength: 3,
+            }
+        },
+
+        messages: {
+            building_name: {
+                required: "please enter your address",
+                maxlength: "please enter rest in next field",
+            },
+            street: {
+                required: "please enter your street details",
+                maxlength: "please enter rest in next field",
+            },
+            city: {
+                required: "please enter your city",
+            },
+            country: {
+                required: "please enter your city details",
+                maxlength: "please enter a valid country name or type short hand",
+            },
+            pincode: {
+                required: "please enter your picode",
+                digits: "enter a valid pin",
+                maxlength: "please enter a valid a pincode",
+                minlength: "please enter a valid a pincode",
+            }
+        },
+
+        submitHandler: (form) => {
+
+            $.ajax({
+                url: "/profile/add-address",
+                data: $(form).serialize(),
+                method: "post",
+                success: (result) => {
+                    if (result.status) {
+                        // location.reload()
+                        $("#address").load(location.href + " #address");
+                        $("#profile-address").toggle()   //to reload only div
+                        // $('#add-address').load(location.href + " #add-address")
+                    } else {
+                        swal("oops ")
+                    }
+                }
+            })
+        }
+    })
+
+    function removeAddress(addressId, userId) {
+        swal({
+            title: "remove this address field ? ",
+            buttons: true,
+            icons: 'warning',
+            closeOnClickOutside: false,
+
+        }).then((ok) => {
+            if (ok) {
+                console.log(addressId, 'address', userId, 'user');
+                $.ajax({
+                    url: "/profile/remove-address",
+                    data: {
+                        addressId: addressId,
+                        userId: userId
+                    },
+                    method: 'delete',
+                    success: (result) => {
+                        if (result.status) {
+                            $('#address').load(" #address >*")
+                        } else {
+                            swal({ title: "oops something went wrong ...!" })
+                        }
+                    }
+
+                })
+            }
+        })
+    }
+
+
+    $('$changePassword').validate({
+        errorClass: 'signupError',
+        rules: {
+            userInput: {
+                required: true,
+
+            },
+            newPassword: {
+                required: true,
+                rangelength: [7, 14]
+            },
+            confirmPassword: {
+                required: true,
+                equalTo: '#newPassword'
+            }
+        },
+
+        messages: {
+            userInput: {
+                required: "Please enter yout email or phone",
+
+            },
+            newPassword: {
+                required: "Enter a password",
+                rangelength: "Enter characters between 7 to 14 ",
+            },
+            confirmPassword: {
+                required: "Confirm your password",
+                equalTo: "Password doesn't match",
+            },
+        }
+    })
+ </script> --}}

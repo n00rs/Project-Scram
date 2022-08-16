@@ -4,6 +4,7 @@
   <div class="container py-5 h-100">
 
     <div class="row d-flex justify-content-center align-items-center h-100">
+      {{#if orders.orders}}
       <div class="col-lg-10 col-xl-8">
         {{#each orders.orders}}
         <div class="card mt-4" style="border-radius: 10px;">
@@ -134,6 +135,26 @@
           </button>
         </div>
       </div>
+      {{else}}
+       <div class="col-md-12">
+      <div class="row">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="h5">SORRY NO ORDERS </th>
+            </tr>
+          </thead>
+        </table>
+        <div class="col-md-6">
+          <a href="/" class="custom-btn">HOME <i class="fa-solid fa-home"></i></a>
+        </div>
+        <div class="col-md-6">
+          <a href="/wishlist" class="custom-btn">GO TO WISH LIST <i class="fa-solid fa-heart"></i></a>
+
+        </div>
+      </div>
+      </div>
+      {{/if}}
     </div>
   </div>
 </section>

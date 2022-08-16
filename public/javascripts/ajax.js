@@ -390,75 +390,42 @@ $(document).ready(function () {
     })
 })
 
-$("#nameUpdate").click(() => {
-    $("#updateName").toggle();
-});
-
-$(document).ready(function () {
-    $('#updateName').on('submit', function (event) {
-        event.preventDefault();
-        const firstName = $('#firstName').val();
-        const lastName = $('#lastName').val();
-        const userId = $("#userId").val();
-
-        console.log(firstName, lastName);
-        $.ajax({
-            url: "/profile/update-name",
-            data: {
-                firstName: firstName,
-                lastName: lastName,
-                userId: userId,
-            },
-            method: 'post',
-            success: (result) => {
-                if (result.status)
-                    $("#name").load(location.href + " #name");
-                else
-                    swal({ title: "oops somthing went wrong" })
-            }
-        })
-
-    })
-})
-
-$("#add-address").click(function () {
-    $("#address-form").toggle();
-})
 
 
-function removeAddress(addressId, userId) {
-    swal({
-        title: "remove this address field ? ",
-        buttons: true,
-        icons: 'warning',
-        closeOnClickOutside: false,
+// $(document).ready(function () {
+   
+//     $('#updateName').on('submit', function (event) {
+//         // var isvalid = $("#myform").valid();
+//         // console.log(isvalid)
+//         event.preventDefault();
+//         const firstName = $('#firstName').val();
+//         const lastName = $('#lastName').val();
+//         const userId = $("#userId").val();
 
-    }).then((ok) => {
-        if (ok) {
-            console.log(addressId, 'address', userId, 'user');
-            $.ajax({
-                url: "/profile/remove-address",
-                data: {
-                    addressId: addressId,
-                    userId: userId
-                },
-                method: 'get',
-                success: (result) => {
-                    if (result.status) {
-                        $('#address').load(location.href + " #address")
-                    } else {
-                        swal({ title: "oops something went wrong ...!" })
-                    }
-                }
+//         console.log(firstName, lastName, userId);
+//         $.ajax({
+//             url: "/profile/update-name",
+//             data: {
+//                 firstName: firstName,
+//                 lastName: lastName,
+//                 userId: userId,
+//             },
+//             method: 'post',
+//             success: (result) => {
+//                 if (result.status)
+//                     $("#name").load(location.href + " #name");
+//                 else
+//                     swal({ title: "oops somthing went wrong" })
+//             }
+//         })
 
-            })
-        }
-    })
-}
+//     })
+// })
 
-$('#updatePhone').click(function () {
-    $("#verifyPhone").toggle();
-})
+
+
+
+
 
 function confirmEmail(userInput) {
     console.log(userInput);
