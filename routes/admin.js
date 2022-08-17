@@ -170,11 +170,11 @@ router.post('/edit-product', (req, res) => {
     }
 })
 
-router.get('/deleteProduct', (req, res) => {
-    console.log(req.query.id);
-    adminHelpers.deleteProduct(req.query.id).then((result) => {
-        res.json(result);
-    })
+router.delete('/deleteProduct', (req, res) => {
+    console.log(req.body.id);
+    adminHelpers.deleteProduct(req.body.id)
+    .then(result=> res.json(result))
+    .catch(err=> res.json(err))
 })
 
 router.get('/add-banners', (req, res) => {

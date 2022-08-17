@@ -21,7 +21,7 @@
 
 
                 <div class="collapse" id="collapseExample">
-                    <div class="card card-body">
+                    <div class="card card-body" style="border-color: transparent;">
                         <ul class="w3layouts-box-list">
                             <li>
                                 <input type="radio" class="checked"  value="racing" onChange="sortSize(this.value)"
@@ -77,34 +77,34 @@
                     SIZES
                 </a>
                 <div class="collapse" id="sizecollapse">
-                    <div class="card card-body">
+                    <div class="card card-body" style="border-color: transparent;">
                         <ul class="w3layouts-box-list">
                             <li>
                                 <input class="checked ms-3" type="checkbox" name="size" value="S"
-                                    onChange="sortSize('{{category}}')" {{check filterSize "S" }}>
+                                    onChange="sortSize('{{category}}')" {{checkSize filterSize category "S" }}>
                                 <span class="span">S</span>
                             </li>
 
                             <li>
                                 <input class="checked ms-3" type="checkbox" name="size" value="M"
-                                    onChange="sortSize('{{category}}')" {{check filterSize "M" }}>
+                                    onChange="sortSize('{{category}}')" {{checkSize filterSize category "M" }}>
                                 <span class="span">M</span>
                             </li>
                             <li>
                                 <input class="checked ms-3 " type="checkbox" name="size" value="L"
-                                    onChange="sortSize('{{category}}')" {{check filterSize "L" }}>
+                                    onChange="sortSize('{{category}}')" {{checkSize filterSize category "L" }}>
                                 <span class="span">L</span>
 
                             </li>
                             <li>
                                 <input class="checked ms-3" type="checkbox" name="size" value="XL"
-                                    onChange="sortSize('{{category}}')" {{check filterSize "XL" }}>
+                                    onChange="sortSize('{{category}}')" {{checkSize filterSize category "XL" }}>
                                 <span class="span">XL</span>
                             </li>
 
                             <li>
                                 <input class="checked ms-3" type="checkbox" name="size" value="XXL" class="ms-3"
-                                    onChange="sortSize('{{category}}')" {{check filterSize "XXL" }}>
+                                    onChange="sortSize('{{category}}')" {{checkSize filterSize category "XXL" }}>
                                 <span class="span">XXL</span>
                             </li>
 

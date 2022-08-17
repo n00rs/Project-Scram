@@ -103,6 +103,10 @@
                 digits: true,
                 maxlength: 10,
                 minlength: 3,
+            },
+            altPhone: {
+                digits:true,
+                maxlength:14,
             }
         },
 
@@ -138,10 +142,8 @@
                 method: "post",
                 success: (result) => {
                     if (result.status) {
-                        // location.reload()
-                        $("#address").load(location.href + " #address");
-                        $("#profile-address").toggle()   //to reload only div
-                        // $('#add-address').load(location.href + " #add-address")
+                        $("#address").load(" #address >*");
+                        $("#profile-address").toggle()  
                     } else {
                         swal("oops ")
                     }
@@ -159,7 +161,6 @@
 
         }).then((ok) => {
             if (ok) {
-                console.log(addressId, 'address', userId, 'user');
                 $.ajax({
                     url: "/profile/remove-address",
                     data: {

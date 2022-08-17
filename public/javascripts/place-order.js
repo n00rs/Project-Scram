@@ -2,50 +2,121 @@
 // $('#updatePhone').click(function () {
 //     $("#verifyPhone").toggle();
 // })
-$("#add-address").click(function () {
-    $("#address-form").toggle();
-})
 
 
-$(document).ready(function () {
-    $('#address-form').on('submit', function (event) {
-        event.preventDefault();
-        const building_name = $("#building_no").val()
-        const street = $('#street').val();
-        const city = $('#city').val();
-        const country = $("#country").val();
-        const pincode = $("#pincode").val();
-        const userId = $('#userId').val();
 
-        console.log(building_name, street, city, country, pincode, userId);
+// $(document).ready(function () {
+//     $('#address-form').on('submit', function (event) {
+//         event.preventDefault();
+//         const building_name = $("#building_no").val()
+//         const street = $('#street').val();
+//         const city = $('#city').val();
+//         const country = $("#country").val();
+//         const pincode = $("#pincode").val();
+//         const userId = $('#userId').val();
+
+//         console.log(building_name, street, city, country, pincode, userId);
+//         $.ajax({
+//             url: "/profile/add-address",
+//             data: {
+//                 building_name: building_name,
+//                 street: street,
+//                 city: city,
+//                 country: country,
+//                 pincode: pincode,
+//                 userId: userId,
+//             },
+//             method: "post",
+//             success: (result) => {
+//                 if (result.status) {
+//                     // location.reload()                 <= preferred this one has a bug
+
+//                     $("#addressCard").load(location.href + " #addressCard");        //to reload only div 
+//                 } else {
+//                     swal("oops ")
+//                 }
+//             }
+//         })
+//     })
+// })
+$("#profile-address").validate({
+    errorClass: 'signupError',
+    rules: {
+        building_name: {
+            required: true,
+            minlength: 3,
+            maxlength: 25,
+        },
+        street: {
+            required: true,
+            minlength: 3,
+            maxlength: 25
+        },
+        city: {
+            required: true,
+            alphanumeric: true,
+        },
+        country: {
+            required: true,
+            lettersonly: true,
+            maxlength: 25,
+        },
+        pincode: {
+            required: true,
+            digits: true,
+            maxlength: 10,
+            minlength: 3,
+        },
+        altPhone: {
+            digits:true,
+            maxlength:14,
+        }
+    },
+
+    messages: {
+        building_name: {
+            required: "please enter your address",
+            maxlength: "please enter rest in next field",
+        },
+        street: {
+            required: "please enter your street details",
+            maxlength: "please enter rest in next field",
+        },
+        city: {
+            required: "please enter your city",
+        },
+        country: {
+            required: "please enter your city details",
+            maxlength: "please enter a valid country name or type short hand",
+        },
+        pincode: {
+            required: "please enter your pincode",
+            digits: "enter a valid pincode",
+            maxlength: "please enter a valid a pincode",
+            minlength: "please enter a valid a pincode",
+        }
+    },
+
+    submitHandler: (form) => {
         $.ajax({
             url: "/profile/add-address",
-            data: {
-                building_name: building_name,
-                street: street,
-                city: city,
-                country: country,
-                pincode: pincode,
-                userId: userId,
-            },
+            data: $(form).serialize(),
             method: "post",
             success: (result) => {
                 if (result.status) {
-                    // location.reload()                 <= preferred this one has a bug
-
-                    $("#addressCard").load(location.href + " #addressCard");        //to reload only div 
+                    location.reload()
+                    $("#profile-address").toggle()  
                 } else {
                     swal("oops ")
                 }
             }
         })
-    })
+    }
 })
-
 function placeOrder() {
 
     body = {
-        address: $('#address:checked').val(),
+        address: $('#selectedAddress:checked').val(),
         couponCode: $('#couponCode').val(),
         paymentMethod: $("#paymentOption:checked").val(),
     }

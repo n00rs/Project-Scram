@@ -96,10 +96,6 @@ function removeUser(userId, email) {
     })
 }
 
-function blockedUsers() {
-
-}
-
 function deleteProduct(productId) {
     swal({
         title: "delete this product  ?",
@@ -112,17 +108,15 @@ function deleteProduct(productId) {
             $.ajax({
                 url: 'deleteProduct',
                 data: { id: productId },
-                method: 'get',
+                method: 'delete',
                 success: (result) => {
                     if (result.itemRemoved) {
                         swal({
                             title: "ProductRemoved",
                             className: 'swal'
                         })
-                        setTimeout(() => {
-                            location.reload()
-                        }, 1000)
-                    }
+                        setTimeout(()=> location.reload(),1000)
+                    }else swal(result.err)
 
                 }
             })
@@ -152,17 +146,20 @@ function sort(category, type) {
     })
 }
 
-function sortSize(value) {
-    console.log(value);
+function sortSize(category) {
     const sortSelection = $('#sortSelection').val()
-    console.log(sortSelection);
+
     let sizeArray = [];
 
     $("input:checkbox[name=size]:checked").each(function () {
         sizeArray.push($(this).val());
     });
-    console.log(sizeArray);
-    location.href = onclick = `/category?size=${sizeArray}&category=${value}&sort=${sortSelection}`
+    (category == 'accessories' || category == 'visors'
+        || category == 'communications' || category == 'pads'
+        || category == 'others') ?
+
+        location.href = onclick = `/category?category=${category}&sort=${sortSelection}` :
+        location.href = onclick = `/category?size=${sizeArray}&category=${category}&sort=${sortSelection}`
 
 }
 
@@ -222,7 +219,7 @@ function addToCart(prodId, selectedSize, wishlistId) {
 }
 
 function changeQuantity(prodId, cartId, selectedSize, count) {
-    // console.log(prodId,"prod",cartId,'cart',count);
+
     let quantity = document.getElementById(prodId + selectedSize).innerHTML
     let body = {
         prodId: prodId,
@@ -299,9 +296,7 @@ function checkCouponCode(couponCode) {
                 $('#couponValid').show()
                 $('#couponValid').html('<i class="text-success fa-regular fa-circle-check"></i>  Valid Code')
                 setTimeout(() => {
-                    // $("#couponInput").attr("disabled", "disabled")
                     $("#couponInput").prop("readonly", true);
-                    // document.getElementById('couponValid').disabled = true ;
                     console.log('hi');
                 }, 1000)
 
@@ -355,45 +350,45 @@ function updateSize(cartId, prodId, size) {
 
 // USER- SIDE PROFILE UPDATE
 
-$(document).ready(function () {
-    $('#address-form').on('submit', function (event) {
-        event.preventDefault();
-        const building_name = $("#building_no").val()
-        const street = $('#street').val();
-        const city = $('#city').val();
-        const country = $("#country").val();
-        const pincode = $("#pincode").val();
-        const userId = $('#userId').val();
+// $(document).ready(function () {
+//     $('#address-form').on('submit', function (event) {
+//         event.preventDefault();
+//         const building_name = $("#building_no").val()
+//         const street = $('#street').val();
+//         const city = $('#city').val();
+//         const country = $("#country").val();
+//         const pincode = $("#pincode").val();
+//         const userId = $('#userId').val();
 
-        console.log(building_name, street, city, country, pincode, userId);
-        $.ajax({
-            url: "/profile/add-address",
-            data: {
-                building_name: building_name,
-                street: street,
-                city: city,
-                country: country,
-                pincode: pincode,
-                userId: userId,
-            },
-            method: "post",
-            success: (result) => {
-                if (result.status) {
-                    // location.reload()
-                    $("#address").load(location.href + " #address");        //to reload only div
-                    $('#add-address').load(location.href + " #add-address")
-                } else {
-                    swal("oops ")
-                }
-            }
-        })
-    })
-})
+//         console.log(building_name, street, city, country, pincode, userId);
+//         $.ajax({
+//             url: "/profile/add-address",
+//             data: {
+//                 building_name: building_name,
+//                 street: street,
+//                 city: city,
+//                 country: country,
+//                 pincode: pincode,
+//                 userId: userId,
+//             },
+//             method: "post",
+//             success: (result) => {
+//                 if (result.status) {
+//                     // location.reload()
+//                     $("#address").load(location.href + " #address");        //to reload only div
+//                     $('#add-address').load(location.href + " #add-address")
+//                 } else {
+//                     swal("oops ")
+//                 }
+//             }
+//         })
+//     })
+// })
 
 
 
 // $(document).ready(function () {
-   
+
 //     $('#updateName').on('submit', function (event) {
 //         // var isvalid = $("#myform").valid();
 //         // console.log(isvalid)
@@ -437,10 +432,13 @@ function confirmEmail(userInput) {
             if (result.status) {
 
                 document.getElementById('checkResult').innerHTML = "<i class='text-success fa-solid fa-check'></i> User confirmed "
-                document.getElementById('change-password').disabled = false;
+                // document.getElementById('change-password').disabled = false;
+                $("#userInput").prop("readonly", true);
+                $('#newPassword').toggle();
+                $('#confirmPassword').toggle();
             } else {
 
-                document.getElementById('checkResult').innerHTML = " <i class= 'text-danger fa-solid fa-xmark' ></i> User not found"
+                document.getElementById('checkResult').innerHTML = " <i class= 'text-danger fa-solid fa-xmark' ></i> User not found add +91 without space"
                 document.getElementById('change-password').disabled = true;
             }
         }
@@ -450,13 +448,13 @@ function confirmEmail(userInput) {
 //  WISHLIST functions
 
 function addToWishlist(prodId) {
-    console.log(prodId)
     $.ajax({
         url: "/add-to-wishlist",
         data: {
             productId: prodId,
         },
         method: 'post',
+
         success: (result) => {
             if (result.success) {
 
@@ -466,10 +464,19 @@ function addToWishlist(prodId) {
 
                 $('#wishCount').html(count);
                 swal({ title: result.success });
-                setTimeout(() => {
-                    swal.close()
-                }, 1000)
-            } else {
+                setTimeout(()=> swal.close(),1000)
+
+            } else if(result.itemRemoved){
+                let count = $("#wishCount").html();
+
+                count = parseInt(count) - 1;
+
+                $('#wishCount').html(count);
+                
+                swal({ title: result.itemRemoved });
+
+                setTimeout(()=> swal.close(),1000)
+            }else{
                 swal({
                     title: result.error,
                     text: "click to login",
@@ -569,41 +576,43 @@ function searchProd(searchKey) {
     //     console.log('inside win')
     //     $('#searchResults').t()
     //   })
-   
-    console.log(searchKey,"null"); 
-     
+
+    console.log(searchKey, "null");
+
     let searchDiv = document.getElementById('searchResults');
     let searchinput = searchKey.match(/^([A-Za-z0-9]+ )+[A-Za-z0-9]+$|^[A-Za-z0-9]+$/);
-try {
-    if(searchKey == '') throw new Error ()
-    if (searchinput[0] === searchKey) {
-        fetch('/search', {
-            method: 'POST',
-            headers: { 'content-Type': 'application/json' },
-            body: JSON.stringify({ searchKey: searchKey }),
-            
-        }).then(res => res.json())
-            .then((res) => {
-                searchDiv.innerHTML = '';
-                if (res.err || res.length < 1) {
-                    searchDiv.innerHTML +=` <li>Item not found </li>`
-                } else {
-                    console.log(res)
-                    res.forEach((item, index) => {
-                        if (index > 0) searchDiv.innerHTML += '<hr>';
-                        searchDiv.innerHTML += `<li><a href="/view-product/${item._id}" >${item.modelDetails.name} 
+    try {
+        if (searchKey == '') throw new Error()
+        if (searchinput[0] === searchKey) {
+            fetch('/search', {
+                method: 'POST',
+                headers: { 'content-Type': 'application/json' },
+                body: JSON.stringify({ searchKey: searchKey }),
+
+            }).then(res => res.json())
+                .then((res) => {
+                    searchDiv.innerHTML = '';
+                    if (res.err || res.length < 1) {
+                        searchDiv.innerHTML += ` <li>Item not found </li>`
+                    } else {
+                        console.log(res)
+                        res.forEach((item, index) => {
+                            if (index > 0) searchDiv.innerHTML += '<hr>';
+                            searchDiv.innerHTML += `<li><a href="/view-product/${item._id}" >${item.modelDetails.name} 
                         <img src='/images/product_images/${item._id}_1.jpg'style=" height: 30px;" ></a> </li>`
-                    });
-                }
-            })
+                        });
+                    }
+                })
             // .catch(err =>  {searchDiv.innerHTML +=` <li><a>Item not found </a></li>`})
+        }
+    } catch (error) {
+        {
+            searchDiv.innerHTML = '';
+            searchDiv.innerHTML += ` <li><a>Item not found </a></li>`
+        }
     }
-} catch (error) {
-    {searchDiv.innerHTML = '';
-        searchDiv.innerHTML +=` <li><a>Item not found </a></li>`}
-}
-  
-   
+
+
 
 }
 
@@ -614,7 +623,7 @@ function copyCouponCode(coupun) {
     $temp.val($(coupun).text()).select();
     document.execCommand("copy");
     $temp.remove();
-  }
+}
 // function countdown(){
 //     console.log('inside script')
 //  // Set the date we're counting down to
@@ -645,7 +654,7 @@ function copyCouponCode(coupun) {
 //   document.getElementById("countdown").innerHTML = days + "D " + hours + "H "
 //    + minutes + "M " + seconds + "S ";
 
-//   // If the count down is over, write some text 
+//   // If the count down is over, write some text
 //   if (distance < 0) {
 //    clearInterval(x);
 //    document.getElementById("countdown").innerHTML = "NO OFFERS AVAILABLE FOR NOW";

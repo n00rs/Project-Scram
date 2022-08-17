@@ -23,19 +23,19 @@
                         <a style="font-weight: 700;">SELECT ADDRESS</a>
                     </div>
                     <div class="ms-auto me-3" >
-                        <button class="btn btn-large" type="" id="add-address" name="add-address">
+                        <button class="btn btn-large" type="" id="add-address" name="add-address" onclick=$('#profile-address').toggle()>
                             <i class="fa-regular fa-address-card"></i> Add Address </button>
                     </div>
-                    <div class="card-body" >
-                        <div class="row">
-                            <div  class="col-lg-12 col-md-6 mb-4 mb-lg-0 " id="address">
-                                <form id="address-form" style="display:none" method="post">
+                    <div class="card-body">
+                        <div class="row" >
+                            <div  class="col-lg-12 col-md-6 mb-4 mb-lg-0 " >
+                                <form id="profile-address" style="display:none">
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label for="inputAddress1">Flat/House </label>
 
                                             <input type="text" maxlength="15" class="form-control" id="building_no"
-                                                name="building_no" placeholder="Flat/House no." value="xcross">
+                                                name="building_name" placeholder="Flat/House no." value="xcross">
 
                                         </div>
                                         <div class="form-group col-md-6">
@@ -63,6 +63,11 @@
                                             <input type="text" class="form-control" maxlength="8" id="pincode"
                                                 name="pincode" placeholder="pin" value="123456">
                                         </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputZip">Alt phone</label>
+                                            <input  class="form-control"  id="altPhone"
+                                                name="altPhone" placeholder="Alt phone(optional*)" value="">
+                                        </div>
                                     </div>
                                     <input type="hidden" name="userId" value="{{user1._id}}" id="userId">
 
@@ -73,7 +78,7 @@
                             </div>
                         </div>
                         <!-- Single item -->
-                        <div class="row">
+                        <div class="row" id="address">
                             <div class="col-lg-12 col-md-6 mb-4 mb-lg-0 ">
 
                                 {{#each user1.address}}
@@ -81,9 +86,8 @@
 
                                     {{!-- function orderAddress written in handlebahelps.js --}}
 
-                                    <input class="form-check-input" type="radio" name="address" id="address"
-                                        value="{{orderAddress this ../user1}}" checked> <br> {{!--function return in
-                                    handlebar.js--}}
+                                    <input class="form-check-input" type="radio" name="address" id="selectedAddress"
+                                        value="{{orderAddress this ../user1}}" checked> <br>                                                               {{!--function return in handlebar.js--}}
                                     <div id="qwe">
                                         <h5 class=" me-1 mb-1 text-black"><strong>{{this.building_name}},
                                                 {{this.street}}</strong></h5>
@@ -97,6 +101,8 @@
                                         <h5 class=" me-1 mb-1  text-black"><strong> Email : </strong> {{../user1.email}}
                                         </h5>
                                         <h5 class=" me-1 mb-0 text-black"><strong>Phone : </strong>{{../user1.phone}}
+                                        </h5>
+                                        <h5 class=" me-1 mb-0 text-black"><strong>Alt Phone : </strong>{{this.altPhone}}
                                         </h5>
                                     </div>
 
@@ -202,7 +208,7 @@
                                 value="{{orderData userCart grandTotal }}">
 
                         </div>
-                        {{#if user1.phoneVerified}}
+                        {{#if user1.phoneVerified}} 
                         <button class="btn btn-success btn-block" onclick="placeOrder()">
                             <div class="d-flex justify-content-between">
                                 <span>Place Order</span>
@@ -215,6 +221,13 @@
                                 your number</a>
                         </div>
                         {{/if}}
+                            {{#unless user1.address}} 
+                        <div class="">
+<br>
+                              <button class="btn btn-large" type="" id="add-address" name="add-address" onclick=$('#profile-address').toggle()>
+                            <i class="fa-regular fa-address-card"></i> Add Address </button>
+                        </div>
+                        {{/unless}}
                     </div>
                 </div>
             </div>
@@ -222,8 +235,10 @@
         </div>
     </div>
 </section>
-<section>
 
 
-</section>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
 <script src="javascripts/place-order.js"></script>

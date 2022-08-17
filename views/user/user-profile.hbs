@@ -171,7 +171,9 @@
                                         <i class="text-danger fa-solid fa-xmark"></i>
                                     </button>
                                     <br>
-                                    {{this.city}},{{this.country}},<br>{{this.pincode}}
+                                    {{this.city}},{{this.country}},<br> 
+                                    Pin: {{this.pincode}} </br>
+                                   Alt Phone:  {{this.altPhone}}
                                 </p>
                                 {{/each}}
 
@@ -218,6 +220,11 @@
                                             <label for="inputZip">Pin</label>
                                             <input type="text" class="form-control" maxlength="8" id="pincode"
                                                 name="pincode" placeholder="pin" value="123456">
+                                        </div>
+                                         <div class="form-group col-md-6">
+                                            <label for="inputZip">Alt phone</label>
+                                            <input  class="form-control"  id="altPhone"
+                                                name="altPhone" placeholder="Alt phone(optional*)" value="">
                                         </div>
                                     </div>
                                     <input type="hidden" name="userId" value="{{user1._id}}" id="userId">

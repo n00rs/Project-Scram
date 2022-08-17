@@ -158,10 +158,12 @@ module.exports = {
 
     deleteProduct: (productId) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.PRODUCTCOLLECTION).deleteOne({ _id: objectId(productId) }).then((result) => {
-                console.log(result, "delteprod");
-                resolve({ itemRemoved: true })
+            db.get().collection(collection.PRODUCTCOLLECTION).updateOne({ _id: objectId(productId) },
+            {
+                $set:{delete: true}
             })
+            .then(result =>  resolve({ itemRemoved: true }))
+            .catch(err=> reject(err))
         })
     },
 
