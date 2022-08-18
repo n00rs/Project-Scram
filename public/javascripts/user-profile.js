@@ -180,4 +180,89 @@
             }
         })
     }
+// CONTACT US FORM SUBMISSION
 
+
+    jQuery.validator.addMethod("Email", function (value, element) {
+        return this.optional(element) || /^\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{1,4}\b$/i.test(value);
+     }, 'Please enter a valid email address.(sample@scram.com)');
+     $('#contactus-form').validate({
+        errorClass: 'is-invalid',
+        rules: {
+           firstName: {
+              required: true,
+              lettersonly: true,
+              minlength: 3,
+              maxlength: 20
+           },
+           lastName: {
+              required: true,
+              maxlength: 20
+           },
+           email: {
+              required: true,
+              Email: true,
+           },
+           phone: {
+              required: true,
+           },
+           country: {
+              required: true,
+           },
+  
+           orderNumber: {
+  
+           },
+           language: {
+              required: true,
+           },
+           reason: {
+              required: true,
+           },
+           consent: {
+              required: true,
+           },
+        },
+        messages: {
+           firstName: {
+              required: "       please     Enter first name",
+              minlength: "         please  Enter atleast 3 characters",
+              maxlength: "         please Not more than 20 characters"
+           },
+           lastName: {
+              required: "          Enter second name",
+              maxlenth: "          Not more than 20 characters"
+           },
+           email: {
+              required: "             Enter your email address",
+           },
+           orderNumber: {
+              required: "please enter your order number"
+           },
+           consent:{
+              required:"please agree"
+           }
+  
+        },
+        submitHandler: (form) => {
+           swal({
+              title: "please wait",
+              closeOnClickOutside: false,
+              buttons:false
+          })
+           $.ajax({
+              url: "https://script.google.com/macros/s/AKfycbxHsh8nONCBdMAXSvktIEW4eYxe08qNPB_5Ig71f9HqYZIcdoZiQb0GwbecufFoIE8N/exec",
+              method: "post",
+              data: $(form).serialize(),
+              success: (res) => {
+                 if (res.result === 'success') {
+                    swal(`your enquiry submitted we'll look into it`)
+                    setTimeout(() => location.reload(), 5000)
+                 } else
+                    swal(`oops google is out of service let me look into it `)
+  
+              }
+           })
+        }
+     })
+  

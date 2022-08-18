@@ -81,7 +81,7 @@
     </div>
 </section>
 
-{{!-- VALIDATION --}}
+{{!-- VALIDATION --}}  
 <script>
     $("#userSignup").validate({
         errorClass: 'signupError',
@@ -91,11 +91,12 @@
                 lettersonly: true,
                 required: true,
                 minlength: 3,
-                maxlength: 15
+                maxlength: 20
             },
             lastName: {
+
                 required: true,
-                maxlength: 15
+                maxlength: 20
             },
             email: {
                 required: true,
@@ -122,11 +123,11 @@
             firstName: {
                 required: "Enter first name",
                 minlength: "Enter atleast 3 characters",
-                maxlength: "Not more than 8 characters"
+                maxlength: "Not more than 15 characters"
             },
             lastName: {
                 required: "Enter second name",
-                maxlenth: "not more than 8 characters"
+                maxlenth: "not more than 15 characters"
             },
             email: {
                 required: "Enter your emailaddress",

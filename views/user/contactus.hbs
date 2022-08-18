@@ -20,26 +20,27 @@
          Fill out this form for information or support on online orders, general information on our products,
          after-sales assistance and any questions or concern related to your purchases.
       </h5>
-      <form action="" method="post">
+      <form id="contactus-form">
          <div class="col-md-8">
             <div class="form-floating mb-3">
-               <input type="text" class="form-control" id="" placeholder="">
-               <label for="">NAME</label>
+               <input type="text" class="form-control" name="firstName" id="firstName" placeholder="">
+               <label for="firstName" class="">NAME</label>
             </div>
             <div class="form-floating mb-3">
-               <input type="text" class="form-control" id="" placeholder="">
+               <input type="text" class="form-control" name="lastName" id="" placeholder="">
                <label for="">SURNAME</label>
             </div>
             <div class="form-floating mb-3">
-               <input type="text" class="form-control" id="" placeholder="">
+               <input type="text" class="form-control" name="email" id="" placeholder="">
                <label for="">EMAIL</label>
             </div>
             <div class="form-floating mb-3">
-               <input type="tel" class="form-control" id="" placeholder="">
+               <input type="tel" class="form-control" name="phone" id="" placeholder="">
                <label for="">PHONE</label>
             </div>
             <div class="form-floating mb-3">
-               <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+               <select class="form-select" id="floatingSelect" name="country"
+                  aria-label="Floating label select example">
 
                   <option selected>SELECT YOUR COUNTRY</option>
                   <option value="France" "$France">France</option>
@@ -439,11 +440,12 @@
                <label for="floatingSelect">COUNTRY</label>
             </div>
             <div class="form-floating mb-3">
-               <input type="text" class="form-control" id="" placeholder="">
+               <input type="text" class="form-control" name="orderNumber" id="" placeholder="">
                <label for="">ORDER NO</label>
             </div>
             <div class="form-floating mb-3">
-               <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+               <select class="form-select" id="floatingSelect" name="language"
+                  aria-label="Floating label select example">
                   <option> SELECT LANGUAGE</option>
                   <option value="English">
                      English</option>
@@ -461,7 +463,7 @@
                <label for="floatingSelect">LANGUAGE</label>
             </div>
             <div class="form-floating mb-3">
-               <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+               <select class="form-select" id="floatingSelect" name="reason" aria-label="Floating label select example">
                   <option selected>PLEASE SELECT</option>
                   <Option value="Product Info">Product Info</Option>
                   <OPtion value="Orders & Returns">Orders & Returns</OPtion>
@@ -474,21 +476,29 @@
                <label for="floatingSelect">ENQUIRY TYPE</label>
             </div>
             <div class="form-floating mb-3">
-               <input type="text" class="form-control" id="" placeholder="">
+               <input type="text" class="form-control" name="question" id="" placeholder="">
                <label for="">TYPE YOUR QUESTION HERE *</label>
             </div>
             <div class="mb-3 form-check">
                <h6>BY SUBMITTING THIS FORM, YOU AGREE THAT YOU HAVE READ AND UNDERSTOOD THE DAINESE USA INC. UNITED
                   STATES PRIVACY POLICY AND AGREE TO PERMIT
                   DAINESE USA INC. TO COLLECT AND USE THE PERSONAL DATA ACCORDINGLY</h6>
-               <input type="checkbox" class="form-check-input" id="">
-               <label class="form-check-label" for="">I AGREE</label>
+               <input type="checkbox" name="consent" value="agreed conditions" class="form-check-input" id="">
+               <label class="form-check-label"  for="">I AGREE</label>
             </div>
-            <a class="btn active " type="submit">
+            <button class="btn active" type="submit">
                SUBMIT
                <span style="margin-left: 1em;"></span>
-            </a>
+            </button>
          </div>
       </form>
    </div>
 </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+   crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+<script src="/javascripts/user-profile.js">
+
+  </script>

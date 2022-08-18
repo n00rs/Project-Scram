@@ -162,8 +162,8 @@
         <div class="row ">
             <div class="button mb-5">
                 <div class="searchBox">
-                    <input class="searchInput" type="email" name="" placeholder="Email address*" required="">
-                    <button class="searchButton" href="#">JOIN COMMUNITY</button>
+                    <input class="searchInput" type="email" id="joinCommunity" name="joinCommunity" placeholder="Email address*" required>
+                    <button class="searchButton" value='$("#joinCommunity").innerHTML'  onclick="joinCommunity(this.value)">JOIN COMMUNITY</button>
                 </div>
             </div>
         </div>
@@ -434,7 +434,7 @@
 </style>
 
 <script>
-    const expireDay = document.getElementById("countdown").innerHTML ;
+ const expireDay = document.getElementById("countdown").innerHTML ;
 
  let countDownDate = new Date(expireDay).getTime()
  let x = setInterval(function () {

@@ -626,6 +626,8 @@ function copyCouponCode(coupon) {
 }
 
 
-
+function joinCommunity(email){
+    console.log(email)
+}
 
 
