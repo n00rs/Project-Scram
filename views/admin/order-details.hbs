@@ -4,7 +4,7 @@
       <div class="col-md-12 col-12">
         <div>
           <div class="all-prod" style=" overflow-x:auto">
-            <h3 class="tittle text-white">ALL PRODUCTS</h3>
+            <h3 class="tittle text-white">ORDER DETAILS</h3>
             <table class="table" id="myTable">
               <thead>
                 <tr class="text-warning">
@@ -19,9 +19,10 @@
                   <th scope="col">Price</th>
                   <th scope="col">status</th>
                   <th scope="col">Actions</th>
+                  <th scope="col">cancel</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="status">
                 {{#each orderDetails.orderData.items}}
                 <tr class="text-white">
                   <th scope="text-warning">{{@index}}</th>
@@ -33,7 +34,7 @@
                   <td> {{this.selectedSize}}</td>
                   <td> {{this.quantity}}</td>
                   <td>&#8377; {{this.price}}</td>
-                  <td class="" style="">
+                  <td class=""  style="">
                     <i class="fa-regular fa-circle-check text-success"></i>
                     {{this.status}}
                   </td>
@@ -47,19 +48,27 @@
 
                     <button class="btn text-white" style="{{dispatchBtn this.status 'shipped'}}" id="dispacthBtn"
                       value="shipped"
-                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}', this.value )">
+                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}',this.value,'{{this.selectedSize}}' )">
                       <i class="fa-solid fa-truck-arrow-right text-success"></i>
                       Dispatch
                     </button>
 
                     <button class="btn text-white" style="{{deliveredBtn this.status 'shipped'}}" id="deliveryBtn"
                       value="delivered"
-                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}', this.value ,'{{this.selectedSize}}')">
+                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}',this.value,'{{this.selectedSize}}')">
                       <i class="fa-solid fa-truck-arrow-right text-success"></i>
                       delivered
                     </button>
                     {{!-- <button class="bg-black" onclick="deleteProduct('{{this._id}}') "><i
                         class="fa-solid fa-trash-can fs-5 text-danger"></i></button> --}}
+                  </td>
+                  <td>
+                    <button class="btn text-white" style="{{cancelBtn this.status}}" id="deliveryBtn"
+                      value="cancelled"
+                      onclick="updateOrderStatus('{{../orderDetails._id}}','{{this.item}}', this.value ,'{{this.selectedSize}}')">
+                      <i class="fa-solid fa-xmark text-danger"></i>
+                      Cancel
+                    </button>
                   </td>
                 </tr>
                 {{/each}}

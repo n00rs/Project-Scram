@@ -122,7 +122,7 @@ function placeOrder() {
         swal({
             title: "please wait",
             closeOnClickOutside: false,
-            buttons:false
+            buttons: false
         })
         body = {
             address: address,
@@ -186,17 +186,33 @@ function post(details) {
 
 function checkStock(orderId, prodId, size, quantity) {
     console.log(orderId, prodId, size, quantity);
-    let body = { orderId: orderId, prodId: prodId, selectedSize: size, quantity: quantity }
+    let body = {
+        orderId: orderId,
+        prodId: prodId,
+        selectedSize: size,
+        quantity: quantity
+    }
     $.ajax({
         url: "/admin/all-orders",
         data: body,
         method: 'patch',
         success: (result) => {
+            if (result.stockOut) {
+                swal({
+                    title: result.stockOut,
+                    icon: "error",
+                    text: "mark the order as canceled ? ",
+                    closeOnClickOutside:false,
+                    buttons: true,
+                 }).then((ok)=>{
+                    ok ? updateOrderStatus(orderId, prodId, 'cancelled',size) : swal.close()
+                 })
+            }else{
 
-            result.error ? swal({ title: result.error, icon: "error" }) :
-                result.stockOut ? swal({ title: result.stockOut, icon: "error" }) :
-                    result.orderConfirmed ? swal({ title: result.orderConfirmed, icon: "success" }) :
-                        swal({ title: "client side error" })
+                result.error ? swal({ title: result.error, icon: "error" }) :
+                result.orderConfirmed ? $('#status').load(' #status >*')  :
+                    swal({ title: "client side error" })
+            }
         }
     })
 }
@@ -215,7 +231,7 @@ function updateOrderStatus(orderId, prodId, status, size) {
                 setTimeout(() => location.reload(), 2000)
             }
             else if (result.fail) {
-                ({ title: result.fail, icon: "error" })
+              swal  ({ title: result.fail, icon: "error" })
                 setTimeout(() => swal.close(), 2000)
             }
             if (result.err) swal({ title: result.err, icon: "error" })

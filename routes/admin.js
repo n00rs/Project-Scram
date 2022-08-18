@@ -270,7 +270,9 @@ router.patch('/all-orders', (req, res) => {
 router.put('/all-orders', (req, res) => {
     try {
         console.log(req.body);
-        adminHelpers.updateOrderStatus(req.body).then(result => res.json(result)).catch(error => res.json(error))
+        adminHelpers.updateOrderStatus(req.body)
+        .then(result => res.json(result))
+        .catch(error => res.json(error))
     } catch (error) {
         console.log(error, 'status update');
     }

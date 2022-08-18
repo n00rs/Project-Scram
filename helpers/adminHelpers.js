@@ -6,6 +6,7 @@ const objectId = require('mongodb').ObjectId
 
 
 module.exports = {
+
     add_admin: (data) => {
         let error = "username already exists";
         return new Promise(async (resolve, reject) => {
@@ -299,6 +300,7 @@ module.exports = {
                 .catch(error => reject({ error: "monog went on leave on contact +919633138136" }))
         })
     },
+
     // scene query (-_-)
     // if (orderUpdate == 'shipped') {
     //     db.get().collection(collection.ORDERCOLLECTION).aggregate([
@@ -363,9 +365,6 @@ module.exports = {
                 console.log(product, "inside chdeck stock");
                 let checkStock = product.modelDetails.size.find(arr => arr.size === selectedSize && +arr.stock >= quantity ? true : resolve(stockOutMsg));
 
-
-                // let checkStock = (stock >= quantity) ? true : reject({ error: "out of stock" })
-
                 console.log(checkStock, "insoie db");
                 if (checkStock) {
                     // let newStock = stock - quantity;
@@ -374,26 +373,19 @@ module.exports = {
                         $inc: { "modelDetails.size.$.stock": -quantity }
 
                     }).then((result) => {
-                        // console.log(result);
                         if (result.modifiedCount == 1) {
                             db.get().collection(collection.ORDERCOLLECTION).updateOne({ _id: orderId, "orderData.items.item": objectId(prodId) },
                                 {
                                     $set: { "orderData.items.$.status": "confirmed" }
 
                                 }).then(result => { console.log(result); resolve(confirmMsg); })
-                                .catch(e => reject({ error: 'mongo loose mind2' }))
+                                .catch(e => reject({ error: 'mongo loose mind3' }))
                         }
-                    }).catch(e => reject({ error: 'mongo loose mind2' }))
+                    }).catch(e => {reject({ error: 'mongo loose mind2' })})
                 }
             }).catch(e => reject({ error: 'mongo loose mind1' }))
         })
     }
-
-
-
-
-
-
 
 }
 

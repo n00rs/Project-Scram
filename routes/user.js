@@ -6,7 +6,6 @@ const twilio = require('../config/twilio');
 const userHelpers = require('../helpers/userHelpers');
 const paytmConfig = require('../config/paytmConfig');
 const stripeConfig = require('../config/stripeConfig');
-
 const adminHelpers = require('../helpers/adminHelpers');
 
 const verifyUser = (req, res, next) => (req.session.loggedIn) ? next() : res.redirect('/login') 

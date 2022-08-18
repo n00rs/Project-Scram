@@ -536,12 +536,8 @@ function removeWishlistItem(wishlistId, prodId) {
     })
 }
 
-function cancelOrderUser(orderId, prodId, currentStatus, prodName, size,) {
+function cancelOrderUser(orderId, prodId, status, prodName, size,) {
 
-    let status = (currentStatus) === 'confirmed' ? 'confirmed & cancelled' : "notConfirmed & cancelled"
-
-    // console.log('inside cancel');
-    // console.log(`orderId :${orderId}  prodId :${prodId} status: ${status} prodName: ${prodName}, size: ${newStatus}`) ;
     body = { orderId: orderId, prodId: prodId, orderStatus: status, selectedSize: size }
     swal({
         title: `DO you wanna cancel ${prodName} ? `,

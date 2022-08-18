@@ -32,14 +32,7 @@ module.exports = {                                   //
       return JSON.stringify(address)
    },
 
-   // orderData: (userCart, grandTotal) => {
-   //    let orderData = {
-   //       order: userCart.products,
-   //       amount: grandTotal
-   //    }
-
-      // return JSON.stringify(orderData)
-   // },
+ 
 
    expandAddress: (address) => {
       let deliveryAddress = address.name + " " + address.building_name + " \n" + address.street + " " + address.city + " \n" + address.country + " "
@@ -73,6 +66,7 @@ module.exports = {                                   //
          // return "notchecked" 
         return selectedSize.includes(size) ? "checked" : "notchecked"
    },
+
    //ORDER-DETAILS.HBS FUNCTIONS ADMIN SIDE
 
    displayOrdrBtn: (value1, value2) => { return (value1 === value2) ? "" : "display:none ;" },
@@ -82,6 +76,10 @@ module.exports = {                                   //
    dispatchBtn: (orderStatus) => { return orderStatus == "confirmed" ? " " : "display:none ;" },
 
    deliveredBtn: (orderStatus) => { return orderStatus == "shipped" ? " " : "display:none ;" },
+
+   cancelBtn: (orderStatus) => { 
+      return (orderStatus == 'shipped' || orderStatus == 'delivered' || orderStatus == 'cancelled') ? "display:none ;" : "" 
+   },
 
    //ALL-ORDERS USER SIDE FUNCTION
 
@@ -94,7 +92,7 @@ module.exports = {                                   //
    },
 
    cancelStatus: (orderStatus) => {
-      return (orderStatus == null || orderStatus === 'confirmed') ? "" : "display:none ;"
+      return (orderStatus == null) ? "" : "display:none ;"
       // orderStatus === 'delivered' ? 
    },
    orderDate: (date) => { date = date.split(','); return date[0] },

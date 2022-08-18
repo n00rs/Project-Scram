@@ -180,7 +180,11 @@
             }
         })
     }
-// CONTACT US FORM SUBMISSION
+
+
+
+
+// ENQUIRY FORM SUBMISSION
 
 
     jQuery.validator.addMethod("Email", function (value, element) {
