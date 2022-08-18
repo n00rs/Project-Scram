@@ -9,7 +9,7 @@ const stripeConfig = require('../config/stripeConfig');
 
 const adminHelpers = require('../helpers/adminHelpers');
 
-const verifyUser = (req, res, next) => (req.session.loggedIn) ? next() : res.redirect('/login')
+const verifyUser = (req, res, next) => (req.session.loggedIn) ? next() : res.redirect('/login') 
 
 
 
@@ -35,27 +35,30 @@ router.get('/', async (req, res) => {
 
 router.get('/login', (req, res) => {
     if (req.session.loggedIn) res.redirect('/')
-
     else {
-
-        res.render('user/login', { idError: req.session.idError });
+        res.render('user/login', {user:true, idError: req.session.idError });
         req.session.idError = false;
     }
 })
 
 router.post('/login', (req, res) => {
-    let sessionId = req.sessionID
-    userHelpers.userLogin(req.body, sessionId).then((result) => {
-        if (result.status) {
-            req.session.loggedIn = true;
-            req.session.user = result.user;
-            res.redirect('/')
-        }
-    })
-        .catch((err) => {
-            req.session.idError = err;
-            res.redirect('/login')
+    try {
+        let sessionId = req.sessionID
+        userHelpers.userLogin(req.body, sessionId).then((result) => {
+            if (result.status) {
+                req.session.loggedIn = true;
+                req.session.user = result.user;
+                res.redirect('/')
+            }
         })
+            .catch((err) => {
+                req.session.idError = err;
+                res.redirect('/login')
+            })      
+    } catch (error) {
+        console.log(error)
+    }
+  
 })
 
 router.get('/logout', (req, res) => {
@@ -288,7 +291,10 @@ router.get('/cart', verifyUser, async (req, res) => {
         else total = await userHelpers.totalAmount(cartItems._id)
         // console.log(cartItems);
         req.session.total = total                                                            //saving total amount for further use
-        res.render('user/cart', { user: true, user1, count, cartItems, total })
+        
+        let offers = await userHelpers.fetchOffers(user1._id)
+        console.log(offers)
+        res.render('user/cart', { user: true, user1, count, offers, cartItems, total })
     } catch (error) {
         console.log(error, 'err in the /cart');
     }
@@ -629,6 +635,7 @@ router.post('/checkout', async (req, res) => {
         const couponCode = req.body.couponCode;
         const userCart = await userHelpers.fetchCart(userId);
         var cartTotal = req.session.total.total;
+        req.session.total = null;
         let discountData = null;
 
         if (couponCode) {

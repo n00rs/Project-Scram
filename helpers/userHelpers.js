@@ -11,7 +11,7 @@ module.exports = {
             couponName: (data.email + "FIrst10%").toUpperCase(),
             category: "ONE TIME",
             discount: { "price": 1000, "percentage": 0.1 },
-            couponExpires:new Date(new Date().getTime() + (oneDay * 180))                                                                     //offer for new user with 6 month validity
+            couponExpires: new Date(new Date().getTime() + (oneDay * 180))                                                                     //offer for new user with 6 month validity
         }
 
         let error = "Email Id or Mobile Number already exists "
@@ -106,16 +106,16 @@ module.exports = {
     fetchCategory: (data) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collections.PRODUCTCOLLECTION).find({
-                    $and: [{
-                        $or: [
-                            { category: data },
-                            { subcategory: data }
-                        ]
-                    },
-                    {
-                        delete: { $ne: true }
-                    }]
-                })
+                $and: [{
+                    $or: [
+                        { category: data },
+                        { subcategory: data }
+                    ]
+                },
+                {
+                    delete: { $ne: true }
+                }]
+            })
                 .toArray()
                 .then(res => resolve(res))
                 .catch(err => reject(err))
@@ -404,6 +404,18 @@ module.exports = {
 
     },
 
+    fetchOffers: (userId) => {
+        return new Promise((resolve, reject) => {
+
+            db.get().collection(collections.COUPONCOLLECTION).find({
+                $or: [
+                    { userId: ObjectId(userId) },
+                    { category: { $ne: 'ONE TIME' } }
+                ]
+            }).toArray().then(result => resolve(result))
+                .catch(err => reject(err))
+        })
+    },
     checkCouponCode: (couponCode, cartTotal) => {
         const couponName = couponCode.toUpperCase();
         console.log(couponCode);
@@ -726,7 +738,7 @@ module.exports = {
                 db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
 
                 status === 'order-placed' ? resolve({ orderPlaced: true }) : resolve({ orderId: result.insertedId })
-            }).catch(error => reject({err: error.message }))
+            }).catch(error => reject({ err: error.message }))
         })
     },
 
@@ -780,47 +792,47 @@ module.exports = {
 
     deleteCoupon: (userId) => {
         db.get().collection(collections.COUPONCOLLECTION).deleteOne({ userId: ObjectId(userId) })
-        .then(res => console.log(res))
-        .catch(err => console.log(err))
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
     },
 
-    // stripeFail: (orderId, chargeId) => {
-    //     return new Promise((resolve, reject) => {
-    //         db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
-    //             {
-    //                 $set: {
-    //                     "status": "payment - failed",
-    //                     "paymentId": chargeId
-    //                 }
-    //             }).then(res => resolve(res))
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    // updateOrderStatus: (orderData) => {
-    //     console.log(orderData)
-    //     const orderId = ObjectId(orderData.orderId);
-    //     const prodId = ObjectId(orderData.prodId);
-    //     const selectedSize = orderData.selectedSize;
-    //     // const currentStatus = orderData.currentStatus ? orderData.currentStatus : null;
-    //     const newStatus = orderData.newStatus ;
-    //     return new Promise((resolve, reject) => {
-    //         db.get().collection(collections.ORDERCOLLECTION).updateOne(
-    //             {
-    //                 _id: orderId,
-    //                 "orderData.items.item": prodId,
-    //                 "orderData.items.selectedSize": selectedSize,
-    //             },
-    //             {
-    //                 $set: {
-    //                     "orderData.items.$.status": newStatus
-    //         }
-    //             }
-    //         ).then(res=> {res.modifiedCount = 1 ? resolve() : reject() } ).catch(err => reject(err))
+ /*   stripeFail: (orderId, chargeId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
+                {
+                    $set: {
+                        "status": "payment - failed",
+                        "paymentId": chargeId
+                    }
+                }).then(res => resolve(res))
+                .catch(err => reject(err))
+        })
+    }
+    updateOrderStatus: (orderData) => {
+        console.log(orderData)
+        const orderId = ObjectId(orderData.orderId);
+        const prodId = ObjectId(orderData.prodId);
+        const selectedSize = orderData.selectedSize;
+        // const currentStatus = orderData.currentStatus ? orderData.currentStatus : null;
+        const newStatus = orderData.newStatus ;
+        return new Promise((resolve, reject) => {
+            db.get().collection(collections.ORDERCOLLECTION).updateOne(
+                {
+                    _id: orderId,
+                    "orderData.items.item": prodId,
+                    "orderData.items.selectedSize": selectedSize,
+                },
+                {
+                    $set: {
+                        "orderData.items.$.status": newStatus
+            }
+                }
+            ).then(res=> {res.modifiedCount = 1 ? resolve() : reject() } ).catch(err => reject(err))
 
 
-    //     })
+        })
 
-    // }
+    }*/
 }
 
 
