@@ -32,14 +32,14 @@ module.exports = {                                   //
       return JSON.stringify(address)
    },
 
-   orderData: (userCart, grandTotal) => {
-      let orderData = {
-         order: userCart.products,
-         amount: grandTotal
-      }
+   // orderData: (userCart, grandTotal) => {
+   //    let orderData = {
+   //       order: userCart.products,
+   //       amount: grandTotal
+   //    }
 
-      return JSON.stringify(orderData)
-   },
+      // return JSON.stringify(orderData)
+   // },
 
    expandAddress: (address) => {
       let deliveryAddress = address.name + " " + address.building_name + " \n" + address.street + " " + address.city + " \n" + address.country + " "

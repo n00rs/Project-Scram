@@ -6,11 +6,12 @@ const db = require('../config/mongoConfig');
 
 module.exports = {
     userSignup: (data) => {
-        console.log(data)
+        const oneDay = 1000 * 60 * 60 * 24;
         coupon = {
             couponName: (data.email + "FIrst10%").toUpperCase(),
             category: "ONE TIME",
             discount: { "price": 1000, "percentage": 0.1 },
+            couponExpires:new Date(new Date().getTime() + (oneDay * 180))                                                                     //offer for new user with 6 month validity
         }
 
         let error = "Email Id or Mobile Number already exists "
@@ -725,11 +726,7 @@ module.exports = {
                 db.get().collection(collections.CARTCOLLECTION).deleteOne({ user: userId })
 
                 status === 'order-placed' ? resolve({ orderPlaced: true }) : resolve({ orderId: result.insertedId })
-            })
-                .catch((error) => {
-                    console.log(error, 'new order');
-                    reject({ orderPlaced: false })
-                })
+            }).catch(error => reject({err: error.message }))
         })
     },
 
@@ -782,7 +779,9 @@ module.exports = {
 
 
     deleteCoupon: (userId) => {
-        db.get().collection(collections.COUPONCOLLECTION).deleteOne({ userId: ObjectId(userId) }).then(res => console.log(res)).catch(err => console.log(err))
+        db.get().collection(collections.COUPONCOLLECTION).deleteOne({ userId: ObjectId(userId) })
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
     },
 
     // stripeFail: (orderId, chargeId) => {
@@ -825,6 +824,3 @@ module.exports = {
 }
 
 
-function productExist(arr) {
-
-}

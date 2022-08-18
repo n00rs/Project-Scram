@@ -67,7 +67,7 @@
                             <label class="form-check-label text-white">I AGREE</p>
                         </div>
                         <div class="col-3 ms-5">
-                            <button type="submit" id="signup" onclick=`document.getElementById('confirm_password').name="";`>
+                            <button type="submit" id="signup">
                                 <span></span>
                                 <span></span>
                                 <span></span>
@@ -81,23 +81,8 @@
     </div>
 </section>
 
-{{!-- VALIDATION  --}}
+{{!-- VALIDATION --}}
 <script>
-/*    function confirmPassword() {
-        let password = document.getElementById('password').value;
-        let confirmPassword = document.getElementById('confirm-password').value;
-
-        if (password != confirmPassword) {
-            document.getElementById('message').style.color = 'red';
-            document.getElementById('message').innerHTML = 'Use same password'
-            document.getElementById('signup').disabled = true;
-        } else {
-            document.getElementById('message').style.color = 'green';
-            document.getElementById('message').innerHTML = 'Password Confirmed'
-            document.getElementById('signup').disabled = false;
-        }
-    }
-document.getElementById('confirm_password').name="";*/
     $("#userSignup").validate({
         errorClass: 'signupError',
 
@@ -114,7 +99,7 @@ document.getElementById('confirm_password').name="";*/
             },
             email: {
                 required: true,
-                email: true
+                Email: true
 
             },
             phone: {
@@ -151,12 +136,12 @@ document.getElementById('confirm_password').name="";*/
                 required: "Enter a password",
                 rangelength: "Enter characters between 7 to 14 ",
             },
-            confirm_password:{
+            confirm_password: {
                 required: "Confirm your password",
                 equalTo: "Password doesn't match",
             },
             phone: {
-                required: "Please enter your number", 
+                required: "Please enter your number",
             },
             consent: {
                 required: "Please agree to our terms and condition"
@@ -169,5 +154,10 @@ document.getElementById('confirm_password').name="";*/
         return this.optional(element) || phone_number.length >= 13 &&
             phone_number.match(/^((\+91[0-9]{10}))$/);
     }, 'Please enter a valid mobile number starts with +91 and no space');
-</script>
 
+    jQuery.validator.addMethod("Email", function (value, element) {
+        return this.optional(element) || /^\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{1,4}\b$/i.test(value);
+    }, 'Please enter a valid email address.(sample@scram.com)');
+
+
+</script>

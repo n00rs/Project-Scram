@@ -5,7 +5,7 @@
 
     <div class="row d-flex justify-content-center align-items-center h-100">
       {{#if orders.orders}}
-      <div class="col-lg-10 col-xl-8">
+      <div class="col-lg-10 col-xl-8 col-12">
         {{#each orders.orders}}
         <div class="card mt-4" style="border-radius: 10px;">
           {{!-- <div class="card-header px-4 py-5">
@@ -13,7 +13,7 @@
           </div> --}}
           <div class="card-body ">
             <div class="d-flex justify-content-between align-items-center mb-4">
-              <p class="lead fw-normal mb-0" style="color: #000;">ORDER : {{this._id}}</p>
+              <p class="lead  mb-0" style="color: #000;">ORDER : {{this._id}}</p>
               <p class="small text-muted mb-0">Receipt Voucher : create new recipt numbers</p>
             </div>
             <div class="card shadow-0 border mb-4">
@@ -27,6 +27,7 @@
                 </div>
 
                 <div class="row p-3">
+
                   <div class="col-md-2">
                     <img src="/images/product_images/{{this.item}}_1.jpg" class="img-fluid" alt="Phone">
                   </div>
@@ -34,9 +35,11 @@
                   <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                     <p class="text-black mb-0">{{this.name}}</p>
                   </div>
+
                   <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                     <p class="text-black mb-0 small">{{this.category}}</p>
                   </div>
+
                   <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                     <p class="text-black mb-0 small">Size: {{this.selectedSize}}</p>
                   </div>
@@ -54,7 +57,7 @@
                   <div class="col-md-2">
                     <p class="text-black mb-0 small">Order Status: {{this.status}}</p>
                   </div>
-                  <div class="col-md-10">
+                  <div class="col-md-10 c">
                     <div class="progress" style="height: 6px; border-radius: 16px;">
                       <div class="progress-bar" role="progressbar"
                         style="width: {{checkOrderStatus this.status}} ; border-radius: 16px; background: -webkit-linear-gradient(left, #000, rgb(19, 228, 211));"
@@ -78,22 +81,25 @@
             </div>
 
             <div class="d-flex justify-content-between pt-2">
-              <p class=" mb-0">TransactionId : {{this.TransactionId}}</p>
+              
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Invoice Date :</span> {{orderDate this.date}}</p>
               <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> &#8377; {{checkDiscountValue
                 this.orderData.discountData.discount}}</p>
             </div>
 
             <div class="d-flex justify-content-between ">
-              <p class="text-muted mb-0">Invoice Date : {{orderDate this.date}}</p>
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Order Status :</span> {{this.status}}</p>
               <p class="text-muted mb-0"><span class="fw-bold me-4">Coupon </span> {{checkDiscountCode
                 this.orderData.discountData.couponCode}}</p>
             </div>
 
             <div class="d-flex justify-content-between mb-5">
-              <p class="text-muted mb-0">Recepits Voucher : 18KU-62IIK</p>
+              <p></p>
               <p class="text-muted mb-0 me-1"><span class="fw-bold me-4">After Discount</span> &#8377;
                 {{checkDiscountValue this.orderData.discountData.total}}</p>
             </div>
+              <p class=" mb-0">TransactionId : {{this.TransactionId}}</p>
+           
             {{#if  this.paymentReciept}}
             <a href="{{this.paymentReciept}}"> STRIPE RECIEPT</a>
             {{/if}}

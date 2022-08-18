@@ -68,8 +68,8 @@ $("#profile-address").validate({
             minlength: 3,
         },
         altPhone: {
-            digits:true,
-            maxlength:14,
+            digits: true,
+            maxlength: 14,
         }
     },
 
@@ -105,7 +105,7 @@ $("#profile-address").validate({
             success: (result) => {
                 if (result.status) {
                     location.reload()
-                    $("#profile-address").toggle()  
+                    $("#profile-address").toggle()
                 } else {
                     swal("oops ")
                 }
@@ -113,102 +113,117 @@ $("#profile-address").validate({
         })
     }
 })
-function placeOrder() {
 
-    body = {
-        address: $('#selectedAddress:checked').val(),
-        couponCode: $('#couponCode').val(),
-        paymentMethod: $("#paymentOption:checked").val(),
+function placeOrder() {
+    let address = $('#selectedAddress:checked').val()
+    if (address === undefined) swal("no address")
+    else {
+
+        swal({
+            title: "please wait",
+            closeOnClickOutside: false,
+            buttons:false
+        })
+        body = {
+            address: address,
+            couponCode: $('#couponCode').val(),
+            paymentMethod: $("#paymentOption:checked").val(),
+        }
+
+        $.ajax({
+            url: '/checkout',
+            data: body,
+            method: 'post',
+            success: (result) => {
+                if (result.url) { console.log(result.url); location.href = result.url; }
+
+                if (result.orderPlaced) location.href = '/order-confirmation/success'
+                if (result.paytm) {
+                    console.log(result.paytm);
+                    var information = {
+                        action: "https://securegw-stage.paytm.in/order/process",
+                        params: result.paytm
+                    }
+                    post(information)
+                }
+                if (result.err) {
+                    swal(result.err)
+                }
+            }
+            // else{
+            //     swal({
+            //         title:"opps something went wrong",
+            //         icon: 'error'
+            //     })            // }
+        })
     }
 
-    $.ajax({
-        url: '/checkout',
-        data: body,
-        method: 'post',
-        success: (result) => {
-            if (result.url) { console.log(result.url); location.href = result.url; }
+    // }
+}
 
-            if (result.orderPlaced) location.href = '/order-confirmation/success'
-            if (result.paytm) {
-                console.log(result.paytm);
-                var information = {
-                    action: "https://securegw-stage.paytm.in/order/process",
-                    params: result.paytm
-                }
-                post(information)
-            }
+function buildForm({ action, params }) {
+    const form = document.createElement('form')
+    form.setAttribute('method', 'post')
+    form.setAttribute('action', action)
+
+    Object.keys(params).forEach(key => {
+        const input = document.createElement('input')
+        input.setAttribute('type', 'hidden')
+        input.setAttribute('name', key)
+        input.setAttribute('value', params[key])
+        form.appendChild(input)
+    })
+
+    return form
+}
+
+function post(details) {
+    const form = buildForm(details)
+    document.body.appendChild(form)
+    form.submit()
+    form.remove()
+}
+
+function checkStock(orderId, prodId, size, quantity) {
+    console.log(orderId, prodId, size, quantity);
+    let body = { orderId: orderId, prodId: prodId, selectedSize: size, quantity: quantity }
+    $.ajax({
+        url: "/admin/all-orders",
+        data: body,
+        method: 'patch',
+        success: (result) => {
+
+            result.error ? swal({ title: result.error, icon: "error" }) :
+                result.stockOut ? swal({ title: result.stockOut, icon: "error" }) :
+                    result.orderConfirmed ? swal({ title: result.orderConfirmed, icon: "success" }) :
+                        swal({ title: "client side error" })
         }
-        // else{
-        //     swal({
-        //         title:"opps something went wrong",
-        //         icon: 'error'
-        //     })            // }
     })
 }
 
-    function buildForm({ action, params }) {
-        const form = document.createElement('form')
-        form.setAttribute('method', 'post')
-        form.setAttribute('action', action)
-
-        Object.keys(params).forEach(key => {
-            const input = document.createElement('input')
-            input.setAttribute('type', 'hidden')
-            input.setAttribute('name', key)
-            input.setAttribute('value', params[key])
-            form.appendChild(input)
-        })
-
-        return form
-    }
-
-    function post(details) {
-        const form = buildForm(details)
-        document.body.appendChild(form)
-        form.submit()
-        form.remove()
-    }
-
-    function checkStock(orderId, prodId, size, quantity) {
-        console.log(orderId, prodId, size, quantity);
-        let body = { orderId: orderId, prodId: prodId, selectedSize: size, quantity: quantity }
-        $.ajax({
-            url: "/admin/all-orders",
-            data: body,
-            method: 'patch',
-            success: (result) => {
-
-                result.error ? swal({ title: result.error, icon: "error" }) :
-                    result.stockOut ? swal({ title: result.stockOut, icon: "error" }) :
-                        result.orderConfirmed ? swal({ title: result.orderConfirmed, icon: "success" }) :
-                            swal({ title: "client side error" })
+function updateOrderStatus(orderId, prodId, status, size) {
+    console.log(orderId, prodId, status);
+    let body = { orderId: orderId, prodId: prodId, orderStatus: status, selectedSize: size }
+    $.ajax({
+        url: '/admin/all-orders',
+        data: body,
+        method: 'put',
+        success: (result) => {
+            console.log(result);
+            if (result.success) {
+                swal({ title: result.success, icon: "success" })
+                setTimeout(() => location.reload(), 2000)
             }
-        })
-    }
-
-    function updateOrderStatus(orderId, prodId, status, size) {
-        console.log(orderId, prodId, status);
-        let body = { orderId: orderId, prodId: prodId, orderStatus: status, selectedSize: size }
-        $.ajax({
-            url: '/admin/all-orders',
-            data: body,
-            method: 'put',
-            success: (result) => {
-                console.log(result);
-                if (result.success) {
-                    swal({ title: result.success, icon: "success" })
-                    setTimeout(() => location.reload(), 2000)
-                }
-                else if (result.fail) {
-                    ({ title: result.fail, icon: "error" })
-                    setTimeout(() => swal.close(), 2000)
-                }
-                if (result.err) swal({ title: result.err, icon: "error" })
-
+            else if (result.fail) {
+                ({ title: result.fail, icon: "error" })
+                setTimeout(() => swal.close(), 2000)
             }
+            if (result.err) swal({ title: result.err, icon: "error" })
 
-        })
-    }
+        }
+
+    })
+}
 
 
 

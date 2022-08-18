@@ -105,7 +105,7 @@ router.get('/category', async (req, res) => {
         let wishId = (user1) ? user1._id : req.sessionID;
         let cartId = (user1) ? user1._id : null;
         let category = req.query.category;
-        let filterSize = req.query.size ? req.query.size.split(",") : '' ;
+        let filterSize = req.query.size ? req.query.size.split(",") : '';
         let sortBy = req.query.sort;
         const count = await fetchCounts(wishId, cartId);
         let products = await userHelpers.fetchCategory(category);
@@ -209,7 +209,7 @@ router.get('/view-product/:id', async (req, res) => {
         console.log(product);
         res.render('user/view-product', { user: true, user1, product, count })
     } catch (error) {
-        console.log(error,"error in view product");
+        console.log(error, "error in view product");
     }
 
 })
@@ -383,8 +383,8 @@ router.post('/add-to-wishlist', (req, res) => {
 
         const prodId = req.body.productId;
 
-        userHelpers.addToWishlist(id, prodId, user).then(result =>  res.json(result))
-            .catch(error =>  res.json(error))
+        userHelpers.addToWishlist(id, prodId, user).then(result => res.json(result))
+            .catch(error => res.json(error))
     } catch (error) {
         console.log(error, 'no user');
         // res.json({error: "please login and try again"})
@@ -438,20 +438,20 @@ router.get('/profile', verifyUser, async (req, res) => {
 })
 
 
-router.post('/verifyPhone', (req, res) => {
+router.post('/verifyPhone', verifyUser, (req, res) => {
     try {
         let phone = req.body.phone
 
-        userHelpers.checkPhone(phone).then(res => {
+        userHelpers.checkPhone(phone).then(result => {
 
             twilio.sendOtp(phone).then(result =>
                 res.render('user/otp', { user: true, phone, }))
 
-                .catch((err) => {                                                                              //catch sendOtp
+                .catch((err) => {                                                                                             //catch sendOtp
                     req.session.otpError = "Server not responding try again later"
                     res.redirect('/profile')
                 })
-        }).catch(err => {                                                                                   //catch from checkphon
+        }).catch(err => {                                                                                                     //catch from checkphon
             req.session.otpError = err;
             res.redirect('/profile')
         })
@@ -500,7 +500,7 @@ router.post('/profile/image-upload', verifyUser, (req, res) => {
 
 })
 
-router.post('/profile/add-address', (req, res) => {
+router.post('/profile/add-address', verifyUser, (req, res) => {
     try {
 
         console.log(req.body, 'profile');
@@ -511,7 +511,7 @@ router.post('/profile/add-address', (req, res) => {
 })
 
 
-router.put("/profile/update-name", (req, res) => {
+router.put("/profile/update-name", verifyUser, (req, res) => {
     try {
         console.log(req.body);
         userHelpers.updateName(req.body).then((result) => {
@@ -522,7 +522,7 @@ router.put("/profile/update-name", (req, res) => {
     }
 })
 
-router.delete("/profile/remove-address", (req, res) => {
+router.delete("/profile/remove-address", verifyUser, (req, res) => {
     console.log(req.body);
     try {
 
@@ -566,8 +566,8 @@ router.post("/change-password", (req, res) => {
     console.log(req.body);
     try {
         userHelpers.changePassword(req.body).then((result) => {
-
-            res.redirect('/profile');
+            req.session.destroy();
+            res.redirect('/login');
 
         }).catch((err) => {
             req.session.changePasswordErr = err;
@@ -638,42 +638,45 @@ router.post('/checkout', async (req, res) => {
             }).catch(err => discountData = null)
         }
 
-        userHelpers.newOrder(req.body, userId, userCart, cartTotal, discountData)
-            .then((result) => {
-                userHelpers.deleteCoupon(userId)
-                console.log(result);
-                switch (paymentMethod) {
-                    case 'COD':
+        userHelpers.newOrder(req.body, userId, userCart, cartTotal, discountData).then((result) => {
+            userHelpers.deleteCoupon(userId)
+            console.log(result);
+            switch (paymentMethod) {
+                case 'COD':
+                    {
                         res.json(result)
                         break;
-
-                    case 'STRIPE': {
-
+                    }
+                case 'STRIPE':
+                    {
                         let total = (discountData) ? discountData.total : cartTotal
                         let orderId = result.orderId
-                        console.log('inside stripe,', result);
-                        stripeConfig.stripeCheckOut(req.body, total, orderId).then(result => res.json(result)).catch(err => console.log(`err in user:${err}`))
+
+                        stripeConfig.stripeCheckOut(req.body, total, orderId)
+                            .then(result => res.json(result))
+                            .catch(err => res.json(err))
 
                         break;
                     }
-                    case 'PAYTM':
-                        {
-                            let total = (discountData) ? discountData.total : cartTotal
-                            let orderId = result.orderId;
-                            console.log(`inside paytm`, result);
+                case 'PAYTM':
+                    {
+                        let total = (discountData) ? discountData.total : cartTotal
+                        let orderId = result.orderId;
+                        console.log(`inside paytm`, result);
 
-                            paytmConfig.paytmPayments(req.body, total, orderId).then(result => res.json(result)).catch(err => console.log('errr in paytm', err))
-                            console.log(`after paytm`);
-                            break;
-                        }
-                }
-            })
-            .catch((error) => { console.log(error); res.json(error) })
+                        paytmConfig.paytmPayments(req.body, total, orderId)
+                            .then(result => res.json(result))
+                            .catch(err => res.json(err))
+                        console.log(`after paytm`);
+                        break;
+                    }
+            }
+        })
+            .catch(error => res.json(error))
 
         console.log(paymentMethod);                                                                                              //using switch just for a change
-
-
     } catch (error) {
+        res.json({ err: error.message })
         console.log(error, 'err');
     }
 })
@@ -684,10 +687,15 @@ router.post('/paytm-status', paytmConfig.callback)
 
 
 router.get('/order-confirmation/:paymentConfirm', verifyUser, (req, res) => {
-    let paymentConfirm = req.params.paymentConfirm;
-    let paymentError = paymentConfirm !== 'success' ? true : false
-    res.render('user/order-confirmation', { user: true, paymentConfirm, paymentError })
-
+    try {
+        let paymentConfirm = req.params.paymentConfirm;
+        let paymentError = paymentConfirm !== 'success' ? true : false
+        res.render('user/order-confirmation', { user: true, paymentConfirm, paymentError })
+        
+    } catch (error) {
+console.log(error)        
+    }
+    
 })
 
 router.get('/orders', verifyUser, async (req, res) => {

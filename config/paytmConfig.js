@@ -40,7 +40,7 @@ module.exports = {
                 };
 
                 resolve({ paytm: paytmParams })                                                                       //sending it into the ajax
-            }).catch(err => { console.log(err); reject({}) })
+            }).catch(err =>  reject({err: err.message}) )
         })
 
     },
@@ -99,25 +99,24 @@ module.exports = {
                                 let status = "order-placed";                                                      // or  paymentData.STATUS
                                 let txnId = paymentData.TXNID
 
-                                userHelpers.updatePaymentStatus(orderId, txnId, status).then(() =>  res.redirect(`/order-confirmation/success`))
-                                    .catch(err => {
-                                        res.redirect(`/order-confirmation/${err}`)
-                                        
-                                    })
-
+                                userHelpers.updatePaymentStatus(orderId, txnId, status)
+                                .then(() =>  res.redirect(`/order-confirmation/success`))
+                                .catch(err =>  res.redirect(`/order-confirmation/${err}`))
                             } else {
                                 console.log("payment failed");
                                 let orderId = paymentData.ORDERID ;
                                 let status =  paymentData.STATUS ;                                                 // or  paymentData.STATUS
                                 let txnId =   paymentData.TXNID ;
                                 
-                                userHelpers.updatePaymentStatus(orderId, txnId, status) ;
-                                res.redirect(`/order-confirmation/${paymentData.RESPMSG}`) ;           
+                                userHelpers.updatePaymentStatus(orderId, txnId, status)
+                                .then(()=> res.redirect(`/order-confirmation/${paymentData.RESPMSG}`))
+                                .catch(err =>  res.redirect(`/order-confirmation/${err}`))
+
                             }
                         })
                     })
                     postReq.write(postData);
-                    postReq.end();
+                    // postReq.end();
                 })
             }    
         } catch (err) {
