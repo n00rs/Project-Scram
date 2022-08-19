@@ -121,7 +121,7 @@ module.exports = {
                     let receipt = event.data.object.receipt_url;
                     let orderId = session.metadata.orderId;
                     let chargeId = session.id;
-                    let status = "order- placed"
+                    let status = "TXN_SUCCESS"
                     console.log(`receipt => ${receipt} user =>  transcationId=> ${chargeId} `);  //send the recipt to the user 
     
                       userHelpers.updatePaymentStatus(orderId, chargeId, status, receipt)

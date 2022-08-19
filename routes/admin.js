@@ -8,9 +8,23 @@ const verifyAdmin = (req, res, next) => {
 
 /*getting  admin routes */
 
-router.get('/', verifyAdmin, (req, res) => {
-    let admin = req.session.admin
-    res.render('admin/admin-dash', { admin })
+router.get('/', verifyAdmin,async (req, res) => {
+    try {
+        let admin = req.session.admin ;
+        // let OrderCount = null ;
+        let userCount = await adminHelpers.userCount()
+        let prodCount = await adminHelpers.productCount()
+        prodCount = prodCount ? prodCount[0] :0
+        let totalSales = await adminHelpers.salesDetails()
+        // console.log(totalRevenue);
+        // totalRevenue = totalRevenue ? totalRevenue[0] : 0 
+
+
+        res.render('admin/admin-dash', { admin, prodCount, userCount, totalSales})      
+    } catch (error) {
+        console.log(error);
+    }
+  
 })
 
 router.get('/login', (req, res) => {
@@ -24,16 +38,16 @@ router.get('/login', (req, res) => {
 
 })
 
-router.post('/add-admin', (req, res) => {
+// router.post('/add-admin', (req, res) => {
 
-    adminHelpers.add_admin(req.body).then(() => {
-        res.redirect('/admin');
-    })
-        .catch((err) => {
-            req.session.idError = err;
-            res.redirect('/admin/add-admin')
-        })
-})
+//     adminHelpers.add_admin(req.body).then(() => {
+//         res.redirect('/admin');
+//     })
+//         .catch((err) => {
+//             req.session.idError = err;
+//             res.redirect('/admin/add-admin')
+//         })
+// })
 
 router.post('/login', (req, res) => {
 
@@ -96,6 +110,20 @@ router.post('/updateUserData', (req, res) => {
     })
 })
 
+
+router.get('/user-orders',(req,res)=>{
+    try {
+        let userId = req.query.id
+        adminHelpers.fetchUserOrders(userId).then((orders)=>{
+console.log(orders)
+            res.render('admin/user-orders',{admin:true,orders })
+        }).catch(err=>console.log(err))
+
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 //   ADDING PRODUCTS 
 
 router.get('/add-products', verifyAdmin, (req, res) => {
@@ -128,20 +156,23 @@ router.post('/add-products', (req, res) => {
 
 
 router.get('/view-products', verifyAdmin, async (req, res) => {
-
+try {
     let products = await adminHelpers.fetchAllProducts();
 
     res.render('admin/view-products', { admin: true, products })
-})
+   
+} catch (error) {
+res.status(500).json(error.message)    
+}
+ })
 
 router.get('/edit-product/:id', verifyAdmin, async (req, res) => {
-    console.log(req.params.id);
-
+try {
     let product = await adminHelpers.fetchProduct(req.params.id)
-
-    console.log(product, 'going to edit product');
-
-    res.render('admin/edit-product', { admin: true, product })
+    res.render('admin/edit-product', { admin: true, product })   
+} catch (error) {
+    res.status(500).json(error.message)
+}
 })
 
 router.post('/edit-product', (req, res) => {

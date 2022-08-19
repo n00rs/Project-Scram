@@ -150,21 +150,20 @@ module.exports = {
 
     fetchAllProducts: () => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.PRODUCTCOLLECTION).find().toArray().then((result) => {
-                console.log(result[0]);
-                resolve(result)
-            })
+            db.get().collection(collection.PRODUCTCOLLECTION).find().sort({ _id: -1 }).toArray()
+                .then((result) => resolve(result))
+                .catch(e => reject(e))
         })
     },
 
     deleteProduct: (productId) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.PRODUCTCOLLECTION).updateOne({ _id: objectId(productId) },
-            {
-                $set:{delete: true}
-            })
-            .then(result =>  resolve({ itemRemoved: true }))
-            .catch(err=> reject(err))
+                {
+                    $set: { delete: true, "modelDetails.size": null }
+                })
+                .then(result => resolve({ itemRemoved: true }))
+                .catch(err => reject(err))
         })
     },
 
@@ -214,7 +213,9 @@ module.exports = {
 
     fetchCoupons: () => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.COUPONCOLLECTION).find().toArray().then((result) => {
+            db.get().collection(collection.COUPONCOLLECTION).find({
+                category: { $ne: 'ONE TIME' }
+            }).toArray().then((result) => {
                 console.log(result);
                 resolve(result);
             })
@@ -381,12 +382,115 @@ module.exports = {
                                 }).then(result => { console.log(result); resolve(confirmMsg); })
                                 .catch(e => reject({ error: 'mongo loose mind3' }))
                         }
-                    }).catch(e => {reject({ error: 'mongo loose mind2' })})
+                    }).catch(e => { reject({ error: 'mongo loose mind2' }) })
                 }
             }).catch(e => reject({ error: 'mongo loose mind1' }))
         })
-    }
+    },
 
+    fetchUserOrders: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.ORDERCOLLECTION).find({ userId: objectId(userId) }).toArray()
+                .then((res) => resolve(res))
+                .catch(err => reject(err))
+        })
+    },
+
+    userCount: () => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.USERCOLLECTION).countDocuments()
+                .then(res => resolve(res))
+                .catch(err => reject(err))
+        })
+    },
+
+    productCount: () => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.PRODUCTCOLLECTION).aggregate([
+                {
+                    $match: {
+                        delete: { $ne: true }
+                    }
+                },
+                { $count: "prodInStock" }
+            ]).toArray()
+                .then(res => resolve(res))
+                .catch(err => reject(err))
+        })
+    },
+
+    salesDetails: () => {
+        return new Promise(async (resolve, reject) => {
+            let totalOrders = await db.get().collection(collection.ORDERCOLLECTION).countDocuments()
+            let totalRevenue = await db.get().collection(collection.ORDERCOLLECTION).aggregate([
+                {
+                    $match:
+                    {
+                        "orderData.items.status": "delivered"
+                    }
+                },
+                {
+                    $unwind: "$orderData.items"
+                },
+                {
+                    $group:
+                    {
+                        _id: null,
+                        deliveredOrders: {
+                            $sum: "$orderData.items.quantity"
+                        },
+                        totalAmount: {
+                            $sum: "$orderData.cartTotal"
+                        },
+                        discount: {
+                            $sum: "$orderData.discountData.total"
+                        }
+                    }
+                }
+
+            ]).toArray()
+
+            db.get().collection(collection.ORDERCOLLECTION).aggregate([
+                {
+                    $match:
+                    {
+                        "orderData.items.status": "delivered"
+                    }
+                },
+                { $unwind: "$orderData.items" },
+                {
+                    $group: {
+                        _id: {
+                        _id:"$orderData.items.item",
+                        prodName:"$orderData.items.name",
+                         soldQty:"$orderData.items.quantity"
+                        },
+                        qty: {
+                            $sum: "$orderData.items.quantity"
+                        }
+                    }
+                },
+                {
+                    $sort: { qty: -1 }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        topSellers: {
+                            $push: "$_id"
+                        }
+                    }
+                }
+            ]).limit(5).toArray()
+                .then((result) => {
+                    let response = totalRevenue[0] ? totalRevenue[0] : null
+                    result[0] ? response.topSellers = result[0] : null
+                    totalOrders ? response.totalOrders = totalOrders : null
+                    resolve(response)
+                })
+                .catch(e => reject(e))
+        })
+    },
 }
 
 

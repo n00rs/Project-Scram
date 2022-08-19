@@ -96,7 +96,7 @@ module.exports = {
 
                                 console.log("payment success");
                                 let orderId = paymentData.ORDERID;
-                                let status = "order-placed";                                                      // or  paymentData.STATUS
+                                let status = paymentData.STATUS;                                                      // or  paymentData.STATUS
                                 let txnId = paymentData.TXNID
 
                                 userHelpers.updatePaymentStatus(orderId, txnId, status)

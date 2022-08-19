@@ -47,9 +47,7 @@ module.exports = {                                   //
          return "display:none ;"
    },
 
-   editPage: (val) => {
-      console.log(val);
-   },
+
    check: (value1, value2) => {
       return (value1 === value2) ? "checked" : "notchecked"
    },
@@ -105,42 +103,22 @@ module.exports = {                                   //
       return (couponCode) ? couponCode.toUpperCase() : "NOCODE"
    },
 
-   // countdown: (date) => {
-   //    let expire = date.toLocaleDateString()
-   //    console.log(expire);
-   //    let countDownDate = new Date(expire).getTime()
+//ADMIN SIDE EDIT PRODUCT PAGE
 
-   //    console.log(countDownDate)
-   //    console.log('hey yeo')
+editSize: (sizeArray ,size)=>{
 
-   //    // Update the count down every 1 second
-   //    let x = setInterval(function () {
+  let checkSize = sizeArray ? sizeArray.find(arr=>  arr.size == size) : false
+  return checkSize ?  checkSize.stock : 0
+},
+editCheck :(sizeArray, size)=>{
+   
+   let checkSize =sizeArray ? sizeArray.some(arr=> arr.size == size) : false
+   return checkSize ? "checked" : "notchecked"
 
-   //       // Get today's date and time
-   //       const now = new Date().getTime()
-   //       //  console.log(now, '...timeRN')
-
-   //       // Find the distance between now and the count down date
-   //       const distance = countDownDate - now;
-   //       //  console.log(distance,"distance")
-   //       // Time calculations for days, hours, minutes and seconds
-   //       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-   //       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-   //       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-   //       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-   //       // Output the result in an element with id="demo"
-   //       //  document.getElementById("countdown").innerHTML =
-   //       // console.log(days + "D " + hours + "H" + minutes + "M" + seconds + "S ");
-   //       return days + "D " + hours + "H" + minutes + "M" + seconds + "S "
-
-   //       // If the count down is over, write some text 
-   //       //  if (distance < 0) {
-   //       //   clearInterval(x);
-   //       //   document.getElementById("countdown").innerHTML = "NO OFFERS AVAILABLE FOR NOW";
-   //       //  }
-   //    }, 1000);
-   // }
+   // sizeArray.some(arr=> {
+//    return arr.size == size ? "
+// })
+}
 
 
 }

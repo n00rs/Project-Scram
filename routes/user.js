@@ -126,7 +126,7 @@ router.get('/category', async (req, res) => {
 })
 
 router.post('/search', (req, res) => {
-    userHelpers.search(req.body, (result => res.json(result)), (err => res.status(500).json(err)))                            //using call back instead promise
+    userHelpers.search(req.body, (result => res.json(result)), (err => res.status(500).json(err)) )                            //using call back instead promise
     // .then(res=>console.log(res)).catch(err=> console.log(err))
 })
 

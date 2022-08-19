@@ -1,10 +1,7 @@
-
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script>
-    $(document).ready( function () {
-    $('#myTable').DataTable();
-} );
+        $('#myTable').DataTable();
 </script>
 <link href="https://demo.dashboardpack.com/architectui-html-free/main.css" rel="stylesheet">
 
@@ -15,19 +12,16 @@
                 <div class="card-header">USERS
                     <div class="btn-actions-pane-right">
                         <div role="group" class="btn-group-sm btn-group">
-                            <button class="active btn btn-focus" onclick="activeUsers()">ACTIVE</button>
-                            <button class="btn btn-focus" onclick="blockedUsers()">BLOCKED </button>
                         </div>
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="align-middle mb-0 table table-borderless table-striped table-hover" id="myTable" >
+                    <table class="align-middle mb-0 table table-borderless table-striped table-hover" id="myTable">
                         <thead>
                             <tr>
                                 <th class="text-center">#</th>
                                 <th>Name</th>
                                 <th class="text-center">Email</th>
-                                <th class="text-center">City</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Actions</th>
                             </tr>
@@ -54,7 +48,6 @@
                                     </div>
                                 </td>
                                 <td class="text-center">{{this.email}}</td>
-                                <td class="text-center">{{this.country}}</td>
                                 <td class="text-center">
                                     {{#if this.block}}
                                     <div class="badge badge-warning">BLOCKED</div>
@@ -63,21 +56,24 @@
                                     {{/if}}
                                 </td>
 
-                                <td class="text-center">
-                                    <a type="button" id="PopoverCustomT-1" class="btn btn-primary "
+                                <td class="text-center " >
+                                    <a type="button" id="PopoverCustomT-1" class="btn btn-primary mb-3"
                                         href="/admin/updateUserData?id={{this._id}}&name={{this.firstName}}">EDIT</a>
 
                                     {{#if this.block}}
-                                    <button class="ml-2 btn-wide btn btn-warning "
+                                    <button class="ml-2 btn-wide btn btn-warning mb-3"
                                         onclick="blockFunc('{{this._id}}','{{this.email}}','unblock') ">UNBLOCK</button>
                                     {{else}}
-                                    <button class="ml-2 btn-wide btn btn-warning "
+                                    <button class="ml-2 btn-wide btn btn-warning mb-3"
                                         onclick="blockFunc('{{this._id}}','{{this.email}}','block') ">BLOCK</button>
                                     {{/if}}
-                                    <button class="ml-2 btn-icon btn-icon-only btn btn-outline-danger "
+                                    <button class="ml-2 btn-icon btn-icon-only btn btn-outline-danger mb-3"
                                         onclick="removeUser('{{this._id}}','{{this.email}}')"><i
                                             class="pe-7s-trash btn-icon-wrapper"> </i></button>
-
+                                </td>
+                                <td>
+                                    <a type="button" id="PopoverCustomT-1" class="btn btn-primary "
+                                        href="/admin/user-orders?id={{this._id}}">View Orders</a>
                                 </td>
                             </tr>
                             {{/each}}
@@ -95,10 +91,11 @@
     src="https://demo.dashboardpack.com/architectui-html-free/assets/scripts/main.js"></script>
 <script src="/javascripts/ajax.js"> </script>
 
-{{!-- <link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+{{!--
+<link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script>
-    $(document).ready( function () {
-    $('#myTable').DataTable();
-} );
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
 </script> --}}

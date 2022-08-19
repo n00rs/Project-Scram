@@ -24,9 +24,6 @@
                                 <option value="{{product.subcategory}}"> {{product.subcategory}}</option>
                             </select>
                         </div>
-
-
-
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" name="model" id="model" placeholder="" minlength="2"
                                 maxlength="25" required value="{{product.model}}">
@@ -42,8 +39,7 @@
                                 <div class="row">
                                     <div class="form-check col-md-6 ">
 
-                                        <input class="form-check-input" type="checkbox" name="small" value="S" {{#if
-                                            product.modelDetails.size.S}} checked{{/if}}>
+                                        <input class="form-check-input" type="checkbox" name="small" value="S" {{editCheck product.modelDetails.size 'S'}}>
                                         <label class="form-check-label" for="">
                                             SMALL
                                         </label>
@@ -53,13 +49,12 @@
                                         <input type="number" class="form-control p-1"
                                             aria-label="Text input with checkbox" name="small" id="smallInput"
                                             placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
-                                            value="{{editPage product.modelDetails.size.1.size}}">
+                                            value="{{editSize product.modelDetails.size 'M'}}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-check col-md-6 ">
-                                        <input class="form-check-input" type="checkbox" name="medium" value="M" {{#if
-                                            product.modelDetails.size.M}} checked{{/if}}>
+                                        <input class="form-check-input" type="checkbox" name="medium" value="M" {{editCheck product.modelDetails.size 'M'}} >
                                         <label class="form-check-label" for="">
                                             MEDIUM
                                         </label>
@@ -69,13 +64,13 @@
                                         <input type="number" class="form-control p-1"
                                             aria-label="Text input with checkbox" name="medium" id="mediumInput"
                                             placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
-                                            value="{{product.modelDetails.size.M}}">
+                                            value="{{editSize product.modelDetails.size 'M'}}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-check col-md-6 ">
-                                        <input class="form-check-input" type="checkbox" name="large" value="L"
-                                            id="large" {{#if product.modelDetails.size.L}} checked{{/if}}>
+                                        <input class="form-check-input" type="checkbox" name="large" value="L" {{editCheck product.modelDetails.size 'L'}}
+                                            id="large">
                                         <label class="form-check-label" for="">
                                             LARGE
                                         </label>
@@ -85,7 +80,7 @@
                                         <input type="number" class="form-control p-1"
                                             aria-label="Text input with checkbox" name="large" id="largeInput"
                                             placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
-                                            value="{{product.modelDetails.size.L}}">
+                                            value="{{editSize product.modelDetails.size 'L'}}">
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +88,7 @@
                                 <div class="row">
                                     <div class="form-check col-md-6 ">
                                         <input class="form-check-input" type="checkbox" name="extra_large" value="XL"
-                                            id="extra_l" {{#if product.modelDetails.size.XL}} checked{{/if}}>
+                                            id="extra_l" {{editCheck product.modelDetails.size 'XL'}}>
                                         <label class="form-check-label" for="">
                                             XL
                                         </label>
@@ -104,14 +99,13 @@
                                             aria-label="Text input with checkbox" name="extra_large"
                                             id="extra_largeInput" placeholder="no.of Stocks"
                                             onchange="check(this.value,this.name,this.id)"
-                                            value="{{product.modelDetails.size.XL}}">
+                                            value="{{editSize product.modelDetails.size 'XL'}}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-check col-md-6 ">
                                         <input class="form-check-input" type="checkbox" name="extra_extra_large"
-                                            value="XXL" id="extra_extra_large" {{#if product.modelDetails.size.XXL}}
-                                            checked{{/if}}>
+                                            value="XXL" id="extra_extra_large" {{editCheck product.modelDetails.size 'XXL'}}>
                                         <label class="form-check-label" for="">
                                             XXL
                                         </label>
@@ -122,13 +116,12 @@
                                             aria-label="Text input with checkbox" name="extra_extra_large"
                                             id="extra_extra_largeInput" placeholder="no.of Stocks"
                                             onchange="check(this.value,this.name,this.id)"
-                                            value="{{product.modelDetails.size.XXL}}">
+                                            value="{{editSize product.modelDetails.size 'XXL'}}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-check col-md-6 ">
-                                        <input class="form-check-input" type="checkbox" name="none" value="NONE" {{#if
-                                            product.modelDetails.size.NONE}} checked{{/if}}>
+                                        <input class="form-check-input" type="checkbox" name="none" value="NONE" {{editCheck product.modelDetails.size 'NONE'}}>
                                         <label class="form-check-label" for="">
                                             NONE
                                         </label>
@@ -138,7 +131,7 @@
                                         <input type="number" class="form-control p-1"
                                             aria-label="Text input with checkbox" name="none" id="noneInput"
                                             placeholder="no.of Stocks" onchange="check(this.value,this.name,this.id)"
-                                            value="{{product.modelDetails.size.NONE}}">
+                                            value="{{editSize product.modelDetails.size 'NONE'}}">
                                     </div>
                                 </div>
                             </div>

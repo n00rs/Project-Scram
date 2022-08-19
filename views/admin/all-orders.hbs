@@ -1,13 +1,12 @@
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" charset="utf8"
-    src=" https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" charset="utf8"
-    src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+{{!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
+{{!-- <script type="text/javascript" charset="utf8" --}}
+    {{!-- src=" https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> --}}
+{{!-- <script type="text/javascript" charset="utf8" --}}
+    {{!-- src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script> --}}
 <script>
-    $(document).ready(function () {
         $('#myTable').DataTable();
-    });
+    
 </script>
 
 <section>
@@ -15,7 +14,7 @@
         <div class="row ">
             <div class="col-md-12 col-12">
                 <div>
-                    <div class="all-prod" style=" overflow-x:auto">
+                    <div class="all-prod text-white" style=" overflow-x:auto">
                         <h3 class="tittle text-white">ALL ORDERS</h3>
                         <table class="table" id="myTable">
                             <thead>
@@ -122,4 +121,10 @@
     </div>
 </section>
 
-<script src="/javascripts/ajax.js"> </script>
+<script src="/javascripts/place-order.js"> </script>
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" charset="utf8" src=" https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf8" src= "https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $('#myTable').DataTable();
+</script>
