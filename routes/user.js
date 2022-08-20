@@ -718,7 +718,7 @@ router.post('/stripe-status', bodyParser.raw({ type: 'application/json' }), stri
 router.post('/paytm-status', paytmConfig.callback)
 
 
-router.get('/order-confirmation/:paymentConfirm', verifyUser, (req, res) => {
+router.get('/order-confirmation/:paymentConfirm',(req, res) => {
     try {
         let paymentConfirm = req.params.paymentConfirm;
         let paymentError = paymentConfirm !== 'success' ? true : false
