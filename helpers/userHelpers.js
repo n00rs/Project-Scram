@@ -179,10 +179,9 @@ module.exports = {
                 {
                     $sort: { "modelDetails.price": 1 }
                 }
-                ]).toArray().then((result) => {
-                    // console.log(result);
-                    resolve(result)
-                })
+                ]).toArray()
+                .then(result => resolve(result) )
+                .catch(err=>reject(err))
             })
 
         } else if (data.sortType === 'Price High To Low') {
@@ -202,6 +201,19 @@ module.exports = {
                 db.get().collection(collections.PRODUCTCOLLECTION).aggregate([])
             })
         }
+    },
+    
+    joinCommunity:(mail) =>{
+        let successMsg = {success: "mail added youl recieve offers in your mail"}
+        let errorMsg = {error: "mail alredy registered or server is down "}
+return new Promise((resolve, reject) => {
+    // let email = mail.email 
+    db.get().collection(collections.COMMUNITY).createIndex({email: 1},{unique:true})
+
+    db.get().collection(collections.COMMUNITY).insertOne(mail)
+    .then(() => resolve(successMsg))
+    .catch(()=> reject(errorMsg))
+})
     },
 
     // CART SECTION

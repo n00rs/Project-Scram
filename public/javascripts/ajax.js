@@ -622,8 +622,19 @@ function copyCouponCode(coupon) {
 }
 
 
-function joinCommunity(email){
-    console.log(email)
+function joinCommunity(){
+    let mail = $('#joinCommunity').val()
+    console.log(mail);
+    $.ajax({
+        url: "/join-community",
+        data: {email: mail},
+        method: "post",
+        success: (result)=>{
+            result.success ? swal(result.success) :
+            result.error ? swal(result.error) :
+            swal(result)
+        }
+    })
 }
 
 

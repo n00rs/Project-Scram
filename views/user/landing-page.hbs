@@ -6,7 +6,7 @@
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-md-7 col-12 ">
-                            <h4>FREEDOM BLAST</h4>
+                            <h4>{{coupon.couponName}}</h4>
                             <p id="countdown"  value={{coupon.couponExpires}}>{{dateFormat coupon.couponExpires}} </p> <br> 
                             <a style="cursor: pointer;" onclick=copyCouponCode(this)>{{coupon.couponName}}</a>
                             <p>CLICK TO COPY THE CODE</p>
@@ -140,7 +140,7 @@
                     <div class="col-6 col-sm-6 col-md-3">
                         <a href="javascript:void(0)" onclick="sortSize('off-road')">
                             <div>
-                                <img src="/images/home-riding-style-Offroad.png" class="img-fluid"
+                                <img src="/images/home-riding-style-offroad.png" class="img-fluid"
                                     style="width:225px ;">
                             </div>
                             <div class="text-center ">
@@ -163,7 +163,7 @@
             <div class="button mb-5">
                 <div class="searchBox">
                     <input class="searchInput" type="email" id="joinCommunity" name="joinCommunity" placeholder="Email address*" required>
-                    <button class="searchButton" value='$("#joinCommunity").innerHTML'  onclick="joinCommunity(this.value)">JOIN COMMUNITY</button>
+                    <button class="searchButton"   onclick="joinCommunity()">JOIN COMMUNITY</button>
                 </div>
             </div>
         </div>

@@ -178,6 +178,18 @@ router.get('/pista-gp-rr', async (req, res) => {
     }
 })
 
+router.post('/join-community',(req,res)=>{
+    console.log(req.body);
+    try {
+    userHelpers.joinCommunity(req.body)
+    .then(result => res.json(result))
+    .catch(err => res.json(err))
+
+    } catch (error) {
+        res.json({error:error.message}) ;   
+    }
+})
+
 router.get('/about-us', async (req, res) => {
     try {
         let user1 = req.session.user;
