@@ -265,12 +265,24 @@ module.exports = {
         })
     },
 
+    deleteCoupon: (couponData) => {
+        return new Promise((resolve, reject) => {
+            let couponId = objectId(couponData.couponId);
+            let successMsg = {success: "deleted coupon" };
+            let errMsg = { error: "mongo out service" };
+            // console.log(couponId);
+            db.get().collection(collection.COUPONCOLLECTION).deleteOne({ _id: couponId })
+                .then(res => resolve(successMsg))
+                .catch(err => reject(errMsg))
+        })
+    },
+
     fetchAllOrders: () => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.ORDERCOLLECTION).find().toArray().then((result) => {
                 console.log("al orders admin ", result);
                 resolve(result)
-            })
+            }).catch(err => reject(err))
         })
     },
 
@@ -461,9 +473,9 @@ module.exports = {
                 {
                     $group: {
                         _id: {
-                        _id:"$orderData.items.item",
-                        prodName:"$orderData.items.name",
-                         soldQty:"$orderData.items.quantity"
+                            _id: "$orderData.items.item",
+                            prodName: "$orderData.items.name",
+                            soldQty: "$orderData.items.quantity"
                         },
                         qty: {
                             $sum: "$orderData.items.quantity"

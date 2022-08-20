@@ -23,19 +23,22 @@ router.get('/', verifyAdmin,async (req, res) => {
         res.render('admin/admin-dash', { admin, prodCount, userCount, totalSales})      
     } catch (error) {
         console.log(error);
+        res.status(500).json(error.message)
     }
   
 })
 
 router.get('/login', (req, res) => {
-    if (req.session.adminIn) {
-        res.redirect('/admin')
-    } else {
-        res.render('admin/admin-login', { idError: req.session.idError });
-        req.session.idError = false;
+    try {
+        if (req.session.adminIn) {
+            res.redirect('/admin')
+        } else {
+            res.render('admin/admin-login', { idError: req.session.idError });
+            req.session.idError = false;
+        }     
+    } catch (error) {
+     res.status(500).json(error.message)   
     }
-
-
 })
 
 // router.post('/add-admin', (req, res) => {
@@ -50,7 +53,7 @@ router.get('/login', (req, res) => {
 // })
 
 router.post('/login', (req, res) => {
-
+try {
     adminHelpers.adminVerify(req.body).then((data) => {
         console.log(data);
         if (data.status) {
@@ -65,53 +68,76 @@ router.post('/login', (req, res) => {
 
         req.session.idError = err;
         res.redirect('/admin')
-    })
+    })  
+} catch (error) {
+    res.status(500).json(error.message)
+}
+  
 })
 
 router.get('/logout', (req, res) => {
     req.session.destroy()
     res.redirect('/admin')
 })
+
 //   USER MANAGEMENT FROM ADMIN SIDE
 
 router.get('/view-users', verifyAdmin, async (req, res) => {
-
+try {
     let users = await adminHelpers.fetchAllUsers()
     console.log(users);
-    res.render('admin/view-users', { admin: true, users });
+    res.render('admin/view-users', { admin: true, users }); 
+} catch (error) {
+    res.status(500).json(error.message)
+}
 })
 
-router.get('/blockUser', (req, res) => {
-    console.log(req.query.id);
-    adminHelpers.blockUser(req.query.id).then(() => {
+router.patch('/blockUser', verifyAdmin, (req, res) => {
+   try {
+    adminHelpers.blockUser(req.body.id).then(() => {
         res.json(true)
-    })
+    }).catch(e=> res.json(e.message))  
+   } catch (error) {
+    res.status(500).json(error.message)
+   }
+  
 })
 
-router.get('/removeUser', (req, res) => {
-    // console.log(req.query.id);
-    adminHelpers.removeUser(req.query.id).then((result) => {
-
-        res.json(result)
-    })
+router.delete('/removeUser',verifyAdmin,  (req, res) => {
+   try {
+    adminHelpers.removeUser(req.body.id)
+    .then((result) => res.json(result))
+    .catch(err => res.json(err.message))  
+   } catch (error) {
+    res.status(500).json(error.message)
+   }
+  
 })
 
-router.get('/updateUserData', async (req, res) => {
-    // console.log(req.query.id);
+router.get('/updateUserData', verifyAdmin, async (req, res) => {
+   try {
     let user = await adminHelpers.fetchUser(req.query.id);
     // console.log(user, "afterfetch");
-    res.render('admin/edit-user', { user })
+    res.render('admin/edit-user', { user }) 
+   } catch (error) {
+    res.status(500).json(error.message)
+   }  
 })
 
-router.post('/updateUserData', (req, res) => {
-    console.log(req.body);
-    adminHelpers.updateUserData(req.body).then(() => {
-        res.redirect('/admin/view-users')
-    })
+router.post('/updateUserData',verifyAdmin,  (req, res) => {
+    try {
+        adminHelpers.updateUserData(req.body).then(() => {
+            res.redirect('/admin/view-users')
+        }).catch(err=> res.json(err.message))
+
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+   
 })
 
 
-router.get('/user-orders',(req,res)=>{
+router.get('/user-orders', verifyAdmin, (req,res)=>{
     try {
         let userId = req.query.id
         adminHelpers.fetchUserOrders(userId).then((orders)=>{
@@ -120,7 +146,7 @@ console.log(orders)
         }).catch(err=>console.log(err))
 
     } catch (error) {
-        console.log(error)
+        res.status(500).json(error.message)
     }
 })
 
@@ -130,7 +156,7 @@ router.get('/add-products', verifyAdmin, (req, res) => {
     res.render('admin/add-products', { admin: true, })
 })
 
-router.post('/add-products', (req, res) => {
+router.post('/add-products', verifyAdmin, (req, res) => {
     try {
 
         adminHelpers.addProduct(req.body).then((result) => {
@@ -150,7 +176,7 @@ router.post('/add-products', (req, res) => {
             res.redirect('/admin/view-products')
         })
     } catch (error) {
-        console.log(error, 'image error');
+        res.status(500).json(error.message)
     }
 })
 
@@ -175,7 +201,7 @@ try {
 }
 })
 
-router.post('/edit-product', (req, res) => {
+router.post('/edit-product', verifyAdmin, (req, res) => {
     try {
         // console.log(req.body);
         adminHelpers.editProduct(req.body).then((result) => {
@@ -195,24 +221,28 @@ router.post('/edit-product', (req, res) => {
             }
             res.redirect('/admin/view-products')
         })
+        .catch(err=> res.status(500).json(err.message))
     } catch (error) {
-        console.log(error, "post edit error");
         res.status({ error: error })
     }
 })
 
-router.delete('/deleteProduct', (req, res) => {
-    console.log(req.body.id);
-    adminHelpers.deleteProduct(req.body.id)
-    .then(result=> res.json(result))
-    .catch(err=> res.json(err))
+router.delete('/deleteProduct',verifyAdmin,  (req, res) => {
+    try {
+        adminHelpers.deleteProduct(req.body.id)
+        .then(result=> res.json(result))
+        .catch(err=> res.json(err))        
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+
 })
 
 router.get('/add-banners', (req, res) => {
     res.render('admin/add-banners')
 })
 
-router.post('/add-banners', (req, res) => {
+router.post('/add-banners',verifyAdmin, (req, res) => {
     try {
         // console.log(req.files);
         let helmetBanner = req.files.helmet;
@@ -242,40 +272,43 @@ router.post('/add-banners', (req, res) => {
 
     } catch (error) {
         console.log(error);
+        res.status(500).json(error.message)
     }
 })
 
-router.get('/manage-coupons', async (req, res) => {
-
+router.get('/manage-coupons',verifyAdmin,  async (req, res) => {
+try {
     let coupons = await adminHelpers.fetchCoupons()
-    res.render("admin/manage-coupons", { admin: true, coupons })
+    res.render("admin/manage-coupons", { admin: true, coupons })  
+} catch (error) {
+    res.status(500).json(error.message)
+}
+  
 })
 
-router.post('/manage-coupons', (req, res) => {
+router.post('/manage-coupons',verifyAdmin, (req, res) => {
+try {
+    adminHelpers.addCoupon(req.body)
+    .then((result) => res.json(result))
+    .catch((error) => res.json(error))    
+} catch (error) {
+    res.status(500).json(error.message)
+}
 
-    console.log(req.body);
-    adminHelpers.addCoupon(req.body).then((result) => {
-        console.log(result);
-        res.json(result);
-    })
-        .catch((error) => {
-            console.log(error, "ctcherr in ");
-            res.json(error);
-        })
 })
 
 //ORDERS   
 
-router.get('/all-orders', async (req, res) => {
+router.get('/all-orders',verifyAdmin, async (req, res) => {
     try {
         let orders = await adminHelpers.fetchAllOrders();
         res.render('admin/all-orders', { admin: true, orders });
     } catch (error) {
-
+res.status(500).json(error.message) 
     }
 })
 
-router.get('/all-orders/:orderId', (req, res) => {
+router.get('/all-orders/:orderId',verifyAdmin,  (req, res) => {
     try {
 
         let orderId = req.params.orderId
@@ -285,28 +318,42 @@ router.get('/all-orders/:orderId', (req, res) => {
         })
 
     } catch (error) {
-        console.log(error, " err in catch ordetails");
+        res.status(500).json(error.message)
     }
 })
 
-router.patch('/all-orders', (req, res) => {
+router.patch('/all-orders',verifyAdmin,  (req, res) => {
     try {
         console.log(req.body);
 
         adminHelpers.checkStock(req.body).then(result => res.json(result)).catch(error => res.json(error))
     } catch (error) {
-        console.log(error, "error in patch");
+        res.status(500).json(error.message)
     }
 })
-router.put('/all-orders', (req, res) => {
+
+
+router.put('/all-orders',verifyAdmin,  (req, res) => {
     try {
         console.log(req.body);
         adminHelpers.updateOrderStatus(req.body)
         .then(result => res.json(result))
         .catch(error => res.json(error))
     } catch (error) {
-        console.log(error, 'status update');
+        res.status(500).json(error.message)
     }
 })
 
+
+router.delete('/delete-coupon', verifyAdmin, (req,res)=>{
+    console.log(req.body);
+    try {
+        adminHelpers.deleteCoupon(req.body)
+        .then(result => res.json(result))
+        .catch(err=> res.json(err))
+    } catch (error) {
+        console.log(error);
+        res.json({error:error.message})
+    }
+})
 module.exports = router;

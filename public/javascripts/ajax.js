@@ -18,7 +18,7 @@ function blockFunc(userId, email, action) {
                     $.ajax({
                         url: "/admin/blockUser",
                         data: { id: userId },
-                        method: 'get',
+                        method: 'patch',
                         success: (result) => {
                             if (result) {
                                 swal(email + " This id  has been blocked")
@@ -45,7 +45,7 @@ function blockFunc(userId, email, action) {
                     $.ajax({
                         url: "/admin/blockUser",
                         data: { id: userId },
-                        method: 'get',
+                        method: 'patch',
                         success: (result) => {
                             if (result) {
                                 swal(email + " This ID has been unblocked");
@@ -59,7 +59,6 @@ function blockFunc(userId, email, action) {
                     })
                 }
             })
-
     }
 }
 
@@ -77,7 +76,7 @@ function removeUser(userId, email) {
             $.ajax({
                 url: 'removeUser',
                 data: { id: userId },
-                method: 'get',
+                method: 'delete',
                 success: (result) => {
                     if (result) {
                         swal(email + ' this ID has been removed')
@@ -611,6 +610,7 @@ function searchProd(searchKey) {
 
 
 }
+
 
 
 function copyCouponCode(coupon) {

@@ -8,7 +8,7 @@ const paytmConfig = require('../config/paytmConfig');
 const stripeConfig = require('../config/stripeConfig');
 const adminHelpers = require('../helpers/adminHelpers');
 
-const verifyUser = (req, res, next) => (req.session.loggedIn) ? next() : res.redirect('/login') 
+const verifyUser = (req, res, next) => (req.session.loggedIn) ? next() : res.redirect('/login')
 
 
 
@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
         res.render("user/landing-page", { user: true, count, user1, coupon });
     } catch (error) {
         console.log(error)
+        res.redirect(`/error/${error}`)
     }
 
 })
@@ -33,10 +34,14 @@ router.get('/', async (req, res) => {
 // user -- login
 
 router.get('/login', (req, res) => {
-    if (req.session.loggedIn) res.redirect('/')
-    else {
-        res.render('user/login', {user:true, idError: req.session.idError });
-        req.session.idError = false;
+    try {
+        if (req.session.loggedIn) res.redirect('/')
+        else {
+            res.render('user/login', { user: true, idError: req.session.idError });
+            req.session.idError = false;
+        }
+    } catch (err) {
+        res.redirect(`/error/${err}`)
     }
 })
 
@@ -53,11 +58,12 @@ router.post('/login', (req, res) => {
             .catch((err) => {
                 req.session.idError = err;
                 res.redirect('/login')
-            })      
+            })
     } catch (error) {
         console.log(error)
+        res.redirect(`/error/${error}`)
     }
-  
+
 })
 
 router.get('/logout', (req, res) => {
@@ -91,7 +97,8 @@ router.post('/signup', (req, res) => {
                 res.redirect('/signup')
             })
     } catch (error) {
-        console.log(error);
+        // console.log(error);
+        res.redirect(`/error/${error}`)
     }
 
 
@@ -120,14 +127,18 @@ router.get('/category', async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).send(error.message)
-        console.log(error, 'error in loading category');
+        // res.status(500).send(error.message)
+        res.redirect(`/error/${error}`)
+        // console.log(error, 'error in loading category');
     }
 })
 
 router.post('/search', (req, res) => {
-    userHelpers.search(req.body, (result => res.json(result)), (err => res.status(500).json(err)) )                            //using call back instead promise
-    // .then(res=>console.log(res)).catch(err=> console.log(err))
+    try {
+        userHelpers.search(req.body, (result => res.json(result)), (err => res.status(500).json(err)))                            //using call back instead promise
+    } catch (err) {
+        res.redirect(`/error/${error}`)
+    }                                                                                                                // .then(res=>console.log(res)).catch(err=> console.log(err))
 })
 
 
@@ -143,6 +154,7 @@ router.get('/world-title', async (req, res) => {
         res.render('user/world-title', { user: true, user1, worldTitleId, count })
     } catch (err) {
         console.log(err)
+        res.redirect(`/error/${err}`)
     }
 })
 
@@ -162,6 +174,7 @@ router.get('/pista-gp-rr', async (req, res) => {
         res.render('user/pista-gp-rr', { user: true, user1, pistaGpId, count })
     } catch (error) {
         console.log(error)
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -176,8 +189,11 @@ router.get('/about-us', async (req, res) => {
         res.render('user/about-us', { user: true, user1, count })
     } catch (error) {
         console.log(error)
+        res.redirect(`/error/${error}`)
     }
 })
+
+
 // router.get('/accessories', async (req,res)=>{
 
 //     let accessories = await userHelpers.fetchAccessories()
@@ -212,6 +228,7 @@ router.get('/view-product/:id', async (req, res) => {
         res.render('user/view-product', { user: true, user1, product, count })
     } catch (error) {
         console.log(error, "error in view product");
+        res.redirect(`/error/${error}`)
     }
 
 })
@@ -265,7 +282,9 @@ router.post('/add-to-cart', verifyUser, (req, res) => {
         let user = req.session.user;
         if (!user) throw new Error("no user")
 
-        userHelpers.addToCart(req.body, user._id).then(result => res.json(result)).catch(err => { res.json(err); console.log(err, 'err in order'); })
+        userHelpers.addToCart(req.body, user._id)
+            .then(result => res.json(result))
+            .catch(err => res.json(err))
     } catch (error) {
         console.log(error, 'ths one');
         let errorMsg = "Please Login and try again "
@@ -290,12 +309,13 @@ router.get('/cart', verifyUser, async (req, res) => {
         else total = await userHelpers.totalAmount(cartItems._id)
         // console.log(cartItems);
         req.session.total = total                                                            //saving total amount for further use
-        
+
         let offers = await userHelpers.fetchOffers(user1._id)
         console.log(offers)
         res.render('user/cart', { user: true, user1, count, offers, cartItems, total })
     } catch (error) {
         console.log(error, 'err in the /cart');
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -311,6 +331,7 @@ router.post('/changeQuantity', (req, res) => {
         }).catch(err => res.json(err))
     } catch (error) {
         console.log(error, 'error in chngqty');
+        res.redirect(`/error/${error}`)
     }
 
 })
@@ -323,6 +344,7 @@ router.delete("/remove-cart-item/:cartId/:prodId/:selectedSize", (req, res) => {
             .catch(err => res.json(err))
     } catch (error) {
         console.log(error, "in delet cart");
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -335,6 +357,7 @@ router.post('/cart/confirm-coupon', (req, res) => {
 
     } catch (error) {
         console.log(error);
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -353,6 +376,7 @@ router.put('/cart/update-size', (req, res) => {
 
     } catch (error) {
         console.log(error, 'err in /updatesize');
+        res.redirect(`/error/${error}`)
     }
 
 })
@@ -375,7 +399,7 @@ router.get('/wishlist', async (req, res) => {
         res.render('user/wishlist', { user: true, wishlist, count, user1 })
 
     } catch (error) {
-        console.log(error);
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -391,8 +415,7 @@ router.post('/add-to-wishlist', (req, res) => {
         userHelpers.addToWishlist(id, prodId, user).then(result => res.json(result))
             .catch(error => res.json(error))
     } catch (error) {
-        console.log(error, 'no user');
-        // res.json({error: "please login and try again"})
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -404,15 +427,12 @@ router.delete('/wishlist/remove-item/:wid/:pid', (req, res) => {                
         const wishlistId = req.params.wid
         const prodId = req.params.pid
 
-        userHelpers.removeWishlistItem(wishlistId, prodId).then((result) => {
-            res.json(result)
-        })
-            .catch((error) => {
-                res.json(error)
-            })
+        userHelpers.removeWishlistItem(wishlistId, prodId)
+            .then(result => res.json(result))
+            .catch(error => res.json(error))
 
     } catch (error) {
-        console.log(error);
+        res.redirect(`/error/${error}`)
     }
 
 })
@@ -438,7 +458,7 @@ router.get('/profile', verifyUser, async (req, res) => {
         req.session.otpError = false;
 
     } catch (error) {
-        console.log(error);
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -461,28 +481,26 @@ router.post('/verifyPhone', verifyUser, (req, res) => {
             res.redirect('/profile')
         })
     } catch (error) {
-        console.log(error)
+        res.redirect(`/error/${error}`)
     }
 })
 
 router.post('/otp', verifyUser, (req, res) => {
+    try {
+        const userId = req.session.user._id;
+        const otp = req.body.otp.join('');                                                          //otp from form was in array converted it into string
+        const phone = req.body.phone;
 
-    const userId = req.session.user._id;
-    const otp = req.body.otp.join('');                                                          //otp from form was in array converted it into string
-    const phone = req.body.phone;
+        twilio.verifyOtp(otp, phone).then((result) => {
 
-    twilio.verifyOtp(otp, phone).then((result) => {
-
-        userHelpers.verifyPhone(userId, phone).then(() => {
-
-            res.redirect('/profile');
+            userHelpers.verifyPhone(userId, phone).then(() => res.redirect('/profile'))
+        }).catch((err) => {
+            req.session.otpError = err;
+            res.redirect('/profile')
         })
-
-    }).catch((err) => {
-
-        req.session.otpError = err;
-        res.redirect('/profile')
-    })
+    } catch (err) {
+        res.redirect(`/error/${err}`)
+    }
 })
 
 router.post('/profile/image-upload', verifyUser, (req, res) => {
@@ -500,7 +518,7 @@ router.post('/profile/image-upload', verifyUser, (req, res) => {
         }
 
     } catch (error) {
-        console.log(error);
+        res.redirect(`/error/${error}`)
     }
 
 })
@@ -511,7 +529,7 @@ router.post('/profile/add-address', verifyUser, (req, res) => {
         console.log(req.body, 'profile');
         userHelpers.addAddress(req.body).then(() => res.json({ status: true })).catch(err => res.json(err))
     } catch (error) {
-        console.log(error);
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -523,7 +541,7 @@ router.put("/profile/update-name", verifyUser, (req, res) => {
             res.json({ status: true })
         })
     } catch (error) {
-        console.log(error);
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -535,12 +553,12 @@ router.delete("/profile/remove-address", verifyUser, (req, res) => {
             .catch(err => res.json({ status: false }))
 
     } catch (error) {
-        console.log(error, "remove-address");
+        res.redirect(`/error/${error}`)
     }
 })
 
 router.get("/change-password", async (req, res) => {
-    {
+    try {
         const user1 = req.session.user;
         let wishId = (user1) ? user1._id : req.sessionID;
         let cartId = (user1) ? user1._id : null;
@@ -549,26 +567,22 @@ router.get("/change-password", async (req, res) => {
         res.render('user/change-password', { user: true, "error": req.session.changePasswordErr, user1, count })
         req.session.changePasswordErr = false;
 
+    } catch (err) {
+        res.redirect(`/error/${err}`)
     }
 })
 
 router.get('/change-password/check-user', (req, res) => {
     try {
-        // console.log(req.query,"get");
-
-        userHelpers.checkEmail(req.query).then((result) => {
-            res.json({ status: true })
-        })
-            .catch((err) => {
-                res.json({ status: false })
-            })
+        userHelpers.checkEmail(req.query)
+            .then(() => res.json({ status: true }))
+            .catch(() => res.json({ status: false }))
     } catch (error) {
-        console.log(error)
+        res.redirect(`/error/${error}`)
     }
 })
 
 router.post("/change-password", (req, res) => {
-    console.log(req.body);
     try {
         userHelpers.changePassword(req.body).then((result) => {
             req.session.destroy();
@@ -593,7 +607,7 @@ router.get("/contactus", async (req, res) => {
         const count = await fetchCounts(wishId, cartId);
         res.render('user/contactus', { user: true, user1, count })
     } catch (error) {
-        console.log(error)
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -622,7 +636,7 @@ router.post('/place-order', verifyUser, async (req, res) => {
         res.render('user/place-order', { user: true, grandTotal, user1, userCart, discountData })
 
     } catch (error) {
-        console.log(error, "try err fetching place order");
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -683,7 +697,7 @@ router.post('/checkout', async (req, res) => {
         console.log(paymentMethod);                                                                                              //using switch just for a change
     } catch (error) {
         res.json({ err: error.message })
-        console.log(error, 'err');
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -697,11 +711,11 @@ router.get('/order-confirmation/:paymentConfirm', verifyUser, (req, res) => {
         let paymentConfirm = req.params.paymentConfirm;
         let paymentError = paymentConfirm !== 'success' ? true : false
         res.render('user/order-confirmation', { user: true, paymentConfirm, paymentError })
-        
+
     } catch (error) {
-console.log(error)        
+        res.redirect(`/error/${error}`)
     }
-    
+
 })
 
 router.get('/orders', verifyUser, async (req, res) => {
@@ -718,8 +732,9 @@ router.get('/orders', verifyUser, async (req, res) => {
         console.log(orders);
         res.render('user/each-orderDetails', { user: true, orders, user1, count });
     } catch (error) {
-        console.log(error, "error in getting orders");
-        res.status(500).json({ message: error.message })
+        // console.log(error, "error in getting orders");
+        // res.status(500).json({ message: error.message })
+        res.redirect(`/error/${error}`)
     }
 })
 
@@ -733,7 +748,11 @@ router.put('/orders/cancel', (req, res) => {
     }
 })
 
+router.get('/error/:error', (req, res) => {
+    let error = req.params.error
+    res.render('error', { error })
 
+})
 
 module.exports = router;
 
