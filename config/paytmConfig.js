@@ -89,7 +89,7 @@ module.exports = {
                     let postReq = https.request(options, (response) => {
                         response.on('data', (chunk => result += chunk));
 
-                        response.on('end', () => {
+                        response.on('end', async () => {
                             const paymentData = JSON.parse(result);
                             console.log(paymentData);
                             if (paymentData.STATUS === 'TXN_SUCCESS') {
@@ -99,7 +99,7 @@ module.exports = {
                                 let status = paymentData.STATUS;                                                      // or  paymentData.STATUS
                                 let txnId = paymentData.TXNID
 
-                                userHelpers.updatePaymentStatus(orderId, txnId, status)
+                                await userHelpers.updatePaymentStatus(orderId, txnId, status)
                                 .then(() =>  res.redirect(`/order-confirmation/success`))
                                 .catch(err =>  res.redirect(`/order-confirmation/${err}`))
                             } else {
@@ -108,7 +108,7 @@ module.exports = {
                                 let status =  paymentData.STATUS ;                                                 // or  paymentData.STATUS
                                 let txnId =   paymentData.TXNID ;
                                 
-                                userHelpers.updatePaymentStatus(orderId, txnId, status)
+                              await  userHelpers.updatePaymentStatus(orderId, txnId, status)
                                 .then(()=> res.redirect(`/order-confirmation/${paymentData.RESPMSG}`))
                                 .catch(err =>  res.redirect(`/order-confirmation/${err}`))
 
