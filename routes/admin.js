@@ -156,7 +156,7 @@ router.get('/add-products', verifyAdmin, (req, res) => {
     res.render('admin/add-products', { admin: true, })
 })
 
-router.post('/add-products', verifyAdmin, (req, res) => {
+router.post('/add-products',  (req, res) => {
     try {
 
         adminHelpers.addProduct(req.body).then((result) => {
@@ -238,7 +238,7 @@ router.delete('/deleteProduct',verifyAdmin,  (req, res) => {
 
 })
 
-router.get('/add-banners', (req, res) => {
+router.get('/add-banners',verifyAdmin, (req, res) => {
     res.render('admin/add-banners')
 })
 

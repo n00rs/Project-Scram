@@ -33,6 +33,9 @@ module.exports = {
                 db.get().collection(collections.USERCOLLECTION).insertOne(data).then((result) => {
                     console.log(result)
                     coupon.userId = result.insertedId;
+
+                    db.get().collection(collection.COUPONCOLLECTION).createIndex({ "couponExpires": 1 }, { expireAfterSeconds: 0 })
+                    
                     db.get().collection(collections.COUPONCOLLECTION).insertOne(coupon)
                         .then(res => resolve(res))
                         .catch(err => reject(err))
