@@ -612,7 +612,6 @@ function searchProd(searchKey) {
 }
 
 
-
 function copyCouponCode(coupon) {
     var $temp = $("<input>");
     $("body").append($temp);

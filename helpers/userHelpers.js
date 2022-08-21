@@ -737,6 +737,7 @@ return new Promise((resolve, reject) => {
         const userId = ObjectId(userID);
         const orderObj = {
             userId: userId,
+            receipt: receiptNumber(),
             address: address,
             orderData: orderData,
             paymentMethod: data.paymentMethod,
@@ -847,4 +848,6 @@ return new Promise((resolve, reject) => {
     }*/
 }
 
-
+function receiptNumber() {
+    return 1+Math.floor(Math.random()*(50000-1))
+  }

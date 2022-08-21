@@ -16,12 +16,12 @@
         <div class="cart">
             <div class="row row1">
                 <div class="col-md-4 col-12">
-                    <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" id="ProductImg">
+                    <img src="/images/product_images/{{product._id}}_1.jpg" alt="" width="100%" id="ProductImg">
                     <div class="small-imgs">
-                        <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" class="small-img">
-                        <img src="/images/product_images/{{product._id}}_2.jpg" width="100%" class="small-img">
-                        <img src="/images/product_images/{{product._id}}_3.jpg" width="100%" class="small-img">
-                        <img src="/images/product_images/{{product._id}}_4.jpg" width="100%" class="small-img">
+                        <img src="/images/product_images/{{product._id}}_1.jpg" alt="" width="100%" class="small-img">
+                        <img src="/images/product_images/{{product._id}}_2.jpg" alt="" width="100%" class="small-img">
+                        <img src="/images/product_images/{{product._id}}_3.jpg" alt="" width="100%" class="small-img">
+                        <img src="/images/product_images/{{product._id}}_4.jpg" alt="" width="100%" class="small-img">
                     </div>
                 </div>
                 <div class="col-md-6 col-12">
@@ -36,7 +36,7 @@
                     </div> --}}
                     <div class="price">
                         <span>&#8377; {{product.modelDetails.price}}</span>
-                        {{!-- <span>$49.99</span> --}}
+                        <span></span>
                     </div>
                     <div class="row">
 
@@ -56,30 +56,32 @@
                     </div>
                     <div class="buttons">
                         <div class="row">
-                            <div class="col-md-6">
+                            {{#unless product.delete}}
+                            <div class="col-md-6 col-12">
                                 <button onclick="addToWishlist('{{product._id}}')" class="custom-btn">WISH LIST <i
                                         class="fa-solid fa-heart-circle-plus"></i></button>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 col-12">
                                 <button class="custom-btn"
                                     onclick="addToCart('{{product._id}}',$('#selectedSize').val())">ADD TO CART<i
                                         class="fas fa-angle-right"></i></button>
                             </div>
+                            {{/unless}}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row p-5">
-                <div class="col-md-6"> Description
-                    <h5>{{product.modelDetails.description}}</h5>
-                    Features
-                    <h5>{{product.modelDetails.features}}</h5>
+            <div class="row row1 ">
+                <div class="col-md-6 col-12"><strong> Description</strong>
+                    <p>{{product.modelDetails.description}}</p>
+                   <strong> Features</strong>
+                    <p>{{product.modelDetails.features}}</p>
 
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 col-12">
 
-                    <img src="/images/product_images/{{product._id}}_1.jpg" width="100%" id="ProductImg">
-                    <img src="/images/product_images/{{product._id}}_3.jpg" width="100%" id="ProductImg">
+                    <img src="/images/product_images/{{product._id}}_1.jpg" alt="" width="100%" id="ProductImg">
+                    <img src="/images/product_images/{{product._id}}_3.jpg" alt="" width="100%" id="ProductImg">
                 </div>
             </div>
         </div>
