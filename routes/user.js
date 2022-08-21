@@ -7,7 +7,7 @@ const userHelpers = require('../helpers/userHelpers');
 const paytmConfig = require('../config/paytmConfig');
 const stripeConfig = require('../config/stripeConfig');
 const adminHelpers = require('../helpers/adminHelpers');
-
+const PORT =process.env.PORT ;
 const verifyUser = (req, res, next) => (req.session.loggedIn) ? next() : res.redirect('/login')
 
 
@@ -766,6 +766,9 @@ router.get('/error/:error', (req, res) => {
 
 })
 
+router.get('/port',(req,res)=>{
+    res.send(`server port ${PORT}`);
+})
 module.exports = router;
 
 async function fetchCounts(wishId, cartId) {
