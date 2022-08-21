@@ -152,7 +152,7 @@ console.log(orders)
 
 //   ADDING PRODUCTS 
 
-router.get('/add-products', verifyAdmin, (req, res) => {
+router.get('/add-products', (req, res) => {
     res.render('admin/add-products', { admin: true, })
 })
 
