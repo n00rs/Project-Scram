@@ -152,11 +152,11 @@ console.log(orders)
 
 //   ADDING PRODUCTS 
 
-router.get('/add-products', (req, res) => {
+router.get('/add-products',verifyAdmin,  (req, res) => {
     res.render('admin/add-products', { admin: true, })
 })
 
-router.post('/add-products',  (req, res) => {
+router.post('/add-products', verifyAdmin, (req, res) => {
     try {
 
         adminHelpers.addProduct(req.body).then((result) => {
