@@ -18,7 +18,7 @@ router.get('/', verifyAdmin,async (req, res) => {
         let totalSales = await adminHelpers.salesDetails()
         // console.log(totalRevenue);
         // totalRevenue = totalRevenue ? totalRevenue[0] : 0 
-console.log(totalSales.ordersPerMonth)
+// console.log(totalSales.ordersPerMonth)
 
         res.render('admin/admin-dash', { admin, prodCount, userCount, totalSales})      
     } catch (error) {

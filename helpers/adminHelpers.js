@@ -522,10 +522,10 @@ module.exports = {
                 }
             ]).limit(5).toArray()
                 .then((result) => {
-                    let response = totalRevenue[0] ? totalRevenue[0] : null
-                    result[0] ? response.topSellers = result[0] : null
-                    totalOrders ? response.totalOrders = totalOrders : null
-                    ordersPerMonth ? response.ordersPerMonth = ordersPerMonth : null
+                    let response = totalRevenue[0] ? totalRevenue[0] : 0
+                    result[0] ? response.topSellers = result[0] : 0
+                    totalOrders ? response.totalOrders = totalOrders : 0
+                    ordersPerMonth ? response.ordersPerMonth = ordersPerMonth : 0
                     resolve(response)
                 })
                 .catch(e => reject(e))
