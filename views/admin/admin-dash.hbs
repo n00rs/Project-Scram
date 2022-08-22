@@ -1,5 +1,6 @@
 <link href="https://demo.dashboardpack.com/architectui-html-free/main.css" rel="stylesheet">
-</head><section class="container-fluid">
+</head>
+<section class="container-fluid">
     <div class="app-container app-theme-dark body-tabs-shadow">
         <div class="ui-theme-settings">
             <button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
@@ -8,7 +9,7 @@
         </div>
         <div class="app-main">
             <div class="app-main__outer">
-                <div class="app-main__inner">             
+                <div class="app-main__inner">
                     <div class="row">
                         <div class="col-md-6 col-xl-4">
                             <div class="card mb-3 widget-content bg-midnight-bloom">
@@ -18,7 +19,8 @@
                                         <div class="widget-subheading">All Orders</div>
                                     </div>
                                     <div class="widget-content-right">
-                                        <div class="widget-numbers text-white"><span>{{totalSales.totalOrders}}</span></div>
+                                        <div class="widget-numbers text-white"><span>{{totalSales.totalOrders}}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +46,8 @@
                                         <div class="widget-subheading">Product In Stock</div>
                                     </div>
                                     <div class="widget-content-right">
-                                        <div class="widget-numbers text-white"><span>{{prodCount.prodInStock}}</span></div>
+                                        <div class="widget-numbers text-white"><span>{{prodCount.prodInStock}}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -53,25 +56,106 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-6">
                             <div class="mb-3 card">
+                                
                                 <div class="card-header-tab card-header-tab-animation card-header">
                                     <div class="card-header-title">
                                         <i class="header-icon lnr-apartment icon-gradient bg-love-kiss"> </i>
-                                    Top Sellers
+                                        Top Sellers
                                     </div>
 
                                 </div>
+
+                                <script>
+                                                        window.onload = function () {
+
+                                                            var chart = new CanvasJS.Chart("topSellers", {
+                                                                theme: "light2", // "light1", "light2", "dark1"
+                                                                animationEnabled: true,
+                                                                exportEnabled: true,
+                                                                title: {
+                                                                    text: "Top 5 Products"
+                                                                },
+                                                                axisX: {
+                                                                    margin: 5,
+                                                                    labelPlacement: "inside",
+                                                                    tickPlacement: "inside"
+                                                                },
+                                                                axisY2: {
+                                                                    title: "orders",
+                                                                    titleFontSize: 14,
+                                                                    includeZero: true,
+                                                                    
+                                                                },
+                                                                data: [{
+                                                                    type: "bar",
+                                                                    axisYType: "secondary",
+                                                                    yValueFormatString: "#,###.##nos",
+                                                                    indexLabel: "{y}",
+                                                                    
+                                                                    dataPoints: [
+                                                                    {label:'total Orders', y:{{totalSales.totalOrders}} },
+                                                                    {{#each  totalSales.topSellers.topSellers}}
+                                                                        { label: `{{this.prodName}}`, y: {{this.soldQty}} },
+                                                                       
+                                                                        {{/each}}
+                                                                        
+                                                                    ]
+                                                                }]
+                                                            });
+                                                            chart.render();
+                                                            var chart1 = new CanvasJS.Chart("6monthsorders", {
+	animationEnabled: true,
+	title:{
+		text: "Orders Per Month"
+	},
+	axisX:{
+		valueFormatString: "MMM"
+	},
+	axisY: {
+		title: "Number of ORDERS",
+		scaleBreaks: {
+			autoCalculate: true
+		}
+	},
+	data: [{
+		type: "line",
+		xValueFormatString: "MMM",
+		color: "#F08080",
+		dataPoints: [
+
+        {{#each totalSales.ordersPerMonth}}
+			{ x: new Date(2017,{{this.month}}), y: {{this.orders}} },
+            {{/each}}
+		]
+	}]
+});
+
+chart1.render();
+
+                                                        }
+
+                                                    </script>
+                                {{!-- <div id="chartContainer"> --}}
                                 <div class="card-body">
                                     <div class="tab-content">
                                         <div class="tab-pane fade show active" id="tabs-eg-77">
-                                            
-                                            {{!-- <div class="card mb-3 widget-chart widget-chart2 text-left w-100">
+
+                                            <div class="card mb-3 widget-chart widget-chart2 text-left w-100" >
                                                 <div class="widget-chat-wrapper-outer">
+                                                    {{!-- CHART --}}
+                                                    
+
+
+                                                    {{!-- <div style="height: 370px; width: 100%;"></div> --}}
                                                     <div
                                                         class="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
-                                                        <canvas id="canvas"></canvas>
+
                                                     </div>
+                                                    <div id="topSellers" style="height: 370px; width: 100%"></div>
+
                                                 </div>
-                                            </div> --}}
+                                            </div>
+                                            
                                             <h6
                                                 class="text-muted text-uppercase font-size-md opacity-5 font-weight-normal">
                                                 Top Sellers</h6>
@@ -85,7 +169,8 @@
                                                                 <div class="widget-content-wrapper">
                                                                     <div class="widget-content-left mr-3">
                                                                         <img width="42" class="rounded-circle"
-                                                                            src="/images/product_images/{{this._id}}.jpg" alt="">
+                                                                            src="/images/product_images/{{this._id}}"
+                                                                            alt="">
                                                                     </div>
                                                                     <div class="widget-content-left">
                                                                         <div class="widget-heading">{{this.prodName}}
@@ -95,7 +180,7 @@
                                                                         <div class="font-size-xlg text-muted">
                                                                             <small class="opacity-5 pr-1"></small>
                                                                             <span>{{this.soldQty}}</span>
-                                                                            
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -122,11 +207,13 @@
                                         </div>
                                     </div>
                                 </div>
+
+
                                 <div class="tab-content">
                                     <div class="tab-pane fade active show" id="tab-eg-55">
-                                        {{!-- <div class="widget-chart p-3">
-                                            <div style="height: 350px">
-                                                <canvas id="line-chart"></canvas>
+                                        <div class="widget-chart p-3">
+                                            <div id="6monthsorders" style="height: 350px">
+                                                {{!-- <canvas id="line-chart"></canvas> --}}
                                             </div>
                                             <div class="widget-chart-content text-center mt-5">
                                                 <div class="widget-description mt-0 text-warning">
@@ -136,7 +223,7 @@
                                                         resources</span>
                                                 </div>
                                             </div>
-                                        </div> --}}
+                                        </div>
                                         <div class="pt-2 card-body">
                                             <div class="row">
                                                 <div class="col-md-6">
@@ -271,9 +358,11 @@
                                             <div class="widget-subheading">After discount</div>
                                         </div>
                                         <div class="widget-content-right">
-                                            <div class="widget-numbers text-warning">&#8377; {{totalSales.totalAmount}}</div>
-                                            
-                                            <div class="widget-subheading text-warning">&#8377; {{totalSales.discount}}</div>
+                                            <div class="widget-numbers text-warning">&#8377; {{totalSales.totalAmount}}
+                                            </div>
+
+                                            <div class="widget-subheading text-warning">&#8377; {{totalSales.discount}}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -294,34 +383,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-xl-none d-lg-block col-md-6 col-xl-4">
-                            <div class="card mb-3 widget-content">
-                                <div class="widget-content-outer">
-                                    <div class="widget-content-wrapper">
-                                        <div class="widget-content-left">
-                                            <div class="widget-heading">Income</div>
-                                            <div class="widget-subheading">Expected totals</div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                            <div class="widget-numbers text-focus">$147</div>
-                                        </div>
-                                    </div>
-                                    <div class="widget-progress-wrapper">
-                                        <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                            <div class="progress-bar bg-info" role="progressbar" aria-valuenow="54"
-                                                aria-valuemin="0" aria-valuemax="100" style="width: 54%;"></div>
-                                        </div>
-                                        <div class="progress-sub-label">
-                                            <div class="sub-label-left">Expenses</div>
-                                            <div class="sub-label-right">100%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      
                     </div>
 
-                    <div class="row">
+                    {{!-- <div class="row">
                         <div class="col-md-6 col-lg-3">
                             <div class="card-shadow-danger mb-3 widget-chart widget-chart2 text-left card">
                                 <div class="widget-content">
@@ -414,12 +479,15 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
+            
             <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
         </div>
     </div>
 </section>
-<script type="text/javascript"
-    src="https://demo.dashboardpack.com/architectui-html-free/assets/scripts/main.js"></script>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

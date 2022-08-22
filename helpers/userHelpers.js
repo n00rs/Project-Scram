@@ -625,15 +625,15 @@ return new Promise((resolve, reject) => {
             wishlist = {
                 user_or_sessionId: id,
                 products: [ObjectId(prodId)],
-                endSessionAt: new Date(new Date().getTime() + oneDay)                                                                             //creating a field with date which removes the doc when it expires
-            }
+                endSessionAt: new Date(new Date().getTime() + oneDay)                                                                                  //creating a field with date which removes the doc when it expires
+            }  
         }
         return new Promise((resolve, reject) => {
             db.get().collection(collections.WISHLISTCOLLECTION).findOne({ user_or_sessionId: id }).then((result) => {
                 console.log(result, 'wishlist');
                 if (result == null) {
 
-                    db.get().collection(collections.WISHLISTCOLLECTION).createIndex({ "endSessionAt": 1 }, { expireAfterSeconds: 0 })             //creating index for date field to auto remove the doc past date
+                    db.get().collection(collections.WISHLISTCOLLECTION).createIndex({ "endSessionAt": 1 }, { expireAfterSeconds: 0 })                     //creating index for date field to auto remove the doc past date
 
                     db.get().collection(collections.WISHLISTCOLLECTION).insertOne(wishlist).then((result) => {
                         resolve({ success: "Item added to wishlist" })

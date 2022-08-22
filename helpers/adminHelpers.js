@@ -268,7 +268,7 @@ module.exports = {
     deleteCoupon: (couponData) => {
         return new Promise((resolve, reject) => {
             let couponId = objectId(couponData.couponId);
-            let successMsg = {success: "deleted coupon" };
+            let successMsg = { success: "deleted coupon" };
             let errMsg = { error: "mongo out service" };
             // console.log(couponId);
             db.get().collection(collection.COUPONCOLLECTION).deleteOne({ _id: couponId })
@@ -433,7 +433,34 @@ module.exports = {
 
     salesDetails: () => {
         return new Promise(async (resolve, reject) => {
-            let totalOrders = await db.get().collection(collection.ORDERCOLLECTION).countDocuments()
+            let totalOrders = await db.get().collection(collection.ORDERCOLLECTION).countDocuments();
+
+            let ordersPerMonth = await db.get().collection(collection.ORDERCOLLECTION).aggregate([
+                {
+                    $set: { dateConvert: { $toDate: "$date" } }                                               //converting string to date type 
+                },
+                {
+                    $group: {
+                        _id: {
+                            month: {
+                                $month: "$dateConvert"
+                            }
+                        },
+                        orders: {
+                            $count: {}
+                        }
+                    },
+
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        month: "$_id.month",
+                        orders: "$orders"
+                    }
+                }
+            ]).toArray()
+
             let totalRevenue = await db.get().collection(collection.ORDERCOLLECTION).aggregate([
                 {
                     $match:
@@ -462,7 +489,7 @@ module.exports = {
 
             ]).toArray()
 
-            db.get().collection(collection.ORDERCOLLECTION).aggregate([
+            db.get().collection(collection.ORDERCOLLECTION).aggregate([                                   //topsellers
                 {
                     $match:
                     {
@@ -498,6 +525,7 @@ module.exports = {
                     let response = totalRevenue[0] ? totalRevenue[0] : null
                     result[0] ? response.topSellers = result[0] : null
                     totalOrders ? response.totalOrders = totalOrders : null
+                    ordersPerMonth ? response.ordersPerMonth = ordersPerMonth : null
                     resolve(response)
                 })
                 .catch(e => reject(e))
