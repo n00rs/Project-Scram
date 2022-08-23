@@ -431,6 +431,7 @@ return new Promise((resolve, reject) => {
                 .catch(err => reject(err))
         })
     },
+    
     checkCouponCode: (couponCode, cartTotal) => {
         const couponName = couponCode.toUpperCase();
         console.log(couponCode);
