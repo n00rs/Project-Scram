@@ -34,7 +34,7 @@ module.exports = {
                     console.log(result)
                     coupon.userId = result.insertedId;
 
-                    db.get().collection(collection.COUPONCOLLECTION).createIndex({ "couponExpires": 1 }, { expireAfterSeconds: 0 })
+                    db.get().collection(collections.COUPONCOLLECTION).createIndex({ "couponExpires": 1 }, { expireAfterSeconds: 0 })
                     
                     db.get().collection(collections.COUPONCOLLECTION).insertOne(coupon)
                         .then(res => resolve(res))
@@ -88,23 +88,6 @@ module.exports = {
         })
     },
 
-    // fetchHelmets : ()=>{
-    //     return new Promise((resolve, reject) => {
-    //         db.get().collection(collections.PRODUCTCOLLECTION).find({category : 'helmet'}).toArray().then((result)=>{
-    //             console.log(result);
-    //             resolve(result)
-    //     })
-    //     })
-    // },
-
-    // fetchAccessories : ()=>{
-    //     return new Promise((resolve, reject) => {
-    //         db.get().collection(collections.PRODUCTCOLLECTION).find({category: 'accessories'}).toArray().then((result)=>{
-
-    //             resolve(result)
-    //         })
-    //     })
-    // },
 
     fetchCategory: (data) => {
         return new Promise((resolve, reject) => {
@@ -813,43 +796,7 @@ return new Promise((resolve, reject) => {
             .catch(err => console.log(err))
     },
 
- /*   stripeFail: (orderId, chargeId) => {
-        return new Promise((resolve, reject) => {
-            db.get().collection(collections.ORDERCOLLECTION).updateOne({ _id: ObjectId(orderId) },
-                {
-                    $set: {
-                        "status": "payment - failed",
-                        "paymentId": chargeId
-                    }
-                }).then(res => resolve(res))
-                .catch(err => reject(err))
-        })
-    }
-    updateOrderStatus: (orderData) => {
-        console.log(orderData)
-        const orderId = ObjectId(orderData.orderId);
-        const prodId = ObjectId(orderData.prodId);
-        const selectedSize = orderData.selectedSize;
-        // const currentStatus = orderData.currentStatus ? orderData.currentStatus : null;
-        const newStatus = orderData.newStatus ;
-        return new Promise((resolve, reject) => {
-            db.get().collection(collections.ORDERCOLLECTION).updateOne(
-                {
-                    _id: orderId,
-                    "orderData.items.item": prodId,
-                    "orderData.items.selectedSize": selectedSize,
-                },
-                {
-                    $set: {
-                        "orderData.items.$.status": newStatus
-            }
-                }
-            ).then(res=> {res.modifiedCount = 1 ? resolve() : reject() } ).catch(err => reject(err))
 
-
-        })
-
-    }*/
 }
 
 function receiptNumber() {
