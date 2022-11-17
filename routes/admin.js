@@ -151,14 +151,10 @@ router.post("/add-products", verifyAdmin, (req, res) => {
         let img3 = req.files.image3;
         let img4 = req.files.image4;
 
-        if (img1)
-          img1.mv("./public/images/product_images/" + result + "_1.jpg");
-        if (img2)
-          img2.mv("./public/images/product_images/" + result + "_2.jpg");
-        if (img3)
-          img3.mv("./public/images/product_images/" + result + "_3.jpg");
-        if (img4)
-          img4.mv("./public/images/product_images/" + result + "_4.jpg");
+        if (img1) img1.mv("./public/images/product_images/" + result + "_1.jpg");
+        if (img2) img2.mv("./public/images/product_images/" + result + "_2.jpg");
+        if (img3) img3.mv("./public/images/product_images/" + result + "_3.jpg");
+        if (img4) img4.mv("./public/images/product_images/" + result + "_4.jpg");
       }
       res.redirect("/admin/view-products");
     });
@@ -188,7 +184,6 @@ router.get("/edit-product/:id", verifyAdmin, async (req, res) => {
 
 router.post("/edit-product", verifyAdmin, (req, res) => {
   try {
-
     adminHelpers
       .editProduct(req.body)
       .then((result) => {
@@ -208,7 +203,7 @@ router.post("/edit-product", verifyAdmin, (req, res) => {
       })
       .catch((err) => res.status(500).json(err.message));
   } catch (error) {
-    res.status({ error: error });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -229,9 +224,8 @@ router.get("/add-banners", verifyAdmin, (req, res) => {
 
 router.post("/add-banners", verifyAdmin, (req, res) => {
   try {
-  
     let helmetBanner = req.files.helmet;
-    
+
     let accessoriesBanner = req.files.accessories;
     let racingBanner = req.files.racing;
     let sportBanner = req.files.sport;
@@ -243,21 +237,18 @@ router.post("/add-banners", verifyAdmin, (req, res) => {
     let othersBanner = req.files.others;
 
     if (helmetBanner) helmetBanner.mv("./public/images/banners/helmet.jpg");
-    if (accessoriesBanner)
-      accessoriesBanner.mv("./public/images/banners/accessories.jpg");
+    if (accessoriesBanner) accessoriesBanner.mv("./public/images/banners/accessories.jpg");
     if (racingBanner) racingBanner.mv("./public/images/banners/racing.jpg");
     if (sportBanner) sportBanner.mv("./public/images/banners/sport.jpg");
     if (touringBanner) touringBanner.mv("./public/images/banners/touring.jpg");
     if (offRoadBanner) offRoadBanner.mv("./public/images/banners/off-road.jpg");
     if (visorsBanners) visorsBanners.mv("./public/images/banners/visors.jpg");
-    if (communicationsBanner)
-      communicationsBanner.mv("./public/images/banners/communications.jpg");
+    if (communicationsBanner) communicationsBanner.mv("./public/images/banners/communications.jpg");
     if (padsBanner) padsBanner.mv("./public/images/banners/pads.jpg");
     if (othersBanner) othersBanner.mv("./public/images/banners/others.jpg");
 
     res.redirect("/admin/add-banners");
   } catch (error) {
-   
     res.status(500).json(error.message);
   }
 });
@@ -307,7 +298,6 @@ router.get("/all-orders/:orderId", verifyAdmin, (req, res) => {
 
 router.patch("/all-orders", verifyAdmin, (req, res) => {
   try {
-
     adminHelpers
       .checkStock(req.body)
       .then((result) => res.json(result))
@@ -319,7 +309,6 @@ router.patch("/all-orders", verifyAdmin, (req, res) => {
 
 router.put("/all-orders", verifyAdmin, (req, res) => {
   try {
-   
     adminHelpers
       .updateOrderStatus(req.body)
       .then((result) => res.json(result))
@@ -330,7 +319,6 @@ router.put("/all-orders", verifyAdmin, (req, res) => {
 });
 
 router.delete("/delete-coupon", verifyAdmin, (req, res) => {
-  
   try {
     adminHelpers
       .deleteCoupon(req.body)

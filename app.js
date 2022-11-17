@@ -9,7 +9,7 @@ const helper = require('./helpers/handlebarHelpers')
 const fileUpload = require('express-fileupload');
 const dataBase = require('./config/mongoConfig');        //DB connection
 
-// const methodOverride = require('method-override')
+
 
 const adminRouter = require('./routes/admin')
 const userRouter = require('./routes/user')
@@ -38,7 +38,7 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
 }));
 app.use(fileUpload());
-// app.use( methodOverride() );
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'images')))
 

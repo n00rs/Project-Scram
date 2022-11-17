@@ -8,8 +8,8 @@ const paytmConfig = require("../config/paytmConfig");
 const stripeConfig = require("../config/stripeConfig");
 const adminHelpers = require("../helpers/adminHelpers");
 const PORT = process.env.PORT;
-const verifyUser = (req, res, next) =>
-  req.session.loggedIn ? next() : res.redirect("/login");
+
+const verifyUser = (req, res, next) => (req.session.loggedIn ? next() : res.redirect("/login"));
 
 router.get("/", async (req, res) => {
   try {
@@ -98,8 +98,7 @@ router.post("/signup", (req, res) => {
 
 router.get("/category", async (req, res) => {
   try {
-    if (Object.keys(req.query).length === 0)
-      throw new Error("opps something went wrong");
+    if (Object.keys(req.query).length === 0) throw new Error("opps something went wrong");
     let user1 = req.session.user;
 
     let wishId = user1 ? user1._id : req.sessionID;
@@ -433,9 +432,7 @@ router.post("/otp", verifyUser, (req, res) => {
     twilio
       .verifyOtp(otp, phone)
       .then(() => {
-        userHelpers
-          .verifyPhone(userId, phone)
-          .then(() => res.redirect("/profile"));
+        userHelpers.verifyPhone(userId, phone).then(() => res.redirect("/profile"));
       })
       .catch((err) => {
         req.session.otpError = err;
@@ -682,7 +679,6 @@ router.get("/orders", verifyUser, async (req, res) => {
     const userId = req.session.user._id;
 
     const orders = await userHelpers.fetchOrders(req.query, userId);
-  
 
     res.render("user/each-orderDetails", { user: true, orders, user1, count });
   } catch (error) {
@@ -718,9 +714,9 @@ async function fetchCounts(wishId, cartId) {
   count.wishlistCount = null;
 
   count.wishlistCount = await userHelpers.fetchWishlistCount(wishId.toString());
- 
+
   if (cartId) count.cartCount = await userHelpers.fetchCartCount(cartId);
- 
+
   return count;
 }
 

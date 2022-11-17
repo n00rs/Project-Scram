@@ -1,5 +1,3 @@
-
-
 html,
 body {
     margin: 0;
@@ -8,6 +6,7 @@ body {
     font-family: 'Lato', sans-serif;
     scroll-behavior: smooth;
 }
+
 body a {
     text-decoration: none;
     transition: 0.5s all;
@@ -20,6 +19,7 @@ body a {
 a:hover {
     text-decoration: none;
 }
+
 input[type="button"],
 input[type="submit"],
 input[type="text"],
@@ -46,7 +46,7 @@ h6 {
 }
 
 p {
-    font-size:0.9em;
+    font-size: 0.9em;
     color: #8c9398;
     line-height: 2em;
     letter-spacing: 1px;
@@ -168,7 +168,7 @@ nav ul li {
 /* Background color change on Hover */
 
 nav .menu li a:hover {
-    color:#feff31;
+    color: #feff31;
 }
 
 .menu li.active a {
@@ -189,7 +189,7 @@ nav ul ul {
 
 /* Display Dropdowns on Hover */
 
-nav ul li:hover > ul {
+nav ul li:hover>ul {
     display: inherit;
 }
 
@@ -224,7 +224,7 @@ nav ul ul ul li {
 
 /* Change ' +' in order to change the Dropdown symbol */
 
-li > a:only-child:after {
+li>a:only-child:after {
     content: '';
 }
 
@@ -248,7 +248,7 @@ li > a:only-child:after {
 
     /* Hide the navigation menu by default */
     /* Also hide the  */
-    .toggle + a,
+    .toggle+a,
     .menu {
         display: none;
     }
@@ -284,7 +284,7 @@ li > a:only-child:after {
     }
 
     /* Display Dropdown when clicked on Parent Lable */
-    [id^=drop]:checked + ul {
+    [id^=drop]:checked+ul {
         display: block;
         background: rgba(16, 16, 16, 0.85);
         padding: 15px 0;
@@ -326,9 +326,11 @@ li > a:only-child:after {
     nav ul ul a {
         background-color: #212121;
     }
+
     .menu li ul li a {
         color: #fff;
     }
+
     /* Hide Dropdowns by Default */
     nav ul ul {
         float: none;
@@ -338,13 +340,15 @@ li > a:only-child:after {
     }
 
     /* Hide menus on hover */
-    nav ul ul li:hover > ul,
-    nav ul li:hover > ul {
+    nav ul ul li:hover>ul,
+    nav ul li:hover>ul {
         display: none;
     }
-    nav ul ul{
-        background:none!important;
+
+    nav ul ul {
+        background: none !important;
     }
+
     /* Fisrt Tier Dropdown */
     nav ul ul li {
         display: block;
@@ -377,7 +381,7 @@ li > a:only-child:after {
 /*--/banner --*/
 
 .main-banner {
-    background:url(../images/header.png)no-repeat center;
+    background: url(../images/header.png)no-repeat center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -442,6 +446,7 @@ li > a:only-child:after {
     margin: 0;
     text-shadow: 2px 5px 3px rgba(0, 0, 0, 0.06);
 }
+
 .ban-buttons a {
     background: rgb(18, 17, 17);
     padding: 11px 31px;
@@ -593,7 +598,7 @@ ul.tic-info li {
     border: 1px solid transparent;
 }
 
-.product-shoe-info:hover{
+.product-shoe-info:hover {
     border-color: #feff31;
 }
 
@@ -616,9 +621,11 @@ ul.stars li a span {
     font-size: 0.7em;
     color: #6a6c6d;
 }
-ul.stars li a span:hover{
-    opacity:0.8;
+
+ul.stars li a span:hover {
+    opacity: 0.8;
 }
+
 span.product-new-top {
     background: #414b52;
     font-size: 0.8em;
@@ -642,6 +649,7 @@ section#brands {
 .service-content {
     margin-left: 1em;
 }
+
 .icon span {
     width: 60px;
     height: 60px;
@@ -654,6 +662,7 @@ section#brands {
     -webkit-transition: all 1s;
     -o-transition: all 1s;
 }
+
 .service-content h4 {
     font-size: 1.15em;
     line-height: 1.75em;
@@ -732,29 +741,34 @@ ul.list-unstyled.w3layouts-icons.clients li span:hover {
 }
 
 /*-- //testimonials --*/
-.men-thumb-item{
-   position: relative;
+.men-thumb-item {
+    position: relative;
 }
+
 .item-info-product h4 {
     margin-top: 0.5em;
 }
-.shop-now{
+
+.shop-now {
     position: absolute;
     bottom: 8%;
     right: 8%;
 }
+
 .shop-now a {
     font-size: 0.9em;
     text-transform: uppercase;
     font-weight: 600;
-    text-decoration:none;
-    color:#333;
+    text-decoration: none;
+    color: #333;
 }
+
 h4.group.card-title {
     font-size: 1.2em;
     letter-spacing: 2px;
     color: #464f56;
 }
+
 /*--/breadcrumb--*/
 ol.breadcrumb {
     background: none;
@@ -762,16 +776,20 @@ ol.breadcrumb {
     padding: .2em .2em;
     background: #f7f7f7;
 }
+
 li.breadcrumb-item {
     font-size: 0.9em;
     letter-spacing: 1px;
 }
+
 .breadcrumb-item.active {
     color: #888;
 }
+
 li.breadcrumb-item a {
     color: #000;
 }
+
 /*--//breadcrumbr--*/
 /*--/shop--*/
 /*-- special deals --*/
@@ -781,13 +799,13 @@ li.breadcrumb-item a {
 }
 
 .img-deal1 h3 {
-        color: #495057;
-        font-size: 13px;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-    }
-    
-    
+    color: #495057;
+    font-size: 13px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+
 .img-deal1 a {
     font-size: 14px;
     color: #6d6c6c;
@@ -796,6 +814,7 @@ li.breadcrumb-item a {
 .img-deals img {
     border: 1px solid #ddd;
 }
+
 ul.w3layouts-box-list li {
     list-style: none;
     display: block;
@@ -804,39 +823,45 @@ ul.w3layouts-box-list li {
     letter-spacing: 1px;
     font-size: 0.9em;
 }
-.grid-img-right{
-background: url(../images/single.jpg)no-repeat center;
--webkit-background-size: cover;
--moz-background-size: cover;
--o-background-size: cover;
--ms-background-size: cover;
-background-size: cover;
-position: relative;
-height:15em;
-padding:5.5em 2em 0 0;
+
+.grid-img-right {
+    background: url(../images/single.jpg)no-repeat center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    -ms-background-size: cover;
+    background-size: cover;
+    position: relative;
+    height: 15em;
+    padding: 5.5em 2em 0 0;
 }
-.grid-img-right span.money{
+
+.grid-img-right span.money {
     color: #fff;
-    display:block;
+    display: block;
 }
+
 .grid-img-right a {
     font-size: 0.9em;
     text-transform: uppercase;
     font-weight: 600;
     text-decoration: none;
     color: #fff;
-    padding:0;
+    padding: 0;
 
 }
+
 .desc1-left {
     border: 1px solid #ddd;
 }
+
 .desc1-right h3 {
     text-shadow: 0 1px 0 #ffffff;
     color: #1e272e;
     font-size: 1.1em;
     margin-bottom: 15px;
 }
+
 .desc1-right h5 {
     font-size: 1.3em;
     color: #62676b;
@@ -844,6 +869,7 @@ padding:5.5em 2em 0 0;
     -webkit-text-stroke: 0.2px;
     font-weight: 400;
 }
+
 .share h4 {
     font-size: 0.9em;
     color: #555555;
@@ -852,9 +878,11 @@ padding:5.5em 2em 0 0;
     text-shadow: 0 1px 0 #ffffff;
     font-weight: 400;
 }
+
 .desc1-right h5 span {
     text-decoration: line-through;
 }
+
 .desc1-right h5 a {
     margin-left: 5px;
     color: #555555;
@@ -863,6 +891,7 @@ padding:5.5em 2em 0 0;
     -webkit-text-stroke: 0px;
     letter-spacing: 0px;
 }
+
 .available span a {
     margin: 4% 0;
     display: block;
@@ -872,6 +901,7 @@ padding:5.5em 2em 0 0;
     text-shadow: 0 1px 0 #ffffff;
     text-decoration: underline;
 }
+
 h3.shop-sing {
     text-transform: uppercase;
     font-size: 1.2em;
@@ -879,11 +909,13 @@ h3.shop-sing {
     margin: 1.5em 0 2em 0;
     color: #323a40;
 }
+
 p.italic-blue {
     font-style: italic;
     color: #89bff3;
     font-weight: 500;
 }
+
 /*--//shop--*/
 /*-- customer --*/
 
@@ -891,6 +923,7 @@ p.italic-blue {
     color: #f58b8d;
     font-size: 0.8em
 }
+
 h3.sear-head {
     color: #1e272e;
     margin-bottom: 20px;
@@ -899,9 +932,11 @@ h3.sear-head {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
 .customer-rev ul li {
-	list-style: none;
+    list-style: none;
 }
+
 .customer-rev ul li a span {
     color: #a4a6a9;
     font-weight: normal;
@@ -973,8 +1008,12 @@ h2.logo-2 a {
     text-shadow: 2px 5px 3px rgba(0, 0, 0, 0.06);
     letter-spacing: 1px;
 }
+
 /*--contact--*/
-.contact-right-content input[type="text"], .contact-right-content input[type="email"],.contact-right-content input[type="tel"], .contact-right-content textarea {
+.contact-right-content input[type="text"],
+.contact-right-content input[type="email"],
+.contact-right-content input[type="tel"],
+.contact-right-content textarea {
     padding: 0.8em 1em;
     color: #495057;
     border: none;
@@ -988,6 +1027,7 @@ h2.logo-2 a {
     width: 100%;
     background: #f0f1f3;
 }
+
 .contact-right-content input[type="submit"] {
     outline: none;
     border: none;
@@ -1003,8 +1043,9 @@ h2.logo-2 a {
     -webkit-transition: all 0.3s;
     -moz-transition: all 0.3s;
     transition: all 0.3s;
-    border-radius:0em;
+    border-radius: 0em;
 }
+
 .contact-left-content h4 {
     color: #3d3f44;
     font-weight: 600;
@@ -1012,18 +1053,23 @@ h2.logo-2 a {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
-.contact-left-content a{
+
+.contact-left-content a {
     color: #8c9398;
 }
-.contact-left-content p{
-    margin-bottom:0;
+
+.contact-left-content p {
+    margin-bottom: 0;
 }
+
 .contact-left-content {
     padding-left: 2em;
 }
+
 .contact-right-content textarea {
     min-height: 10em;
 }
+
 /*--//contact--*/
 .map-fo iframe {
     min-height: 350px;
@@ -1108,9 +1154,11 @@ ul.w3layouts-icons li a {
 .footer-grid_section_w3layouts {
     padding: 3em 0;
 }
+
 .contact-info a {
     color: #777;
 }
+
 /* //contact address */
 
 /* copyright */
@@ -1159,10 +1207,12 @@ a.move-top span {
     .main-banner {
         height: 45em;
     }
+
     .banner-info {
         padding: 16em 0 0em 3em;
         width: 38%;
     }
+
     .service-content h4 {
         font-size: 1em;
     }
@@ -1172,9 +1222,11 @@ a.move-top span {
     h3.tittle {
         font-size: 2.3em;
     }
+
     .main-banner {
         height: 40em;
     }
+
     .main-banner.inner {
         height: 15em;
     }
@@ -1185,26 +1237,33 @@ a.move-top span {
         font-size: 3em;
         letter-spacing: 2px;
     }
+
     .main-banner {
         height: 38em;
     }
+
     h3.tittle {
         font-size: 2em;
     }
+
     .ban-buttons a {
         padding: 10px 14px;
         font-size: 12px;
     }
 }
+
 @media(max-width:1024px) {
     .banner-info {
         padding: 14em 0 0em 3em;
         width: 40%;
     }
-    .feature-grids h3, .bottom-gd.fea h3 {
+
+    .feature-grids h3,
+    .bottom-gd.fea h3 {
         font-size: 0.8em;
     }
 }
+
 @media(max-width:991px) {
 
     .gd-bottom {
@@ -1212,21 +1271,26 @@ a.move-top span {
         width: 50%;
         margin-top: 1em;
     }
+
     ul.navbar-nav {
         margin-top: 10px;
         background: #101315;
     }
+
     li.nav-item {
         margin-right: 0;
     }
+
     .test-info {
         padding: 2em 0;
         margin: 0 auto;
         width: 80%;
     }
+
     .product-men {
         margin-bottom: 1em;
     }
+
     .navbar-toggler {
         padding: 0.3rem 0.5rem;
         font-size: 1.25rem;
@@ -1235,11 +1299,13 @@ a.move-top span {
         border: 1px solid transparent;
         border-radius: 0.2rem;
     }
+
     div#products .item {
         float: left;
         width: 50%;
         margin-top: 1em;
     }
+
     .left-ads-display {
         margin-top: 2em;
     }
@@ -1251,14 +1317,18 @@ a.move-top span {
     .dropdown-menu {
         width: 100%;
     }
+
     .banner-info h3 {
         font-size: 2.5em;
         letter-spacing: 2px;
     }
+
     .main-banner {
         height: 38em;
     }
-    .feature-grids h3, .bottom-gd.fea h3 {
+
+    .feature-grids h3,
+    .bottom-gd.fea h3 {
         font-size: 0.9em;
     }
 }
@@ -1267,13 +1337,16 @@ a.move-top span {
     .main-banner.inner {
         height: 12em;
     }
+
     .banner-info {
         padding: 11em 0 0em 1em;
         width: 44%;
     }
+
     .main-banner {
         height: 30em;
     }
+
     h3.tittle {
         font-size: 1.8em;
     }
@@ -1284,6 +1357,7 @@ a.move-top span {
         padding: 11em 0 0em 1em;
         width: 58%;
     }
+
     .test-info {
         padding: 2em 0;
         margin: 0 auto;
@@ -1295,40 +1369,50 @@ a.move-top span {
     .icon-gd-info {
         text-align: center;
     }
+
     .product-men {
         margin-bottom: 1em;
         float: left;
         width: 50%;
     }
+
     .footer-grid_section_w3layouts {
         padding: 1em 0;
     }
+
     h2.logo-2 {
         padding-top: 1em;
     }
+
     .img-deals {
         float: left;
         width: 40%;
     }
+
     .img-deal1 {
         padding: 0;
         float: right;
         width: 60%;
     }
-    .desc1-right{
+
+    .desc1-right {
         margin-top: 1.5em;
     }
+
     .contact-left-content {
         padding-left: 1em;
         margin-top: 2em;
     }
+
     .footer-right {
         border-left: 1px solid #ddd;
         padding: 3em 1em 3em 1em;
     }
+
     .footer-grid_section_w3layouts {
         padding: 1em 1em;
     }
+
     ol.breadcrumb {
         padding: 1em 1em;
     }
@@ -1338,15 +1422,18 @@ a.move-top span {
     .main-banner {
         height: 28em;
     }
+
     .banner-info {
         padding: 10em 0 0em 1em;
         width: 58%;
     }
+
     div#products .item {
         float: left;
         width: 100%;
         margin-top: 1em;
     }
+
     h3.tittle {
         font-size: 1.7em;
     }
@@ -1357,32 +1444,38 @@ a.move-top span {
         font-size: 2em;
         letter-spacing: 2px;
     }
+
     .banner-info p {
         font-size: 0.7em;
         letter-spacing: 2px;
     }
+
     .sub-para-w3layouts {
         margin: 0;
     }
-   
+
 }
 
 @media(max-width:480px) {
     .main-banner {
         height: 25em;
     }
+
     .banner-info {
         padding: 9em 0 0em 1em;
         width: 58%;
     }
+
     #logo a {
         font-size: 0.8em;
     }
+
     .test-info {
         padding: 0em 0;
         margin: 0 auto;
         width: 96%;
     }
+
     .main-banner.inner {
         height: 9em;
     }
@@ -1390,20 +1483,24 @@ a.move-top span {
 
 @media(max-width:440px) {
     .banner-info {
-        padding:8em 0 0em 1em;
+        padding: 8em 0 0em 1em;
         width: 68%;
     }
+
     .main-banner {
         height: 23em;
     }
+
     .item-info-product h4 a {
         font-size: 15px;
     }
+
     .product-men {
         margin-bottom: 1em;
         float: left;
         width: 100%;
     }
+
     .gd-bottom {
         float: left;
         width: 100%;
@@ -1419,16 +1516,10 @@ a.move-top span {
     }
 }
 
-@media(max-width:384px) {
-  
-}
+@media(max-width:384px) {}
 
-@media(max-width:375px) {
+@media(max-width:375px) {}
 
-}
-
-@media(max-width:320px) {
-  
-}
+@media(max-width:320px) {}
 
 /*--//responsive--*/
